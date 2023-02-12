@@ -1,0 +1,34 @@
+# Local server continue delop
+import subprocess
+import time
+import git
+
+
+
+def main():
+    while True:
+        p = subprocess.Popen(['python', 'main.py'])
+        while git_pull_change():
+            time.sleep(10)
+        p.terminate()
+
+
+def git_pull_change():
+    this_repo    = '.'
+    repo = git.Repo(this_repo)
+    current = repo.head.commit
+
+    repo.remotes.origin.pull()
+
+    if current == repo.head.commit:
+        print("[*] Repo not changed. Sleep mode activated.")
+        return False
+    else:
+        print("[*] Repo changed! Activated.")
+        return True
+
+if __name__ == '__main__':
+    main()
+
+
+

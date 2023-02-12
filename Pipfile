@@ -16,6 +16,7 @@ beautifulsoup4 = "*"
 requests-html = "*"
 yt-dlp = "*"
 pynacl = "*"
+gitpython = "*"
 
 [dev-packages]
 
