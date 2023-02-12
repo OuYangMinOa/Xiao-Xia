@@ -17,7 +17,7 @@ def main():
             while True:
                 if (git_pull_change()):
                     break
-                time.sleep(60)
+                time.sleep(10)
         except Exception as e:
             print(e)
         p.terminate()
