@@ -31,10 +31,9 @@ def get_covid():
     
     
     message = f"""
-=====================
 {data_date}:
 =====================
-今日本土確診 : {TODAY} (包含校正回歸)
+今日本土確診 : {TODAY}
 今日境外移入 : {came}
 今日死亡人數 : {D_TOD}
 =====================
@@ -42,7 +41,7 @@ def get_covid():
 全台累積確診 : {TOTAL}
 全台累積死亡 : {DEAD_}   :skull_crossbones: :skull_crossbones: :skull_crossbones:
 =====================
-資料來源 : yahoo
+資料來源 : yahoo.com.tw
 """
     return message
 
