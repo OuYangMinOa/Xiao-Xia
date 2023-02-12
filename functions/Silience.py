@@ -16,7 +16,7 @@ class Silence(discord.ext.commands.Cog):
     async def silence(self,ctx):
         silinece_channel.append(ctx.channel.id)
 
-        await  ctx.respond("ok, I will shut up in this channel :smiling_face_with_tear: :mask: ")
+        await ctx.respond("ok, I will shut up in this channel :smiling_face_with_tear: :mask: ")
 
 
     @slash_command(name="talk",description="Shut me up in this channel")
@@ -24,7 +24,7 @@ class Silence(discord.ext.commands.Cog):
 
         if (ctx.channel.id in silinece_channel):
             silinece_channel.remove(ctx.channel.id)
-            ctx.respond(":confetti_ball: Yeah! :confetti_ball:  ")
+            await ctx.respond(":confetti_ball: Yeah! :confetti_ball:  ")
             return
 
         await ctx.respond("I could have talked.")
