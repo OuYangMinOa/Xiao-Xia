@@ -1,7 +1,7 @@
 # OnMessage.py
 
 from utils.file_os import readfile    , addtxt
-from utils.info    import MASSAGE_DATA, PASS_MSG
+from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel
 
 import openai
 import random
@@ -29,6 +29,8 @@ def prompt_openai(word):
 async def handle_message(message):
     this_message = message.content.strip()
     print(f"[*] {message.author.name} : {this_message}")
+    if (message.channel.id in silinece_channel):
+        return 
     pass_memory_arr = []
     count = 0
     for i in range(len(PASS_MSG)-1,-1,-1):

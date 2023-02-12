@@ -2,13 +2,13 @@
 
 # <p align="center"><img src="https://github.com/OuYangMinOa/Xiao-Xia/blob/main/icon.png" width = '200' height="200" ></img> </p>
 
-# <p align="center">歐陽小俠 Discord Bot </p>
+# <p align="center">歐陽小俠</p>
 ![](https://img.shields.io/github/pipenv/locked/dependency-version/ncuphysics/hack_bot/py-cord)
 ![](https://img.shields.io/bower/l/mi)
 
-# Installation (Bbuild your own bot)
+# Installation
 
-This bot is develop base on [python](https://www.python.org). Python3 is require for installation and ffmpeg for audio procession. Here are the procedure to run Hack bot locally.
+If you want to build your own bot, the bot is develop base on [python](https://www.python.org). Python3 is require for installation and ffmpeg for audio procession. Here are the procedure to run Hack bot locally.
 
 1. Install python virtual environment
     ```shell
@@ -47,3 +47,7 @@ This bot is develop base on [python](https://www.python.org). Python3 is require
 * `/loop` to loop current song.
 * `/clear`  to clear the playlist
 * `/leave` to leave the voice channel.
+
+# :laughing: chat
+* I will reply all message, if you want to shut it down, use `/silence` to shut me up
+* Use `/talk` so I can keep talking
