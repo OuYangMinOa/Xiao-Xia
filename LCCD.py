@@ -1,7 +1,8 @@
 # Local server continue delop
-import subprocess
-import time
 from sys import platform
+import subprocess
+
+import time
 import git
 
 
@@ -11,8 +12,13 @@ def main():
 
         print("[*] Starting server ...")
         p = subprocess.Popen(['python', 'main.py'])
-        while git_pull_change():
-            time.sleep(300)
+        try:
+            while True:
+                if (git_pull_change()):
+                    break
+                time.sleep(300)
+        except Exception as e:
+            print(e)
         p.terminate()
 
 
@@ -24,6 +30,8 @@ def git_pull_change():
     repo.remotes.origin.pull()
 
     if current == repo.head.commit:
+        print("[*] Repo same, slepping.")
+
         return False
     else:
         print("[*] Repo changed! Activated.")
