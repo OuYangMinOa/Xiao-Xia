@@ -1,12 +1,15 @@
 # main.py
+from utils.OnMessage import prompt_openai, handle_message
+from utils.MyLog     import logger
 
 from traceback       import format_exception
-from utils.OnMessage import prompt_openai, handle_message
 
 import discord
 import dotenv
-
 import os
+
+
+
 
 dotenv.load_dotenv()
 
@@ -16,7 +19,8 @@ bot = discord.Bot(intents=discord.Intents.all(),)
 
 @bot.event
 async def on_ready():
-    print(f'We have logged in as {bot.user}')
+    # print(f'We have logged in as {bot.user}')
+    logger.info(f'We have logged in as {bot.user}')
 
 @bot.event
 async def on_message(message):
@@ -32,7 +36,6 @@ if __name__ == '__main__':
         if filename.endswith(".py"):
             extension = f"functions.{filename[:-3]}"
             bot.load_extension(extension)
-
 
 
 bot.run(token)

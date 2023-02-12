@@ -2,7 +2,7 @@
 
 from utils.file_os import readfile    , addtxt
 from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel
-
+from utils.MyLog     import logger
 import openai
 import random
 import os
@@ -21,14 +21,14 @@ def prompt_openai(word):
         return completion.choices[0].text
         
     except openai.error.InvalidRequestError:
-        print("[*] Prompt to many words ..., Cutting down")
+        logger.error("[*] Prompt to many words ..., Cutting down")
         return prompt_openai("\n".join(word.split('\n')[:-1]))
 
 
 
 async def handle_message(message):
     this_message = message.content.strip()
-    print(f"[*] {message.author.name} : {this_message}")
+    logger.info(f"[*] {message.author.name} : {this_message}")
     if (message.channel.id in silinece_channel):
         return 
     pass_memory_arr = []
@@ -48,19 +48,19 @@ async def handle_message(message):
             break
 
     pass_memory = "\n".join(pass_memory_arr)
-    print(pass_memory)
+    # print(pass_memory)
     if ("http" not in this_message) :
         try:
             word = "你現在是一個discord音樂機器人,名子叫小俠,可以使用/play來播放youtube上的音樂,/help可以看到小俠的全部功能,如果聽不懂的話,可以隨便回復一句幹話或句點他就好了。"+pass_memory+"。\n" + f"{message.author.name}:"+ this_message+"\nA:"
             chatgpt_result = prompt_openai(word)
             await message.channel.send(chatgpt_result)
-            print(f"[*] 回復 : {chatgpt_result}")
+            logger.info(f"[*] 回復 : {chatgpt_result}")
             PASS_MSG.append(f"{message.author.name}:"+this_message)
             PASS_MSG.append("小俠:"+chatgpt_result)
             addtxt( MASSAGE_DATA,f"{message.author.name}:"+this_message.strip())
             addtxt( MASSAGE_DATA,"小俠:"+chatgpt_result.strip())
         except Exception as e:
-            print(e)
+            logger.error(e)
             chosen_message = random.choices(PASS_MSG)[0]
             if (":" in chosen_message): chosen_message = chosen_message.split(":")[-1]
             await message.channel.send(chosen_message)

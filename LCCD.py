@@ -1,5 +1,6 @@
 # Local server continue delop
 from sys import platform
+from utils.MyLog     import logger
 import subprocess
 
 import time
@@ -10,7 +11,7 @@ import git
 def main():
     while True:
 
-        print("[*] Starting server ...")
+        logger.info("[*] Starting server ...")
         p = subprocess.Popen(['python', 'main.py'])
         try:
             while True:
@@ -33,7 +34,7 @@ def git_pull_change():
 
         return False
     else:
-        print("[*] Repo changed! Activated.")
+        logger.info("[*] Repo changed! Activated.")
         return True
 
 if __name__ == '__main__':

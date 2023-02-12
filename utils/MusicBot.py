@@ -1,6 +1,6 @@
 ## music.py
 from utils.GrabYtList import *
-
+from utils.MyLog     import logger
 import threading
 import discord
 import asyncio
@@ -98,10 +98,10 @@ class MusicBot:
                 print("[*] downloading ->", this_song_name,"\n")
                 with youtube_dl.YoutubeDL(self.ytl) as ydl:
                     ydl.download([this_song_url])
-                print("\n[*] ------------ download successful ------------")
+                logger.info("\n[*] ------------ download successful ------------")
             except Exception as e:
-                print("[*] ----- error -----")
-                print(e)
+                logger.error("[*] ----- error -----")
+                logger.error(e)
                 error_     = await self.ctx.send(f':weary:  An error occurred while downloading ... ')
                 redownload = await self.ctx.send(f':weary:  Download again in 5 seconds')
                 print("[*] redownloaded in 5 second")
@@ -112,11 +112,13 @@ class MusicBot:
                     with youtube_dl.YoutubeDL(self.ytl) as ydl:
                         ydl.download([this_song_url])
                     print("[*] download successful")
-                except:
+                except Exception as e:
                     error_     = await self.ctx.channel.send(f':weary:  Error occurred again')
                     redownload = await self.ctx.channel.send(f':weary:  Skipping this song ... {this_song_name}')
-                    print("[*] error heppened again")
-                    print("[*] play next song in 5second")
+                    logger.info("[*] error heppened again")
+                    logger.info("[*] play next song in 5second")
+                    logger.error(e)
+
                     await redownload.delete()
                     await error_.delete()
                     await self.dowloading.delete()

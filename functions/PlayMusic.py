@@ -1,6 +1,6 @@
 from discord.commands import slash_command, Option
 from discord.ext      import commands
-
+from utils.MyLog     import logger
 
 from utils.info       import music_user
 
@@ -37,7 +37,7 @@ class Music(discord.ext.commands.Cog):
         if (ctx.channel.id in music_user):
             if (music_user[ctx.channel.id].channelid != channel.id):
                 await music_user[ctx.channel.id].voice.move_to(channel)
-                print(f"[*] move {music_user[ctx.channel.id].channelid} -> {channel.id}")
+                logger.info(f"[*] move {music_user[ctx.channel.id].channelid} -> {channel.id}")
                 music_user[ctx.channel.id].channel    = channel
                 music_user[ctx.channel.id].channelid  = channel.id
                 music_user[ctx.channel.id].ctx        = ctx
@@ -45,7 +45,7 @@ class Music(discord.ext.commands.Cog):
             if ctx.guild.voice_client not in self.bot.voice_clients:
                 await music_user[ctx.channel.id].kill()
                 del music_user[ctx.channel.id]
-                print("[*] rejoin the voice channel")
+                logger.info("[*] rejoin the voice channel")
                 voice =  await channel.connect()
                 music_user[ctx.channel.id] = my_mb.MusicBot(channel, voice , ctx, self.bot)
 
@@ -60,7 +60,7 @@ class Music(discord.ext.commands.Cog):
         else:
             voice =  await channel.connect()
             MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
-            print(f"[*] creating Class id : {id(MB)} for serving channel",channel.id)
+            logger.info(f"[*] creating Class id : {id(MB)} for serving channel",channel.id)
             music_user[ctx.channel.id] = MB
             if (not url):
                 await ctx.send("Use `\play url` to play youtube music")
@@ -83,7 +83,7 @@ class Music(discord.ext.commands.Cog):
             return
 
         if (ctx.channel.id in music_user):
-            print(f"[*] {channel.id} is asking the playlist")
+            logger.info(f"[*] {channel.id} is asking the playlist")
             await music_user[ctx.channel.id].list()
             # await ctx.send(f"Total {len(self.queqed)} songs")
 
@@ -104,7 +104,7 @@ class Music(discord.ext.commands.Cog):
             await ctx.send("Leaving the voice channel ...")
             await music_user[ctx.channel.id].kill()
             await music_user[ctx.channel.id].voice.disconnect()
-            print("[*] leaving", channel.id)
+            logger.info("[*] leaving", channel.id)
             del music_user[ctx.channel.id]
 
     @slash_command(name="clear",description="clear the music")
@@ -124,7 +124,7 @@ class Music(discord.ext.commands.Cog):
             return
 
         if (ctx.channel.id in music_user):
-            print(f"[*] {channel.id} cleared")
+            logger.info(f"[*] {channel.id} cleared")
             await music_user[ctx.channel.id].clear()
         else:
             await ctx.send("I'm not singing")

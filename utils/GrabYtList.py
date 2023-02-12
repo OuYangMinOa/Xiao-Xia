@@ -1,4 +1,5 @@
 import googleapiclient.discovery
+from utils.MyLog     import logger
 import numpy
 import os
 import re
@@ -20,7 +21,7 @@ def get_title(url):
 def grab_playlist(url,maxima_song = 25):
 
     playlist_id = re.search("list=(.*?)(?:&|$)", url, re.M|re.I).group(1)
-    print(playlist_id)
+    logger.info(playlist_id)
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = "AIzaSyBc_c3SVM8AMVp9SIUvanuLTiumk-MXneM")
     request = youtube.playlistItems().list(
         part = "snippet",
@@ -53,16 +54,16 @@ async def grab_Lyrics_spotify(song_name):
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36'
     }
 
-    print("[*] Start Web grabing")
+    logger.info("[*] Start Web grabing")
     session = AsyncHTMLSession()
     r =  await session.get(search_url)
     await r.html.arender(scrolldown = 4 , sleep = 0.1)
-    print("[*] Finish Web grabing")
+    logger.info("[*] Finish Web grabing")
 
     output = ""
     get_all_url = r.html.xpath("//a[@class='gs-title']")
     get_links = list(get_all_url)#[0]
-    print(f"[*] Found {len(get_links)} result")
+    logger.info(f"[*] Found {len(get_links)} result")
     Found = False
     for each in get_links: 
         each_links = list(each.links)
