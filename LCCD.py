@@ -8,11 +8,9 @@ import git
 
 def main():
     while True:
-        if platform == "linux" or platform == "linux2":
-            p = subprocess.Popen(['python3', 'main.py'])
 
-        else:
-            p = subprocess.Popen(['python', 'main.py'])
+        print("[*] Starting server ...")
+        p = subprocess.Popen(['python', 'main.py'])
         while git_pull_change():
             time.sleep(300)
         p.terminate()
