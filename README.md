@@ -8,7 +8,7 @@
 
 # Installation
 
-If you want to build your own bot, the bot is develop base on [python](https://www.python.org). Python3 is require for installation and ffmpeg for audio procession. Here are the procedure to run Hack bot locally.
+If you want to build your own bot, the bot is develop base on [python](https://www.python.org). Python3 is require for installation and ffmpeg for audio procession. Here are the procedure to run Xiao-xia locally.
 
 1. Install python virtual environment
     ```shell
@@ -20,6 +20,7 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 	Edit  `.env_example` and rename the file to `.env`
     
 3. Install ffmpeg
+
 	For Windows: [tutorial](https://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/)
 
 	For Mac: `brew install ffmpeg`
@@ -34,9 +35,7 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 
 # :rocket: Getting Started
 
-* Invite with this <a href="https://discord.com/api/oauth2/authorize?client_id=851419786465771520&permissions=8&scope=bot%20applications.commands">url</a>  
-
-# <p align="center"> :sparkles: Features :sparkles: </p>
+* Invite with this [url]"https://discord.com/api/oauth2/authorize?client_id=851419786465771520&permissions=8&scope=bot%20applications.commands">
 
 # :notes: Music
 
