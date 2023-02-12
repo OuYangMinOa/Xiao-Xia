@@ -1,6 +1,8 @@
 # main.py
 
-from traceback import format_exception
+from traceback    import format_exception
+from utils.Openai import prompt_openai
+
 import discord
 import dotenv
 import os
@@ -15,9 +17,16 @@ bot = discord.Bot(intents=discord.Intents.all(),)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+    this_message = message.content.strip()
+    print('[*] On message : ',this_message)
+
 
 if __name__ == '__main__': 
-	# import cogs from cogs folder
+    # import cogs from cogs folder
     for filename in os.listdir("functions"):
         if filename.endswith(".py"):
             extension = f"functions.{filename[:-3]}"
