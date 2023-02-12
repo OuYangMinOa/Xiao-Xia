@@ -1,6 +1,6 @@
 
 
-# <p align="center"><img src="https://github.com/OuYangMinOa/Xiao-Xia/icon.png" width = '200' height="200" ></img> </p>
+# <p align="center"><img src="https://github.com/OuYangMinOa/Xiao-Xia/blob/main/icon.png" width = '200' height="200" ></img> </p>
 
 # <p align="center">歐陽小俠 Discord Bot </p>
 ![](https://img.shields.io/github/pipenv/locked/dependency-version/ncuphysics/hack_bot/py-cord)
@@ -33,4 +33,17 @@ This bot is develop base on [python](https://www.python.org). Python3 is require
     ```
 
 # :rocket: Getting Started
-* Inite with this <a href="https://discord.com/api/oauth2/authorize?client_id=851419786465771520&permissions=8&scope=bot%20applications.commands">url</a>  
+
+* Invite with this <a href="https://discord.com/api/oauth2/authorize?client_id=851419786465771520&permissions=8&scope=bot%20applications.commands">url</a>  
+
+# <p align="center"> :sparkles: Features :sparkles: </p>
+
+# :notes: Music
+
+* `/play {url}` to play music on youtube.
+* `/skip` to skip the song.
+* `/pause` to pause the song.
+* `/list` to show the playlist
+* `/loop` to loop current song.
+* `/clear`  to clear the playlist
+* `/leave` to leave the voice channel.
