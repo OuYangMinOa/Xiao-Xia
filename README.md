@@ -12,10 +12,16 @@ This bot is develop base on [python](https://www.python.org). Python3 is require
     pipenv install
     ```
 2. add personal discord token 
+
 	Edit  `.env_example` and rename the file to `.env`
-3. install ffmpeg
+    
+3. Install ffmpeg
 	For Windows: [tutorial](https://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/)
-	For Mac: `brew install ffmpeg
+
+	For Mac: `brew install ffmpeg`
+
+    For Linux : `sudo apt-install ffmpeg`
+
 3. activate virtual environment and run
     ```shell
     pipenv shell
