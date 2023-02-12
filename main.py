@@ -1,7 +1,7 @@
 # main.py
 
-from traceback    import format_exception
-from utils.Openai import prompt_openai
+from traceback       import format_exception
+from utils.OnMessage import prompt_openai, handle_message
 
 import discord
 import dotenv

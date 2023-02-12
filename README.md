@@ -6,12 +6,12 @@
 
 This bot is develop base on [python](https://www.python.org). Python3 is require for installation and ffmpeg for audio procession. Here are the procedure to run Hack bot locally.
 
-1. install python virtual environment
+1. Install python virtual environment
     ```shell
     pip install pipenv
     pipenv install
     ```
-2. add personal discord token 
+2. Add personal discord token 
 
 	Edit  `.env_example` and rename the file to `.env`
     
@@ -22,7 +22,7 @@ This bot is develop base on [python](https://www.python.org). Python3 is require
 
     For Linux : `sudo apt-install ffmpeg`
 
-3. activate virtual environment and run
+3. Activate virtual environment and run
     ```shell
     pipenv shell
     python3 main.py
