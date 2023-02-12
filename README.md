@@ -2,26 +2,6 @@
 ![](https://img.shields.io/github/pipenv/locked/dependency-version/ncuphysics/hack_bot/py-cord)
 ![](https://img.shields.io/bower/l/mi)
 
-
-# Hack bot
-Hack bot is a discord chat bot for teamwork enchancement.
-
-
-# Features:
-There are more than than ten feature with over thirty commands for this chat bot. Here are some of the highlights:
-
-### General Commands
-
-- `/help` -> List all the most use commands.
-- `/vote` ->
-- `/order_drink` ->
-
-
-### Team manage Commands
-
-
-
-
 # Installation
 
 This bot is develop base on [python](https://www.python.org). Python3 is require for installation and ffmpeg for audio procession. Here are the procedure to run Hack bot locally.
