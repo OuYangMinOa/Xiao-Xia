@@ -1,13 +1,18 @@
 # Local server continue delop
 import subprocess
 import time
+from sys import platform
 import git
 
 
 
 def main():
     while True:
-        p = subprocess.Popen(['python', 'main.py'])
+        if platform == "linux" or platform == "linux2":
+            p = subprocess.Popen(['python3', 'main.py'])
+
+        else:
+            p = subprocess.Popen(['python', 'main.py'])
         while git_pull_change():
             time.sleep(300)
         p.terminate()
