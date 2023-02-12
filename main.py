@@ -5,6 +5,7 @@ from utils.OnMessage import prompt_openai, handle_message
 
 import discord
 import dotenv
+
 import os
 
 dotenv.load_dotenv()
