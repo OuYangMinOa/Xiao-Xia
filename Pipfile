@@ -11,6 +11,11 @@ pydub = "*"
 openai = "*"
 google-api-python-client = "*"
 pipfile = "*"
+numpy = "*"
+beautifulsoup4 = "*"
+requests-html = "*"
+yt-dlp = "*"
+pynacl = "*"
 
 [dev-packages]
 
