@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 dir_path = 'logs'# 設定 logs 目錄
-filename = "{:%Y-%m-%d}".format(datetime.now()) + '.log' # 設定檔名
+filename = "{:%Y-%m-%d_%X}".format(datetime.now()) + '.log' # 設定檔名
 
 def create_logger(log_folder):
 
