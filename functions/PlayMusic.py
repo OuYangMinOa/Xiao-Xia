@@ -2,7 +2,7 @@ from discord.commands import slash_command, Option
 from discord.ext      import commands
 
 
-from utils.info       import music_user   , connections
+from utils.info       import music_user
 
 import utils.MusicBot     as my_mb # my class
 import discord
@@ -58,12 +58,8 @@ class Music(discord.ext.commands.Cog):
                 await music_user[ctx.channel.id].add(url) 
 
         else:
-
-            if ctx.guild.voice_client in self.bot.voice_clients and (ctx.channel.id in connections ):
-                MB = my_mb.MusicBot(channel, connections[ctx.channel.id]     , ctx, self.bot)
-            else:
-                voice =  await channel.connect()
-                MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
+            voice =  await channel.connect()
+            MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
             print(f"[*] creating Class id : {id(MB)} for serving channel",channel.id)
             music_user[ctx.channel.id] = MB
             if (not url):

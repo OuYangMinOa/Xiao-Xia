@@ -1,6 +1,10 @@
 from utils.info       import silinece_channel
 
 import utils.MusicBot     as my_mb # my class
+
+from discord.commands import slash_command, Option
+from discord.ext      import commands
+
 import discord
 
 

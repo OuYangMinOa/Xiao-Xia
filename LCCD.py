@@ -16,7 +16,7 @@ def main():
             while True:
                 if (git_pull_change()):
                     break
-                time.sleep(300)
+                time.sleep(60)
         except Exception as e:
             print(e)
         p.terminate()
@@ -30,7 +30,6 @@ def git_pull_change():
     repo.remotes.origin.pull()
 
     if current == repo.head.commit:
-        print("[*] Repo same, slepping.")
 
         return False
     else:
