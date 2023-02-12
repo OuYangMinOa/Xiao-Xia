@@ -8,7 +8,7 @@ This bot is develop base on [python](https://www.python.org). Python3 is require
 
 1. install python virtual environment
     ```shell
-    pip install pipenv
+    sudo pip install pipenv
     pipenv install
     ```
 2. add personal discord token 
