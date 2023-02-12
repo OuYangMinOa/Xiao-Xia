@@ -9,7 +9,7 @@ def main():
     while True:
         p = subprocess.Popen(['python', 'main.py'])
         while git_pull_change():
-            time.sleep(10)
+            time.sleep(300)
         p.terminate()
 
 
@@ -21,7 +21,6 @@ def git_pull_change():
     repo.remotes.origin.pull()
 
     if current == repo.head.commit:
-        print("[*] Repo not changed. Sleep mode activated.")
         return False
     else:
         print("[*] Repo changed! Activated.")
