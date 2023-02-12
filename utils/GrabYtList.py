@@ -5,7 +5,6 @@ import re
 import bs4
 import json
 import requests
-from requests_html import AsyncHTMLSession
 from pip._vendor import requests
 
 # grab the title of single video
@@ -95,9 +94,9 @@ async def grab_Lyrics_spotify(song_name):
 
 if __name__ == "__main__":
     # pass
-    # print(
-    #     grab_playlist(r"https://www.youtube.com/watch?v=vWpc7f6b9kA&list=RDvWpc7f6b9kA&start_radio=1")
-    #     )
+    print(
+        grab_playlist(r"https://www.youtube.com/watch?v=vWpc7f6b9kA&list=RDvWpc7f6b9kA&start_radio=1")
+        )
 
     print(get_title('https://www.youtube.com/watch?v=mnta9Pp2LqA'))
     # import asyncio
