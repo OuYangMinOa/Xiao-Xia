@@ -16,7 +16,7 @@ class Silence(discord.ext.commands.Cog):
     async def silence(self,ctx):
         silinece_channel.append(ctx.channel.id)
 
-        await ctx.respond("ok, I will shut up in this channel :smiling_face_with_tear: :mask: ")
+        await ctx.respond("ok, I will shut up in this channel :smiling_face_with_tear: :mask:")
 
 
     @slash_command(name="talk",description="Shut me up in this channel")

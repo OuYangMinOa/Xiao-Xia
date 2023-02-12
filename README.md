@@ -27,10 +27,14 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 
     For Linux : `sudo apt-install ffmpeg`
 
-3. Activate virtual environment and run
+4. Activate virtual environment and run
     ```shell
     pipenv shell
     python3 main.py
+    ```
+5. Continuous Deployment
+    ```
+    python LCCD.py
     ```
 
 # :rocket: Getting Started
@@ -50,3 +54,6 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 # :laughing: chat
 * I will reply all message, if you want to shut it down, use `/silence` to shut me up
 * Use `/talk` so I can keep talking
+
+# :bookmark_tabs: Informations
+* `get_covid` Get the number of confirmed cases in Taiwan

@@ -16,6 +16,9 @@ beautifulsoup4 = "*"
 yt-dlp = "*"
 pynacl = "*"
 gitpython = "*"
+testcord = "*"
+pytest-asyncio = "*"
+pytest = "*"
 
 [dev-packages]
 
