@@ -20,9 +20,9 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
-        return
-    this_message = message.content.strip()
-    print('[*] On message : ',this_message)
+        return  
+    await handle_message(message)
+
 
 
 if __name__ == '__main__': 

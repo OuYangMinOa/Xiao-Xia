@@ -7,4 +7,4 @@ orders      = {}
 alarm_arr   = []
 
 PASS_MSG    = []
-MASSAGE_DATA = "message_collect.txt"
+MASSAGE_DATA = "data/message_collect.txt"
