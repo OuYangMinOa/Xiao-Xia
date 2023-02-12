@@ -1,7 +1,10 @@
 connections = {}
-music_user = {}
+music_user  = {}
 connections = {}
 teams_dict  = {}
 User_dict   = {}  ##   {userid : userclass }k
 orders      = {}
 alarm_arr   = []
+
+PASS_MSG    = []
+MASSAGE_DATA = "data/message_collect.txt"

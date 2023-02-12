@@ -1,7 +1,7 @@
 # main.py
 
-from traceback    import format_exception
-from utils.Openai import prompt_openai
+from traceback       import format_exception
+from utils.OnMessage import prompt_openai, handle_message
 
 import discord
 import dotenv
@@ -20,9 +20,9 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
-        return
-    this_message = message.content.strip()
-    print('[*] On message : ',this_message)
+        return  
+    await handle_message(message)
+
 
 
 if __name__ == '__main__': 
