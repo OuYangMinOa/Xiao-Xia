@@ -6,7 +6,7 @@
 ![](https://img.shields.io/github/pipenv/locked/dependency-version/ncuphysics/hack_bot/py-cord)
 ![](https://img.shields.io/bower/l/mi)
 
-# Installation
+# Build your own discord bot
 
 If you want to build your own bot, the bot is develop base on [python](https://www.python.org). Python3 is require for installation and ffmpeg for audio procession. Here are the procedure to run Xiao-xia locally.
 
@@ -15,7 +15,7 @@ If you want to build your own bot, the bot is develop base on [python](https://w
     sudo pip install pipenv
     pipenv install
     ```
-2. Add personal discord token 
+2. Add personal discord [token](https://discord.com/developers/docs/topics/oauth2) 
 
 	Edit  `.env_example` and rename the file to `.env`
     
@@ -39,7 +39,7 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 
 # :rocket: Getting Started
 
-* Invite with this [url]"https://discord.com/api/oauth2/authorize?client_id=851419786465771520&permissions=8&scope=bot%20applications.commands">
+* Invite with this [url](https://discord.com/api/oauth2/authorize?client_id=851419786465771520&permissions=8&scope=bot%20applications.commands)
 
 # :notes: Music
 
