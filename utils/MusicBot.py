@@ -89,7 +89,7 @@ class MusicBot:
 
         if ( not os.path.isfile(song_path)):
             self.ytl  = {
-                'format': '249/250/251',
+                'format': '251/171/250/249',
                 "outtmpl" : f"{self.floder}/{this_song_name}",
                 'noplaylist': False,
             } 
