@@ -3,6 +3,14 @@ from operator  import ne, eq
 import os
 
 def readfile(filename):
+    """read file from
+
+    Args:
+        filename (string): read the file if not exists create it.
+
+    Returns:
+        list: return a list split with \\n
+    """    
     if (os.path.isfile(filename)):
         with open(filename,"r",encoding="utf-8") as f:
             out = f.read().split("\n")
@@ -15,6 +23,15 @@ def readfile(filename):
 
 
 def addtxt(filename,msg):
+    """add a new line to the given filename
+
+    Args:
+        filename (string): the filename to add
+        msg (string): the message to add
+
+    Returns:
+        None
+    """    """"""
     if (os.path.isfile(filename)):
         with open(filename,"a",encoding="utf-8") as f:
             out = f.write(f"{msg}\n")

@@ -9,6 +9,7 @@ import yt_dlp as youtube_dl
 
 
 class MusicBot:
+    
     def __init__(self,channel, voice , ctx, client):
         self.music_msg = None       # The message for current music
         self.loop      = False      # Enable loop or not

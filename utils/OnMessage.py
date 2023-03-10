@@ -51,7 +51,7 @@ async def handle_message(message):
     # print(pass_memory)
     if ("http" not in this_message) :
         try:
-            word = "你現在是一個discord音樂機器人,名子叫小俠,可以使用/play來播放youtube上的音樂,/help可以看到小俠的全部功能,如果聽不懂的話,可以隨便回復一句幹話或句點他就好了。"+pass_memory+"。\n" + f"{message.author.name}:"+ this_message+"\nA:"
+            word = "你現在是一個discord機器人,名子叫歐陽小俠。"+pass_memory+"。\n" + f"{message.author.name}:"+ this_message+"\nA:"
             chatgpt_result = prompt_openai(word)
             await message.channel.send(chatgpt_result)
             logger.info(f"[*] 回復 : {chatgpt_result}")
