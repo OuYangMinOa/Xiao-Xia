@@ -51,7 +51,7 @@ async def handle_message(message):
     # print(pass_memory)
     if ("http" not in this_message) :
         try:
-            word = "你現在是一個discord機器人,名子叫歐陽小俠。"+pass_memory+"。\n" + f"{message.author.name}:"+ this_message+"\nA:"
+            word = "你現在是一個discord機器人,名字叫歐陽小俠,。"+pass_memory+"。\n" + f"{message.author.name}:"+ this_message+"\小俠:"
             chatgpt_result = prompt_openai(word)
             await message.channel.send(chatgpt_result)
             logger.info(f"[*] 回復 : {chatgpt_result}")
