@@ -30,6 +30,8 @@ async def handle_message(message):
     this_message = message.content.strip()
     logger.info(f"[*] {message.author.name} : {this_message}")
     if (message.channel.id in silinece_channel):
+        return
+    if (message == ""):
         return 
     pass_memory_arr = []
     count = 0
