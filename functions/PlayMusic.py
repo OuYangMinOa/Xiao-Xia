@@ -33,7 +33,6 @@ class Music(discord.ext.commands.Cog):
             return
         else:
             channel = ctx.author.voice.channel
-
         if (ctx.channel.id in music_user):
             if (music_user[ctx.channel.id].channelid != channel.id):
                 await music_user[ctx.channel.id].voice.move_to(channel)
@@ -56,14 +55,13 @@ class Music(discord.ext.commands.Cog):
                     await music_user[ctx.channel.id].skip()
             else:
                 await music_user[ctx.channel.id].add(url) 
-
         else:
             try:
                 print("[*] moving to voice channel")
                 voice =  await channel.connect()
                 print("[*] voice channel connected")
                 MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
-                logger.info(f"[*] creating Class id : {id(MB)} for serving channel",channel.id)
+                logger.info(f"[*] creating Class id : {id(MB)} for serving channel {channel.id}")
                 music_user[ctx.channel.id] = MB
                 if (not url):
                     await ctx.send("Use `\play url` to play youtube music")

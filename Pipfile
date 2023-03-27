@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-py-cord = "*"
 python-dotenv = "*"
 pytz = "*"
 pydub = "*"
@@ -19,6 +18,7 @@ gitpython = "*"
 testcord = "*"
 pytest-asyncio = "*"
 pytest = "*"
+py-cord = {extras = ["voice"], version = "*"}
 
 [dev-packages]
 

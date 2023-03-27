@@ -19,6 +19,7 @@ def get_title(url):
 
 # grab the title and url of playlist
 def grab_playlist(url,maxima_song = 25):
+    print(url)
     playlist_id = re.search("list=(.*?)(?:&|$)", url, re.M|re.I).group(1)
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = "AIzaSyBc_c3SVM8AMVp9SIUvanuLTiumk-MXneM")
     request = youtube.playlistItems().list(
