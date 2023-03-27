@@ -27,7 +27,7 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name="play",description="play the music")
     async def play(self,ctx,  url: Option(str, "The youtube url", required = False)):
         await ctx.respond(f'{url} - {ctx.author.mention}')
-
+        logger.info(f'{url} - {ctx.author.mention}')
         if not ctx.author.voice:
             await ctx.send('you are not connected to a voice channel')
             return
@@ -58,15 +58,20 @@ class Music(discord.ext.commands.Cog):
                 await music_user[ctx.channel.id].add(url) 
 
         else:
-            voice =  await channel.connect()
-            MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
-            logger.info(f"[*] creating Class id : {id(MB)} for serving channel",channel.id)
-            music_user[ctx.channel.id] = MB
-            if (not url):
-                await ctx.send("Use `\play url` to play youtube music")
-
-            else:
-                await MB.add(url)
+            try:
+                print("[*] moving to voice channel")
+                voice =  await channel.connect()
+                print("[*] voice channel connected")
+                MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
+                logger.info(f"[*] creating Class id : {id(MB)} for serving channel",channel.id)
+                music_user[ctx.channel.id] = MB
+                if (not url):
+                    await ctx.send("Use `\play url` to play youtube music")
+                else:
+                    await MB.add(url)
+            except Exception as e:
+                logger.error(e)
+                
 
     @slash_command(name="list",description="List all the music")
     async def list(self,ctx):
