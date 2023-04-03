@@ -1,8 +1,7 @@
 # OnMessage.py
 
 from utils.file_os import readfile    , addtxt
-from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel
-from utils.MyLog     import logger
+from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger
 import openai
 import random
 import os

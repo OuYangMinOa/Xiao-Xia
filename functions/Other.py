@@ -3,8 +3,7 @@ from discord.ext      import commands
 from utils.OnMessage  import prompt_openai
 from utils.file_os    import readfile    , addtxt
 from utils.info       import  MASSAGE_DATA, PASS_MSG
-from utils.MyLog      import logger
-
+from utils.info       import logger
 
 import utils.Covid as my_Cd
 import discord

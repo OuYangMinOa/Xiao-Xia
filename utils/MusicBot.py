@@ -1,6 +1,6 @@
 ## music.py
 from utils.GrabYtList import *
-from utils.MyLog     import logger
+from utils.info     import logger
 import threading
 import discord
 import asyncio

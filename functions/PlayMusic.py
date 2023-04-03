@@ -1,7 +1,7 @@
 from discord.commands import slash_command, Option
 from discord.ext      import commands
-from utils.MyLog     import logger
 
+from utils.info     import logger
 from utils.info       import music_user
 
 import utils.MusicBot     as my_mb # my class

@@ -1,6 +1,6 @@
 # main.py
 from utils.OnMessage import prompt_openai, handle_message
-from utils.MyLog     import logger
+from utils.info     import logger
 
 from traceback       import format_exception
 

@@ -1,5 +1,5 @@
 import googleapiclient.discovery
-from utils.MyLog     import logger
+from utils.info     import logger
 import numpy
 import os
 import re
