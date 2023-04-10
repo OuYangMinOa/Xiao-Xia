@@ -1,5 +1,7 @@
 import googleapiclient.discovery
 from utils.info     import logger
+from os import getenv
+from json import loads
 import numpy
 import os
 import re
@@ -10,8 +12,9 @@ from pip._vendor import requests
 
 # grab the title of single video
 def get_title(url):
-    this_id = re.search("v=(.*?)&", url+'&', re.M|re.I).group(1)
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = "AIzaSyBc_c3SVM8AMVp9SIUvanuLTiumk-MXneM")
+    this_id = re.search('(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})', url, re.M|re.I).group(1)
+    print(f"[*] {this_id}")
+    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN')))
     request = youtube.videos().list(
         part = "snippet",
         id = this_id)
@@ -21,7 +24,7 @@ def get_title(url):
 def grab_playlist(url,maxima_song = 25):
     print(url)
     playlist_id = re.search("list=(.*?)(?:&|$)", url, re.M|re.I).group(1)
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = "AIzaSyBc_c3SVM8AMVp9SIUvanuLTiumk-MXneM")
+    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN')))
     request = youtube.playlistItems().list(
         part = "snippet",
         playlistId = playlist_id,
@@ -95,10 +98,10 @@ async def grab_Lyrics_spotify(song_name):
 if __name__ == "__main__":
     # pass
     print(
-        grab_playlist(r"https://www.youtube.com/watch?v=vWpc7f6b9kA&list=RDvWpc7f6b9kA&start_radio=1")
+        get_title(r"https://www.youtube.com/watch?v=vcGbefQBvJ4")
         )
 
-    print(get_title('https://www.youtube.com/watch?v=mnta9Pp2LqA'))
+    print(get_title('http://youtu.be/NLqAF9hrVbY'))
     # import asyncio
     # loop2 = asyncio.new_event_loop()
     # loop = asyncio.get_event_loop()
