@@ -1,6 +1,6 @@
 # Local server continue delop
 from sys import platform
-from utils.MyLog     import logger
+from utils.info     import logger
 import subprocess
 
 import time
