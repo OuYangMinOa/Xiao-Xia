@@ -106,18 +106,18 @@ class BuildSoundSelect():
         self.sound_class = sound_class
         self.label, self.sounds = self.getsounds(channel_id)
         options = [ discord.SelectOption(label=self.label[i])for i in range(len(self.label))]
-
-
-        self.select = discord.ui.Select(
-            placeholder = "All sounds",
-            min_values  = 1, 
-            max_values  = 1,
-            options = options
-            )
-        
-        self.select.callback = self.callback
         self.view = discord.ui.View(timeout=None)
-        self.view.add_item(self.select)
+        
+        for i in range(len(options)//25+1):
+            self.select = discord.ui.Select(
+                placeholder = "All sounds",
+                min_values  = 1, 
+                max_values  = 1,
+                options = options
+                )
+            
+            self.select.callback = self.callback
+            self.view.add_item(self.select)
 
     def getsounds(self,channel_id):
         save_folder = os.path.join("data/attachments", str(channel_id))
