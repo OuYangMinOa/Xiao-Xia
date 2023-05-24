@@ -87,7 +87,7 @@ class MusicBot:
             this_song_name = this_song_name.replace("|","#")
 
         song_path  = os.path.join(self.floder , this_song_name)
-
+        print(song_path)
         if ( not os.path.isfile(song_path)):
             self.ytl  = {
                 'format': '251/171/250/249',

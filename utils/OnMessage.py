@@ -24,7 +24,7 @@ def prompt_openai(word):
         return prompt_openai("\n".join(word.split('\n')[:-1]))
 
 
-
+    
 async def handle_message(message):
     this_message = message.content.strip()
     logger.info(f"[*] {message.author.name} : {this_message}")

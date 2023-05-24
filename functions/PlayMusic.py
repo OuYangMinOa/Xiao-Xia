@@ -34,14 +34,14 @@ class Music(discord.ext.commands.Cog):
         else:
             channel = ctx.author.voice.channel
         if (ctx.channel.id in music_user):
-            if (music_user[ctx.channel.id].channelid != channel.id):
+            if (music_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
                 await music_user[ctx.channel.id].voice.move_to(channel)
                 logger.info(f"[*] move {music_user[ctx.channel.id].channelid} -> {channel.id}")
                 music_user[ctx.channel.id].channel    = channel
                 music_user[ctx.channel.id].channelid  = channel.id
                 music_user[ctx.channel.id].ctx        = ctx
 
-            if ctx.guild.voice_client not in self.bot.voice_clients:
+            if ctx.guild.voice_client not in self.bot.voice_clients:   # in same channel but not in any voice channel
                 await music_user[ctx.channel.id].kill()
                 del music_user[ctx.channel.id]
                 logger.info("[*] rejoin the voice channel")

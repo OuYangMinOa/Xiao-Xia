@@ -51,6 +51,10 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 * `/clear`  to clear the playlist
 * `/leave` to leave the voice channel.
 
+# :notes: Sound board
+* `/upload_sound {name} {file}` to upload your own sound.
+* `/list_sound` to list all available sound and play it.
+
 # :laughing: chat
 * I will reply all message, if you want to shut it down, use `/silence` to shut me up
 * Use `/talk` so I can keep talking
