@@ -142,7 +142,7 @@ class BuildSoundSelect():
         await self.sound_class.clear()
 
         for this_sound, this_label, this_select in zip(self.my_sound,self.my_label, self.my_select):
-            if (this_select.values):
+            if (len(this_select.values)!=0):
                 print(this_select.values)
                 which_chosen = this_label.index(this_select.values[0])
 
