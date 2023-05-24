@@ -108,12 +108,12 @@ class BuildSoundSelect():
         options = [ discord.SelectOption(label=self.label[i])for i in range(len(self.label))]
         self.view = discord.ui.View(timeout=None)
         
-        for i in range(len(options)//25+1):
+        for i in range(len(options)//24+1):
             self.select = discord.ui.Select(
                 placeholder = "All sounds",
                 min_values  = 1, 
                 max_values  = 1,
-                options = options[25*(i-1):25*(i)]
+                options = options[24*(i-1):24*(i)]
                 )
             
             self.select.callback = self.callback
