@@ -142,8 +142,9 @@ class BuildSoundSelect():
         await self.sound_class.clear()
 
         for this_sound, this_label, this_select in zip(self.my_sound,self.my_label, self.my_select):
-            if (this_select.values[0] in this_label):
-                which_chosen = this_label.index(this_select.values[0])
+            if (len(this_select.values)!=0):
+                if (this_select.values[0] in this_label):
+                    which_chosen = this_label.index(this_select.values[0])
 
         self.sound_class.queqed = [(this_sound[which_chosen],''), ]
         print(self.sound_class.queqed)
