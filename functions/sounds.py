@@ -26,7 +26,7 @@ class Sounds(discord.ext.commands.Cog):
             
             file_extend = "mp3" if attachment.filename.endswith('mp3') else "wav"
 
-            save_folder = os.path.join("data/attachments", str(ctx.channel.id))
+            save_folder = f"data/attachments/{ctx.guild.id}"
             os.makedirs(save_folder,exist_ok=True)
             await attachment.save(f"{save_folder}/{filename}.{file_extend}") 
 
@@ -68,7 +68,7 @@ class Sounds(discord.ext.commands.Cog):
                 await music_user[ctx.channel.id].voice.move_to(channel)
                 logger.info(f"[*]  music_user : {music_user[ctx.channel.id].channelid} -> sound_user : {channel.id}")
                 sound_user[ctx.channel.id]            = music_user[ctx.channel.id]
-                sound_user[ctx.channel.id].floder     = os.path.join("data/attachments", str(ctx.channel.id))
+                sound_user[ctx.channel.id].floder     = f"data/attachments/{ctx.guild.id}"
                 sound_user[ctx.channel.id].loop       = False
                 del music_user[ctx.channel.id]
 
@@ -85,7 +85,7 @@ class Sounds(discord.ext.commands.Cog):
             print("[*] voice channel connected")
             sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
 
-        CRM = BuildSoundSelect(ctx.channel.id, sound_user[ctx.channel.id])
+        CRM = BuildSoundSelect(ctx.guild.id, sound_user[ctx.channel.id])
 
         if (len(CRM.label)==0):
             await ctx.respond("you haven't upload any sound files")
@@ -98,7 +98,7 @@ class Sounds(discord.ext.commands.Cog):
 class SoundBot(my_mb.MusicBot):
     def __init__(self,channel, voice , ctx, client):
         super().__init__(channel, voice , ctx, client)
-        self.floder = os.path.join("data/attachments", str(ctx.channel.id))
+        self.floder = f"data/attachments/{ctx.guild.id}"
         self.loop   = False
 
 class BuildSoundSelect():
