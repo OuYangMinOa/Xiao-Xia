@@ -107,24 +107,10 @@ class BuildSoundSelect():
         self.label, self.sounds = self.getsounds(channel_id)
         options = [ discord.SelectOption(label=self.label[i])for i in range(len(self.label))]
         self.view = discord.ui.View(timeout=None)
-        
-        self.my_select = []
-        self.my_label  = []
-        self.my_sound  = []
+
         for i in range(len(options)//24+1):
-            print(options[24*(i):24*(i+1)])
-            self.select = discord.ui.Select(
-                placeholder = "All sounds",
-                min_values  = 1, 
-                max_values  = 1,
-                options = options[24*(i):24*(i+1)]
-                )
-            
-            self.my_select.append(self.select)
-            self.my_label.append(self.label[24*(i):24*(i+1)])
-            self.my_sound.append(self.sounds[24*(i):24*(i+1)])
-            self.select.callback = self.callback
-            self.view.add_item(self.select)
+            this_select = MySelection(self.sound_class,self.label[24*(i):24*(i+1)] ,self.sounds[24*(i):24*(i+1)] ).select
+            self.view.add_item(this_select)
 
     def getsounds(self,channel_id):
         save_folder = os.path.join("data/attachments", str(channel_id))
@@ -138,21 +124,30 @@ class BuildSoundSelect():
 
         return label, file
 
-    async def callback(self, interaction):
-        await self.sound_class.clear()
-
-        for this_sound, this_label, this_select in zip(self.my_sound,self.my_label, self.my_select):
-            if (len(this_select.values)!=0):
-                if (this_select.values[0] in this_label):
-                    which_chosen = this_label.index(this_select.values[0])
-                    self.sound_class.queqed = [(this_sound[which_chosen],''), ]
-                    print(self.sound_class.queqed)
-                    await self.sound_class._next()
-                    break
 
         
         # await self.sound_class.clear()
         # await interaction.followup.send_message(f"{self.label[which_chosen]}")
+class MySelection:
+    def __init__(self,sound_class,label,sound):
+        self.sound_class, self.label, self.sounds = sound_class,label,sound
+        options = [ discord.SelectOption(label=label[i])for i in range(len(label))]
+
+        self.select = discord.ui.Select(
+                placeholder = "All sounds",
+                min_values  = 1, 
+                max_values  = 1,
+                options = options
+            )
+        
+        self.select.callback = self.callback
+    async def callback(self, interaction):
+        await self.sound_class.clear()
+        which_chosen = self.label.index(self.select.values[0])
+        self.sound_class.queqed = [(self.sounds[which_chosen],''), ]
+        print(self.sound_class.queqed)
+        await self.sound_class._next()
+
 
 def setup(bot):
     bot.add_cog(Sounds(bot))
