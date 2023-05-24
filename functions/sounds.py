@@ -108,6 +108,9 @@ class BuildSoundSelect():
         options = [ discord.SelectOption(label=self.label[i])for i in range(len(self.label))]
         self.view = discord.ui.View(timeout=None)
         
+        self.my_select = []
+        self.my_label  = []
+        self.my_sound  = []
         for i in range(len(options)//24+1):
             print(options[24*(i):24*(i+1)])
             self.select = discord.ui.Select(
@@ -117,6 +120,9 @@ class BuildSoundSelect():
                 options = options[24*(i):24*(i+1)]
                 )
             
+            self.my_select.append(self.select)
+            self.my_label.append(self.label[24*(i):24*(i+1)])
+            self.my_sound.append(self.sounds[24*(i):24*(i+1)])
             self.select.callback = self.callback
             self.view.add_item(self.select)
 
@@ -134,8 +140,10 @@ class BuildSoundSelect():
 
     async def callback(self, interaction):
         await self.sound_class.clear()
-        which_chosen = self.label.index(self.select.values[0])
-        self.sound_class.queqed = [(self.sounds[which_chosen],''), ]
+        for this_sound, this_label, this_select in zip(self.my_sound,self.my_label, self.my_select):
+            which_chosen = this_label.index(this_select.values[0])
+            
+        self.sound_class.queqed = [(this_sound[which_chosen],''), ]
         print(self.sound_class.queqed)
         await self.sound_class._next()
         # await self.sound_class.clear()
