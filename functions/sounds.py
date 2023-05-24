@@ -145,11 +145,12 @@ class BuildSoundSelect():
             if (len(this_select.values)!=0):
                 if (this_select.values[0] in this_label):
                     which_chosen = this_label.index(this_select.values[0])
-                    
                     self.sound_class.queqed = [(this_sound[which_chosen],''), ]
+                    print(self.sound_class.queqed)
+                    await self.sound_class._next()
                     break
-        print(self.sound_class.queqed)
-        await self.sound_class._next()
+
+        
         # await self.sound_class.clear()
         # await interaction.followup.send_message(f"{self.label[which_chosen]}")
 
