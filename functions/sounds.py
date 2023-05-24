@@ -113,7 +113,7 @@ class BuildSoundSelect():
                 placeholder = "All sounds",
                 min_values  = 1, 
                 max_values  = 1,
-                options = options
+                options = options[25*(i-1):25*(i)]
                 )
             
             self.select.callback = self.callback
