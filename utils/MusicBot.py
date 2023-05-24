@@ -150,8 +150,8 @@ class MusicBot:
                 after=lambda e: print("[*] reconnecting the ffmpeg , error : ",e)
                 )
             self.rejoin_c = 0
-            self.recon_msg = await self.ctx.channel.send(f':weary:   please waiting for 5 second')
-            await asyncio.sleep(5)
+            # self.recon_msg = await self.ctx.channel.send(f':weary:   please waiting for 5 second')
+            # await asyncio.sleep(5)
             await self.recon_msg.delete()
 
         print("[*] music start ...")

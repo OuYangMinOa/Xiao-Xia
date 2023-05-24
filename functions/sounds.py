@@ -21,7 +21,7 @@ class Sounds(discord.ext.commands.Cog):
             attachment = file
 
             if ( not attachment.filename.endswith('mp3') and not attachment.filename.endswith('wav')):
-                await ctx.send(f"Only allow mp3 and wav files")
+                await ctx.respond(f"Only allow mp3 and wav files")
                 return
             
             file_extend = "mp3" if attachment.filename.endswith('mp3') else "wav"
@@ -30,9 +30,9 @@ class Sounds(discord.ext.commands.Cog):
             os.makedirs(save_folder,exist_ok=True)
             await attachment.save(f"{save_folder}/{filename}.{file_extend}") 
 
-            await ctx.send(f"{filename}.{file_extend} received.")
+            await ctx.respond(f"{filename}.{file_extend} received.")
         else:
-            await ctx.send("No file attached.")
+            await ctx.respond("No file attached.")
 
     @slash_command(name="list_sound",description="list all the sounds in this channel")
     async def list_sound(self,ctx):
@@ -91,7 +91,7 @@ class Sounds(discord.ext.commands.Cog):
             await ctx.respond("you haven't upload any sound files")
             return
 
-        await ctx.respond("Available sound", view=CRM.view, ephemeral=False)
+        await ctx.respond("Available sound", view=CRM.view, ephemeral=True)
 
 
 
@@ -116,7 +116,7 @@ class BuildSoundSelect():
             )
         
         self.select.callback = self.callback
-        self.view = discord.ui.View()
+        self.view = discord.ui.View(timeout=None)
         self.view.add_item(self.select)
 
     def getsounds(self,channel_id):
