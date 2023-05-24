@@ -140,9 +140,12 @@ class BuildSoundSelect():
 
     async def callback(self, interaction):
         await self.sound_class.clear()
+
         for this_sound, this_label, this_select in zip(self.my_sound,self.my_label, self.my_select):
-            which_chosen = this_label.index(this_select.values[0])
-            
+            if (this_select.values):
+                print(this_select.values)
+                which_chosen = this_label.index(this_select.values[0])
+
         self.sound_class.queqed = [(this_sound[which_chosen],''), ]
         print(self.sound_class.queqed)
         await self.sound_class._next()
