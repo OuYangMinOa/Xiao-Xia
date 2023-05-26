@@ -109,8 +109,9 @@ class BuildSoundSelect():
         self.view = discord.ui.View(timeout=None)
 
         for i in range(len(options)//24+1):
-            this_select = MySelection(self.sound_class,self.label[24*(i):24*(i+1)] ,self.sounds[24*(i):24*(i+1)] ).select
-            self.view.add_item(this_select)
+            if (len(self.label[24*(i):24*(i+1)])!=0):
+                this_select = MySelection(self.sound_class,self.label[24*(i):24*(i+1)] ,self.sounds[24*(i):24*(i+1)] ).select
+                self.view.add_item(this_select)
 
     def getsounds(self,channel_id):
         save_folder = os.path.join("data/attachments", str(channel_id))
