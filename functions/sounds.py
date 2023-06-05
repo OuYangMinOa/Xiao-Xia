@@ -106,7 +106,7 @@ class BuildSoundSelect():
         self.sound_class = sound_class
         self.label, self.sounds = self.getsounds(channel_id)
         options = [ discord.SelectOption(label=self.label[i])for i in range(len(self.label))]
-        self.view = discord.ui.View(timeout=None)
+        self.view = discord.ui.View(timeout=24*60*60*7)
 
         for i in range(len(options)//24+1):
             if (len(self.label[24*(i):24*(i+1)])!=0):
