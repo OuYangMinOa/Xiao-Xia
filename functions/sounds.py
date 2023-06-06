@@ -4,11 +4,18 @@ from discord.ext      import commands
 from utils.info       import logger
 from utils.info       import sound_user, music_user
 from glob             import glob
+from pydub            import AudioSegment
 
 
 import utils.MusicBot     as my_mb # my class
 import discord
 import os
+
+
+def match_target_amplitude(sound, target_dBFS):
+    change_in_dBFS = target_dBFS - sound.dBFS
+    return sound.apply_gain(change_in_dBFS)
+
 
 class Sounds(discord.ext.commands.Cog):
     def __init__(self, bot):
@@ -31,6 +38,19 @@ class Sounds(discord.ext.commands.Cog):
             await attachment.save(f"{save_folder}/{filename}.{file_extend}") 
 
             await ctx.respond(f"{filename}.{file_extend} received.")
+            logger.info(f"[*] {filename}.{file_extend} received.")
+
+
+            ####  re normalize the attachment file dfbs
+            try:
+                sound = AudioSegment.from_file(f"{save_folder}/{filename}.{file_extend}")
+                normalized_sound = match_target_amplitude(sound, -20.0)
+                normalized_sound.export(f"{save_folder}/{filename}.{file_extend}")
+            except:
+                logger.error("[*] Normalize goes wrong")
+
+
+
         else:
             await ctx.respond("No file attached.")
 
