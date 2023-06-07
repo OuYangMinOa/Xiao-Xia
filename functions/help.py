@@ -29,6 +29,7 @@ class Help(discord.ext.commands.Cog):
 :notes: **SOUND**
 \t - `/upload_sound {name} {file}` to upload your own sound.
 \t - `/list_sound` to list all available sound and play it.
+* `/search_sound` to search sounds by keywords.
 
 😆 **CHAT**
 \t - `/silence` to shut me up
@@ -55,6 +56,8 @@ class Help(discord.ext.commands.Cog):
 :notes: **音效**
 \t - `/upload_sound {name} {file}` 上傳你自己的音效.
 \t - `/list_sound` 查看所有的音效並撥放.
+\t - `/search_sound` 用關鍵字查詢音效
+
 
 😆 **聊天**
 \t - `/silence` 閉嘴。
