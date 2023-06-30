@@ -3,12 +3,41 @@ import requests
 import bs4
 
 def get_covid():
-    # url = "https://covid-19.nchc.org.tw/?language=en"
-    # headers = {"User-Agent": "Mozilla/5.0", "Referer": url}
-    # re      = requests.get(url, headers = headers,verify=False,timeout=20)
-    # soup    = bs4.BeautifulSoup(re.content, 'html.parser')
-    # print()
-    return "https://covid-19.nchc.org.tw/?language=en"
+    url = "https://covid-19.nchc.org.tw/?language=en"
+    headers = {"User-Agent": "Mozilla/5.0", "Referer": url}
+    re      = requests.get(url, headers = headers,verify=False,timeout=20)
+    soup    = bs4.BeautifulSoup(re.content, 'html.parser')
+
+    # print(soup)
+    total_people = soup.find_all(class_="mb-1 text-dark display-4")
+    numbers = []
+    for i in total_people:
+        print(i.text.strip())
+        numbers.append(i.text.strip().split("+")[0])
+        numbers.append(i.text.strip().split("+")[1])
+    global_people = soup.find_all("a",href="2023_world_confirmed.php")
+    print(global_people[1].text.strip())
+    print(numbers)
+
+
+    message = f"""
+{datetime.datetime.now().strftime('%Y %#m/%#d')}:
+=====================
+今日本土確診 : {numbers[1]}
+今日死亡人數 : {numbers[3]}
+=====================
+全台累積確診 : {numbers[0]}
+全球累積確診 : {global_people[1].text.strip().split()[0][:-5]}
+全台累積死亡 : {numbers[2]}   :skull_crossbones: :skull_crossbones: :skull_crossbones:
+=====================
+資料來源 : covid-19.nchc.org.tw/
+"""
+    
+    # print(total_people)
+    return message
+
+
+
 
 def get_covid2():
     url = "https://news.campaign.yahoo.com.tw/2019-nCoV/index.php"
