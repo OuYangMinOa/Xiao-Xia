@@ -2,9 +2,15 @@ import datetime
 import requests
 import bs4
 
-
-
 def get_covid():
+    # url = "https://covid-19.nchc.org.tw/?language=en"
+    # headers = {"User-Agent": "Mozilla/5.0", "Referer": url}
+    # re      = requests.get(url, headers = headers,verify=False,timeout=20)
+    # soup    = bs4.BeautifulSoup(re.content, 'html.parser')
+    # print()
+    return "https://covid-19.nchc.org.tw/?language=en"
+
+def get_covid2():
     url = "https://news.campaign.yahoo.com.tw/2019-nCoV/index.php"
     headers = {"User-Agent": "Mozilla/5.0", "Referer": url}
     re      = requests.get(url, headers = headers,verify=False,timeout=20)
