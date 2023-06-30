@@ -30,7 +30,7 @@ def get_covid():
 全球累積確診 : {global_people[1].text.strip().split()[0][:-5]}
 全台累積死亡 : {numbers[2]}   :skull_crossbones: :skull_crossbones: :skull_crossbones:
 =====================
-資料來源 : covid-19.nchc.org.tw/
+資料來源 : https://covid-19.nchc.org.tw/?language=en
 """
     
     # print(total_people)
