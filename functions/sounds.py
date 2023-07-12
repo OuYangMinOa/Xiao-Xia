@@ -84,18 +84,14 @@ class Sounds(discord.ext.commands.Cog):
 
         elif (ctx.channel.id in music_user):  # in music_user (a simple transfer)
             if (music_user[ctx.channel.id].channelid != channel.id):
-                await music_user[ctx.channel.id].clear()
                 await music_user[ctx.channel.id].voice.move_to(channel)
                 logger.info(f"[*]  music_user : {music_user[ctx.channel.id].channelid} -> sound_user : {channel.id}")
-                sound_user[ctx.channel.id]            = music_user[ctx.channel.id]
-                sound_user[ctx.channel.id].floder     = f"data/attachments/{ctx.guild.id}"
-                sound_user[ctx.channel.id].loop       = False
-                del music_user[ctx.channel.id]
 
+            sound_user[ctx.channel.id] = SoundBot(channel, music_user[ctx.channel.id].voice , ctx, self.bot)
 
             if ctx.guild.voice_client not in self.bot.voice_clients:
                 await music_user[ctx.channel.id].kill()
-                del music_user[ctx.channel.id]
+                # del music_user[ctx.channel.id]
                 logger.info("[*] rejoin the voice channel")
                 voice =  await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
@@ -138,18 +134,17 @@ class Sounds(discord.ext.commands.Cog):
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
 
         elif (ctx.channel.id in music_user):  # in music_user (a simple transfer)
-            if (music_user[ctx.channel.id].channelid != channel.id):
-                await music_user[ctx.channel.id].clear()
+            if (music_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
                 await music_user[ctx.channel.id].voice.move_to(channel)
                 logger.info(f"[*]  music_user : {music_user[ctx.channel.id].channelid} -> sound_user : {channel.id}")
-                sound_user[ctx.channel.id]            = music_user[ctx.channel.id]
-                sound_user[ctx.channel.id].floder     = f"data/attachments/{ctx.guild.id}"
-                sound_user[ctx.channel.id].loop       = False
-                del music_user[ctx.channel.id]
 
-            if ctx.guild.voice_client not in self.bot.voice_clients:
+            sound_user[ctx.channel.id] = SoundBot(channel, music_user[ctx.channel.id].voice , ctx, self.bot)
+
+                # del music_user[ctx.channel.id]
+
+            if ctx.guild.voice_client not in self.bot.voice_clients:   
                 await music_user[ctx.channel.id].kill()
-                del music_user[ctx.channel.id]
+                # del music_user[ctx.channel.id]
                 logger.info("[*] rejoin the voice channel")
                 voice =  await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
@@ -234,6 +229,16 @@ class MySelection:
         await self.sound_class.clear()
         which_chosen = self.label.index(self.select.values[0])
         self.sound_class.queqed = [(self.sounds[which_chosen],''), ]
+
+        for i in music_user:
+            print(i)
+
+        if (self.sound_class.ctx.channel.id  in music_user):
+            if (music_user[self.sound_class.ctx.channel.id ].state == 1):
+                music_user[self.sound_class.ctx.channel.id ].voice.pause()
+                music_user[self.sound_class.ctx.channel.id ].state = 2
+                await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
+
         print(self.sound_class.queqed)
         await self.sound_class._next()
 

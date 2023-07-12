@@ -2,7 +2,7 @@ from discord.commands import slash_command, Option
 from discord.ext      import commands
 
 from utils.info     import logger
-from utils.info       import music_user
+from utils.info       import music_user, sound_user
 
 import utils.MusicBot     as my_mb # my class
 import discord
@@ -15,7 +15,7 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="pause",description="Pause the music")
     async def pause(self,ctx):
-        ctx.respond("pause" + f' - {ctx.author.mention}')
+        await ctx.respond("pause" + f' - {ctx.author.mention}')
         voice = ctx.author.voice
         if not voice:
             await ctx.respond("You aren't in a voice channel!")
@@ -26,7 +26,11 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="play",description="play the music")
     async def play(self,ctx,  url: Option(str, "The youtube url", required = False)):
-        await ctx.respond(f'{url} - {ctx.author.mention}')
+        if (not url):
+            await ctx.respond(f'/play\n- {ctx.author.mention}')
+        else:
+            await ctx.respond(f'{url}\n- {ctx.author.mention}')
+
         logger.info(f'{url} - {ctx.author.mention}')
         if not ctx.author.voice:
             await ctx.send('you are not connected to a voice channel')
@@ -49,16 +53,25 @@ class Music(discord.ext.commands.Cog):
                 music_user[ctx.channel.id] = my_mb.MusicBot(channel, voice , ctx, self.bot)
 
             if (not url):
+                print("[*] no url specified",music_user[ctx.channel.id].state)
+
+                if (ctx.channel.id in sound_user):
+                    await sound_user[ctx.channel.id].clear()
+
                 if (music_user[ctx.channel.id].state == 2):
                     await music_user[ctx.channel.id].pause()
                 if (music_user[ctx.channel.id].state == 0):
-                    await music_user[ctx.channel.id].skip()
+                    await music_user[ctx.channel.id].pause()
             else:
                 await music_user[ctx.channel.id].add(url) 
         else:
             try:
                 print("[*] moving to voice channel")
-                voice =  await channel.connect()
+                if (ctx.channel.id in sound_user):
+                    voice = sound_user[ctx.channel.id].voice
+                    await sound_user[ctx.channel.id].clear()
+                else:
+                    voice =  await channel.connect()
                 print("[*] voice channel connected")
                 MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
                 logger.info(f"[*] creating Class id : {id(MB)} for serving channel {channel.id}")
@@ -73,7 +86,7 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="list",description="List all the music")
     async def list(self,ctx):
-        await ctx.respond('list' + f' - {ctx.author.mention}')
+        await ctx.respond( f'list - {ctx.author.mention}')
 
 
         if not ctx.author.voice:
@@ -81,6 +94,7 @@ class Music(discord.ext.commands.Cog):
             return
         else:
             channel = ctx.author.voice.channel
+            
         if ctx.guild.voice_client not in self.bot.voice_clients:
             await ctx.send("I'm not singing")
             return
