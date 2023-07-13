@@ -58,10 +58,10 @@ class Music(discord.ext.commands.Cog):
                 if (ctx.channel.id in sound_user):
                     await sound_user[ctx.channel.id].clear()
 
-                if (music_user[ctx.channel.id].state == 2):
+                if (music_user[ctx.channel.id].state == 2 or music_user[ctx.channel.id].state ==3):
                     await music_user[ctx.channel.id].pause()
                 if (music_user[ctx.channel.id].state == 0):
-                    await music_user[ctx.channel.id].pause()
+                    await music_user[ctx.channel.id].skip()
             else:
                 await music_user[ctx.channel.id].add(url) 
         else:
@@ -94,7 +94,7 @@ class Music(discord.ext.commands.Cog):
             return
         else:
             channel = ctx.author.voice.channel
-            
+
         if ctx.guild.voice_client not in self.bot.voice_clients:
             await ctx.send("I'm not singing")
             return

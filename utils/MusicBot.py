@@ -22,7 +22,7 @@ class MusicBot:
         self.client    = client
         self.queqed    = []         # music queqed for play
         self.passed    = []         # Played music
-        self.state     = 0          # 0:not playing , 1:playing , 2:pause
+        self.state     = 0          # 0:not playing , 1:playing , 2:pause, 3:need to skip to continue
         self.rejoin_c  = 0          # rejoin every 20 songs
         self.dont_stop = 0          # will play untill dont_stop = 3 to check again
 
@@ -236,6 +236,21 @@ class MusicBot:
                 self.wait_msg = None
             self.state = 1
             self.voice.resume()
+
+
+        elif (self.state==3) :
+            print("[*] ===  continue ===   " ,self.channelid)
+            print("[*] plaing", self.this_song[0],"in", self.channelid)
+            if (self.wait_msg):
+                await self.wait_msg.delete()
+                self.wait_msg = None
+            self.state = 1
+
+            self.this_song  = self.passed.pop(0)
+            self.queqed.insert(0,self.this_song)
+
+            
+            await self.skip()
 
     async def skipnums(self,num):
         num = int(num)

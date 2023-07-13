@@ -235,9 +235,9 @@ class MySelection:
 
         if (self.sound_class.ctx.channel.id  in music_user):
             if (music_user[self.sound_class.ctx.channel.id ].state == 1):
-                music_user[self.sound_class.ctx.channel.id ].voice.pause()
-                music_user[self.sound_class.ctx.channel.id ].state = 2
-                await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
+                await music_user[self.sound_class.ctx.channel.id ].pause()
+                music_user[self.sound_class.ctx.channel.id ].state = 3
+                # await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
 
         print(self.sound_class.queqed)
         await self.sound_class._next()
