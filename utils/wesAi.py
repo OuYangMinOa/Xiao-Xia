@@ -3,7 +3,7 @@ from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger
 import socket
 
 def prompt_wes_com(text):   # use my own LLM AI
-    HOST = "127.0.0.1"
+    HOST = "192.168.0.2"
     PORT = 1564
     try:
         mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
