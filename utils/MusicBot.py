@@ -5,8 +5,11 @@ import threading
 import discord
 import asyncio
 import yt_dlp as youtube_dl
+from pydub import AudioSegment
 
-
+def match_target_amplitude(sound, target_dBFS):
+    change_in_dBFS = target_dBFS - sound.dBFS
+    return sound.apply_gain(change_in_dBFS)
 
 class MusicBot:
     
@@ -99,6 +102,11 @@ class MusicBot:
                 print("[*] downloading ->", this_song_name,"\n")
                 with youtube_dl.YoutubeDL(self.ytl) as ydl:
                     ydl.download([this_song_url])
+
+                sound = AudioSegment.from_file(song_path)
+                normalized_sound = match_target_amplitude(sound, -20.0)
+                normalized_sound.export(song_path)
+
                 logger.info("\n[*] ------------ download successful ------------")
             except Exception as e:
                 logger.error("[*] ----- error -----")
@@ -112,6 +120,9 @@ class MusicBot:
                     print("[*] redownloading ->", this_song_name)
                     with youtube_dl.YoutubeDL(self.ytl) as ydl:
                         ydl.download([this_song_url])
+                    sound = AudioSegment.from_file(song_path)
+                    normalized_sound = match_target_amplitude(sound, -20.0)
+                    normalized_sound.export(song_path)
                     print("[*] download successful")
                 except Exception as e:
                     error_     = await self.ctx.channel.send(f':weary:  Error occurred again')

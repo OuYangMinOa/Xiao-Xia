@@ -193,5 +193,27 @@ class Music(discord.ext.commands.Cog):
                 await ctx.send("disable loop")
 
 
+    @slash_command(name="skipnums",description="skip the current music")
+    async def skipnums(self,ctx,  nums: Option(int, "The number of music you want to skip", required = True)):
+
+        await ctx.respond('skipnums' + f' - {ctx.author.mention}')
+
+
+        if not ctx.author.voice:
+            await ctx.send('you are not connected to a voice channel')
+            return
+        else:
+            channel = ctx.author.voice.channel
+
+        if ctx.guild.voice_client not in self.bot.voice_clients:
+            await ctx.send("I'm not singing")
+            return
+
+        if (ctx.channel.id in music_user):
+            await music_user[ctx.channel.id].skipnums(nums)
+        else:
+            await ctx.send("I'm not singing")
+
+
 def setup(bot):
     bot.add_cog(Music(bot))
