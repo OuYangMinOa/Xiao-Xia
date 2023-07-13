@@ -2,6 +2,7 @@
 
 from utils.file_os import readfile    , addtxt
 from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger
+from utils.wesAi   import prompt_wes_com
 import openai
 import random
 import os
@@ -51,17 +52,17 @@ async def handle_message(message):
     pass_memory = "\n".join(pass_memory_arr)
     # print(pass_memory)
     if ("http" not in this_message) :
-        try:
-            word = "你現在是一個discord機器人,名字叫歐陽小俠,。"+pass_memory+"。\n" + f"{message.author.name}:"+ this_message+"\n小俠:"
-            chatgpt_result = prompt_openai(word)
+
+        word = "你現在是一個discord機器人,名字叫歐陽小俠,。"+pass_memory+"。\n" + f"{message.author.name}:"+ this_message+"\n小俠:"
+        chatgpt_result = prompt_wes_com(word)    ## prompt_openai(word)
+        if chatgpt_result:
             await message.channel.send(chatgpt_result)
             logger.info(f"[*] 回復 : {chatgpt_result}")
             PASS_MSG.append(f"{message.author.name}:"+this_message)
             PASS_MSG.append("小俠:"+chatgpt_result)
             addtxt( MASSAGE_DATA,f"{message.author.name}:"+this_message.strip())
             addtxt( MASSAGE_DATA,"小俠:"+chatgpt_result.strip())
-        except Exception as e:
-            logger.error(e)
+        else:
             chosen_message = random.choices(PASS_MSG)[0]
             if (":" in chosen_message): chosen_message = chosen_message.split(":")[-1]
 
