@@ -64,4 +64,11 @@ async def handle_message(message):
             logger.error(e)
             chosen_message = random.choices(PASS_MSG)[0]
             if (":" in chosen_message): chosen_message = chosen_message.split(":")[-1]
+
             await message.channel.send(chosen_message)
+
+            logger.info(f"[*] 回復 : {chosen_message}")
+            PASS_MSG.append(f"{message.author.name}:"+this_message)
+            PASS_MSG.append("小俠:"+chosen_message)
+            addtxt( MASSAGE_DATA,f"{message.author.name}:"+this_message.strip())
+            addtxt( MASSAGE_DATA,"小俠:"+chosen_message.strip())
