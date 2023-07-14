@@ -7,7 +7,7 @@ def prompt_wes_com(text):   # use my own LLM AI
     PORT = 1564
     try:
         mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        mysocket.settimeout(5)
+        mysocket.settimeout(15)
         mysocket.bind((HOST, PORT))
         mysocket.listen(10)
 

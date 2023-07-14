@@ -37,23 +37,16 @@ async def handle_message(message):
     count = 0
     for i in range(len(PASS_MSG)-1,-1,-1):
         if ('http' not in PASS_MSG[i] and ('<@' not in PASS_MSG[i]) and  len(re.findall(r'[\u4e00-\u9fff]+',PASS_MSG[i]))>0 ):
-            if (":" in PASS_MSG[i]):
-                pass_memory_arr.insert(0,PASS_MSG[i])
-            else:
-                if ( abs(len(PASS_MSG)-i)%2 == 0):
-                    pass_memory_arr.insert(0,"A:"+PASS_MSG[i])
-                else:
-                    pass_memory_arr.insert(0,"Q:"+PASS_MSG[i])
-
+            pass_memory_arr.insert(0,PASS_MSG[i])
             count += 1
-        if (count>10 or len("\n".join(pass_memory_arr)) >1000):
+        if (len("\n".join(pass_memory_arr)) >512):
             break
 
     pass_memory = "\n".join(pass_memory_arr)
     # print(pass_memory)
     if ("http" not in this_message) :
 
-        word = "你現在是一個discord機器人,名字叫歐陽小俠,。"+pass_memory+"。\n" + f"{message.author.name}:"+ this_message+"\n小俠:"
+        word = "你現在是一個discord機器人,名字叫歐陽小俠,請以簡短的回答回復用戶們。\n"+pass_memory+"。\n" + f"{message.author.name}:"+ this_message+"\n小俠:"
         chatgpt_result = prompt_wes_com(word)    ## prompt_openai(word)
         if chatgpt_result:
             await message.channel.send(chatgpt_result)
