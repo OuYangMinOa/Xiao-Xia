@@ -13,29 +13,24 @@ def is_port_in_use(port: int) -> bool:
 
 def prompt_wes_com(text):   # use my own LLM AI
 
-    HOST = "192.168.0.2"
+    HOST = "192.168.0.7"
     # HOST = "127.0.0.1"
     PORT = 1564
 
 
-    time.sleep(1)
-    while is_port_in_use(PORT):
-        time.sleep(5)
+    # time.sleep(1)
+    # while is_port_in_use(PORT):
+    #     time.sleep(5)
 
 
     try:
         mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         mysocket.settimeout(50)
-        mysocket.bind((HOST, PORT))
-        mysocket.listen(10)
-
-        client,addr = mysocket.accept()
-        client.settimeout(50)
-        result = client.recv(4096)
-        client.send(text.encode())
-        result = client.recv(4096)
-        client.close()
+        mysocket.connect((HOST, PORT))
+        mysocket.send(text.encode())
+        result = mysocket.recv(4096)
         mysocket.close()
+
         return result.decode()
     except Exception as e:
         logger.error(e)
