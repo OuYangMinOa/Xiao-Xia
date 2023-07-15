@@ -17,6 +17,7 @@ def prompt_wes_com(text):   # use my own LLM AI
     # HOST = "127.0.0.1"
     PORT = 1564
 
+    time.sleep(1)
     while is_port_in_use(PORT):
         time.sleep(5)
 
@@ -28,7 +29,7 @@ def prompt_wes_com(text):   # use my own LLM AI
         mysocket.listen(10)
 
         client,addr = mysocket.accept()
-
+        client.settimeout(50)
         result = client.recv(4096)
         client.send(text.encode())
         result = client.recv(4096)
