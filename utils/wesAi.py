@@ -13,7 +13,7 @@ def is_port_in_use(port: int) -> bool:
 
 def prompt_wes_com(text):   # use my own LLM AI
 
-    HOST = "192.168.0.git 2"
+    HOST = "192.168.0.2"
     # HOST = "127.0.0.1"
     PORT = 1564
 
