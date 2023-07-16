@@ -65,6 +65,7 @@ class Sounds(discord.ext.commands.Cog):
         else:
             channel = ctx.author.voice.channel
 
+        music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
 
         if (ctx.channel.id in sound_user):  # in sound_user
             if (sound_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
@@ -82,15 +83,18 @@ class Sounds(discord.ext.commands.Cog):
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
 
 
-        elif (ctx.channel.id in music_user):  # in music_user (a simple transfer)
-            if (music_user[ctx.channel.id].channelid != channel.id):
-                await music_user[ctx.channel.id].voice.move_to(channel)
-                logger.info(f"[*]  music_user : {music_user[ctx.channel.id].channelid} -> sound_user : {channel.id}")
+        elif (ctx.guild.id in music_user_guild):  # in music_user (a simple transfer)
+            music_channel_id = music_user[list(music_user)[music_user_guild.index(ctx.guild.id)]].ctx.channel.id
 
-            sound_user[ctx.channel.id] = SoundBot(channel, music_user[ctx.channel.id].voice , ctx, self.bot)
+
+            if (music_user[music_channel_id].channelid != channel.id):
+                await music_user[music_channel_id].voice.move_to(channel)
+                logger.info(f"[*]  music_user : {music_user[music_channel_id].channelid} -> sound_user : {channel.id}")
+
+            sound_user[ctx.channel.id] = SoundBot(channel, music_user[music_channel_id].voice , ctx, self.bot)
 
             if ctx.guild.voice_client not in self.bot.voice_clients:
-                await music_user[ctx.channel.id].kill()
+                await music_user[music_channel_id].kill()
                 # del music_user[ctx.channel.id]
                 logger.info("[*] rejoin the voice channel")
                 voice =  await channel.connect()
@@ -118,6 +122,8 @@ class Sounds(discord.ext.commands.Cog):
         else:
             channel = ctx.author.voice.channel
 
+        music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
+
         if (ctx.channel.id in sound_user):  # in sound_user
             if (sound_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
                 await sound_user[ctx.channel.id].voice.move_to(channel)
@@ -133,12 +139,14 @@ class Sounds(discord.ext.commands.Cog):
                 voice =  await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
 
-        elif (ctx.channel.id in music_user):  # in music_user (a simple transfer)
-            if (music_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
-                await music_user[ctx.channel.id].voice.move_to(channel)
-                logger.info(f"[*]  music_user : {music_user[ctx.channel.id].channelid} -> sound_user : {channel.id}")
+        elif (ctx.guild.id in music_user_guild):  # in music_user (a simple transfer)
+            music_channel_id = music_user[list(music_user)[music_user_guild.index(ctx.guild.id)]].ctx.channel.id
 
-            sound_user[ctx.channel.id] = SoundBot(channel, music_user[ctx.channel.id].voice , ctx, self.bot)
+            if (music_user[music_channel_id].channelid != channel.id):  # in same channel but not in same voice channel
+                await music_user[music_channel_id].voice.move_to(channel)
+                logger.info(f"[*]  music_user : {music_user[music_channel_id].channelid} -> sound_user : {channel.id}")
+
+            sound_user[music_channel_id] = SoundBot(channel, music_user[music_channel_id].voice , ctx, self.bot)
 
                 # del music_user[ctx.channel.id]
 
@@ -230,13 +238,13 @@ class MySelection:
         which_chosen = self.label.index(self.select.values[0])
         self.sound_class.queqed = [(self.sounds[which_chosen],''), ]
 
-        for i in music_user:
-            print(i)
+        music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
 
-        if (self.sound_class.ctx.channel.id  in music_user):
-            if (music_user[self.sound_class.ctx.channel.id ].state == 1):
-                await music_user[self.sound_class.ctx.channel.id ].pause()
-                music_user[self.sound_class.ctx.channel.id ].state = 3
+        if (self.sound_class.ctx.guild.id  in music_user_guild):
+            music_channel_id = music_user[list(music_user)[music_user_guild.index(self.sound_class.ctx.guild.id)]].ctx.channel.id
+            if (music_user[music_channel_id].state == 1):
+                await music_user[music_channel_id].pause()
+                music_user[music_channel_id].state = 3
                 # await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
 
         print(self.sound_class.queqed)

@@ -37,6 +37,10 @@ class Music(discord.ext.commands.Cog):
             return
         else:
             channel = ctx.author.voice.channel
+
+        sound_guild_id = [sound_user[x].ctx.guild.id for x in sound_user]
+        print(sound_guild_id)
+
         if (ctx.channel.id in music_user):
             if (music_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
                 await music_user[ctx.channel.id].voice.move_to(channel)
@@ -55,8 +59,9 @@ class Music(discord.ext.commands.Cog):
             if (not url):
                 print("[*] no url specified",music_user[ctx.channel.id].state)
 
-                if (ctx.channel.id in sound_user):
-                    await sound_user[ctx.channel.id].clear()
+                if (ctx.guild.id in sound_guild_id):
+                    sound_channel_id = sound_user[list(sound_user)[sound_guild_id.index(ctx.guild.id)]].ctx.channel.id
+                    await sound_user[sound_channel_id].clear()
 
                 if (music_user[ctx.channel.id].state == 2 or music_user[ctx.channel.id].state ==3):
                     await music_user[ctx.channel.id].pause()
@@ -67,9 +72,13 @@ class Music(discord.ext.commands.Cog):
         else:
             try:
                 print("[*] moving to voice channel")
-                if (ctx.channel.id in sound_user):
-                    voice = sound_user[ctx.channel.id].voice
-                    await sound_user[ctx.channel.id].clear()
+
+                if (ctx.guild.id in sound_guild_id):
+                    print("[*] moving to voice channel 2222 ")
+                    sound_channel_id = sound_user[list(sound_user)[sound_guild_id.index(ctx.guild.id)]].ctx.channel.id
+                    # print(sound_channel_id)
+                    voice = sound_user[sound_channel_id].voice
+                    await sound_user[sound_channel_id].clear()
                 else:
                     voice =  await channel.connect()
                 print("[*] voice channel connected")
