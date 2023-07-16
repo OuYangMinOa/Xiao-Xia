@@ -2,7 +2,7 @@ from functools import partial
 from operator  import ne, eq
 import os
 
-def readfile(filename):
+def readfile(filename,type=str):
     """read file from
 
     Args:
@@ -14,7 +14,7 @@ def readfile(filename):
     if (os.path.isfile(filename)):
         with open(filename,"r",encoding="utf-8") as f:
             out = f.read().split("\n")
-        out = [x for x in out if x != '']
+        out = [type(x) for x in out if x != '']
         return out
     else:
         with open(filename,"w",encoding="utf-8") as f:
@@ -40,6 +40,11 @@ def addtxt(filename,msg):
         with open(filename,"w",encoding="utf-8") as f:
             out = f.write(f"{msg}\n")
         return out
+def newtxt(filename,arr):
+    with open(filename,"w",encoding="utf-8") as f:
+        for i in range(len(arr)):
+            out = f.write(f"{arr[i]}\n")
+
 
 
 if (__name__=="__main__"):
