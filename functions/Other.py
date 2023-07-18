@@ -4,7 +4,7 @@ from utils.OnMessage  import prompt_openai
 from utils.file_os    import readfile    , addtxt
 from utils.info       import  MASSAGE_DATA, PASS_MSG
 from utils.info       import logger
-
+from utils.wesAi      import prompt_wes_com
 import utils.Covid as my_Cd
 import discord
 
@@ -19,7 +19,7 @@ class Others(discord.ext.commands.Cog):
         await ctx.respond("joke"+ f' - {ctx.author.mention}')
 
         logger.info("joke"+ f' - {ctx.author.name}')
-        this_joke = prompt_openai('Q:請你說個笑話\nA:')
+        this_joke = prompt_wes_com('Q:請你說個笑話\nA:')
 
 
         PASS_MSG.append(f"{ctx.author.name}:請你說個笑話")
@@ -39,7 +39,7 @@ class Others(discord.ext.commands.Cog):
         await ctx.respond("chickensoul"+ f' - {ctx.author.mention}')
         logger.info("chickensoul"+ f' - {ctx.author.name}')
 
-        this_chicken = prompt_openai('Q:請你說個一句心靈雞湯\nA:')
+        this_chicken = prompt_wes_com('Q:請你說個一句心靈雞湯\nA:')
 
         PASS_MSG.append(f"{ctx.author.name}:請你說個一句心靈雞湯")
         PASS_MSG.append("小俠:"+this_chicken)
