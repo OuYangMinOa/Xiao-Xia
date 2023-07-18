@@ -4,8 +4,15 @@ from utils.info     import logger
 import threading
 import discord
 import asyncio
-import yt_dlp as youtube_dl
 from pydub import AudioSegment
+# import youtube_dl
+import yt_dlp as youtube_dl
+
+
+youtube_dl.utils.bug_reports_message = lambda: ''
+
+
+
 
 def match_target_amplitude(sound, target_dBFS):
     change_in_dBFS = target_dBFS - sound.dBFS
@@ -16,6 +23,7 @@ class MusicBot:
     def __init__(self,channel, voice , ctx, client):
         self.music_msg = None       # The message for current music
         self.loop      = False      # Enable loop or not
+        self.volume    = 1
         self.live      = True       # Kill this Musicbot if self.live = False
         self.channel   = channel    # Voice channel
         self.channelid = channel.id # This Music serves channel Id
@@ -93,15 +101,22 @@ class MusicBot:
         print(song_path)
         if ( not os.path.isfile(song_path)):
             self.ytl  = {
-                'format': '251/171/250/249',
+                'format': 'bestaudio/best',
                 "outtmpl" : f"{self.floder}/{this_song_name}",
-                'noplaylist': False,
+                'noplaylist': False, 
             } 
             self.dowloading = await self.ctx.send(f'... Downloading {this_song_name}')
             try:
                 print("[*] downloading ->", this_song_name,"\n")
                 with youtube_dl.YoutubeDL(self.ytl) as ydl:
-                    ydl.download([this_song_url])
+                    # ydl.download([this_song_url])
+                    info = ydl.extract_info(this_song_url, download=False)
+                    if (not info['is_live']):
+                        logger.info(f"[*] Downloading {this_song_url} due to it not a live")
+                        ydl.download([this_song_url])
+                    else:
+                        logger.info(f"[*] {this_song_url} is a live stream")
+                        song_path = info['formats'][0]['url']
                 # try:
                 #     sound = AudioSegment.from_file(song_path)
                 #     normalized_sound = match_target_amplitude(sound, -20.0)
@@ -113,15 +128,17 @@ class MusicBot:
             except Exception as e:
                 logger.error("[*] ----- error -----")
                 logger.error(e)
-                error_     = await self.ctx.send(f':weary:  An error occurred while downloading ... ')
-                redownload = await self.ctx.send(f':weary:  Download again in 5 seconds')
                 print("[*] redownloaded in 5 second")
-                await redownload.delete()
-                await error_.delete()
                 try:
                     print("[*] redownloading ->", this_song_name)
                     with youtube_dl.YoutubeDL(self.ytl) as ydl:
-                        ydl.download([this_song_url])
+                        info = ydl.extract_info(this_song_url, download=False)
+                        if (not info['is_live']):
+                            logger.info(f"[*] Downloading {this_song_url} due to it not a live")
+                            ydl.download([this_song_url])
+                        else:
+                            logger.info(f"[*] {this_song_url} is a live stream")
+                            song_path = info['formats'][0]['url']
 
                     # try:
                     #     sound = AudioSegment.from_file(song_path)
@@ -129,6 +146,7 @@ class MusicBot:
                     #     normalized_sound.export(song_path)
                     # except:
                     #     pass
+
                     print("[*] download successful")
                 except Exception as e:
                     error_     = await self.ctx.channel.send(f':weary:  Error occurred again')
@@ -156,25 +174,31 @@ class MusicBot:
         self.music_msg = await self.ctx.channel.send(f':musical_note:  Now playing ({len(self.passed)}/{len(self.queqed)+len(self.passed)}) : {this_song_name} :musical_note:')
 
         FFMPEG_OPTS = {
-        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 
+        # 'before_options': '-reconnect_streamed 1 -reconnect_delay_max 5', 
         'options': '-vn'
         }
 
-        self.rejoin_c += 1
-        if (self.rejoin_c == 10):
-            self.voice.play(
-                discord.FFmpegPCMAudio(song_path, **FFMPEG_OPTS), 
-                after=lambda e: print("[*] reconnecting the ffmpeg , error : ",e)
-                )
-            self.rejoin_c = 0
-            # self.recon_msg = await self.ctx.channel.send(f':weary:   please waiting for 5 second')
-            # await asyncio.sleep(5)
-            await self.recon_msg.delete()
+        # self.rejoin_c += 1
+        # if (self.rejoin_c == 10):
+        #     # this_source = discord.FFmpegPCMAudio(song_path, **FFMPEG_OPTS)
+        #     this_source = discord.FFmpegPCMAudio(song_path, **FFMPEG_OPTS)
+        #     self.voice.play(    
+        #         this_source, 
+        #         after=lambda e: print("[*] reconnecting the ffmpeg , error : ",e)
+        #         )
+        #     self.rejoin_c = 0
+        #     # self.recon_msg = await self.ctx.channel.send(f':weary:   please waiting for 5 second')
+        #     # await asyncio.sleep(5)
+        #     await self.recon_msg.delete()
 
         print("[*] music start ...")
         # FFmpegPCMAudio  FFmpegOpusAudio
+
+        this_source = discord.FFmpegPCMAudio(song_path, **FFMPEG_OPTS)
+        this_source.volume = self.volume
+
         self.voice.play(
-            discord.FFmpegPCMAudio(song_path), 
+            this_source, 
             after = lambda e: asyncio.run_coroutine_threadsafe(self._endsong(e), self.client.loop)
             )
 
