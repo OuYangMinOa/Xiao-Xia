@@ -17,56 +17,55 @@ class Help(discord.ext.commands.Cog):
 
     @slash_command(name="help_en",description="Show all commands")
     async def help_en(self,ctx):
-        await  ctx.respond(""":notes: **MUSIC**
-\t - `/play {url}` to play music on youtube.
-\t - `/skip` to skip the song.
-\t - `/pause` to pause the song.
-\t - `/list` to show the playlist
-\t - `/loop` to loop current song.
-\t - `/clear` to clear the playlist
-\t - `/leave` to leave the voice channel.
+        await  ctx.respond("""* :notes: **MUSIC**
+ - `/play {url}` to play music on youtube.
+ - `/skip` to skip the song.
+ - `/pause` to pause the song.
+ - `/list` to show the playlist.
+ - `/loop` to loop current song.
+ - `/clear` to clear the playlist.
+ - `/leave` to leave the voice channel.
+ 
+* :notes: **SOUND**
+ - `/upload_sound {name} {file}` to upload your own sound.
+ - `/list_sound` to list all available sound and play it.
+ - `/search_sound` {keyword}to search sounds by keywords.
 
-:notes: **SOUND**
-\t - `/upload_sound {name} {file}` to upload your own sound.
-\t - `/list_sound` to list all available sound and play it.
-* `/search_sound` to search sounds by keywords.
+* 😆 **CHAT**
+ - `/silence` to shut me up in this chat.
+ - `/talk` so I can keep talking.
+ - `/joke` say a joke.
+ - `/chickensoul` Chicken Soup for the Soul.
 
-😆 **CHAT**
-\t - `/silence` to shut me up
-\t - `/talk` so I can keep talking
-\t - `/joke` say a joke
-\t - `/chickensoul` Chicken Soup for the Soul
-
-📑 **INFORMATIONS**
-\t - `/get_covid` Get the number of confirmed cases in Taiwan.
+* 📑 **INFORMATIONS**
+ - `/get_covid` Get the number of confirmed cases in Taiwan.
 """)
 
 
     @slash_command(name="help_zhtw",description="幫助訊息")
     async def help_zhtw(self,ctx):
-        await  ctx.respond(""":notes: **音樂**
-\t - `/play {url}` 播放油管上的音樂。
-\t - `/skip` 跳過。
-\t - `/pause` 暫停。
-\t - `/list` 看撥放清單。
-\t - `/loop` 循環播放清單。
-\t - `/clear` 清除播放清單。
-\t - `/leave` 滾。
+        await  ctx.respond("""* :notes: **音樂**
+ - `/play {url}` 播放油管上的音樂。
+ - `/skip` 跳過。
+ - `/pause` 暫停。
+ - `/list` 看撥放清單。
+ - `/loop` 循環播放清單。
+ - `/clear` 清除播放清單。
+ - `/leave` 滾。
 
-:notes: **音效**
-\t - `/upload_sound {name} {file}` 上傳你自己的音效.
-\t - `/list_sound` 查看所有的音效並撥放.
-\t - `/search_sound` 用關鍵字查詢音效
+* :notes: **音效**
+ - `/upload_sound {name} {file}` 上傳你自己的音效。
+ - `/list_sound` 查看所有的音效並撥放。
+ - `/search_sound` {keyword} 用關鍵字查詢音效。
 
+* 😆 **聊天**
+ - `/silence` 在此聊天頻道閉嘴。
+ - `/talk` 你可以繼續說話了。
+ - `/joke` 講笑話給我聽聽。
+ - `/chickensoul` 我需要心靈雞湯。
 
-😆 **聊天**
-\t - `/silence` 閉嘴。
-\t - `/talk` 你可以繼續說話了。
-\t - `/joke` 講笑話給我聽聽
-\t - `/chickensoul` 我需要心靈雞湯
-
-📑 **資訊**
-\t - `/get_covid` 台灣今天又確了多少.
+* 📑 **資訊**
+ - `/get_covid` 台灣今天又確了多少。
 """)
 
 
