@@ -177,7 +177,7 @@ class Sounds(discord.ext.commands.Cog):
                 view.add_item(this_select)
 
         if (len(label)==0):
-            await ctx.respond("you haven't upload any sound files")
+            await ctx.respond("Sound files no found", ephemeral=True)
             return
         
         await ctx.respond(f"Keyword : {keyword}", view=view, ephemeral=True)
