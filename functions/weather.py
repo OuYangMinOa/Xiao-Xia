@@ -14,6 +14,9 @@ class Weather(discord.ext.commands.Cog):
 
     @slash_command(name="weather",description="Today's Weather Overview")
     async def weather(self,ctx):
+        await ctx.respond(f"/weather - {ctx.author.mention}")
+
+
         url = "https://www.cwb.gov.tw/V8/C/W/index.html"
         session = AsyncHTMLSession()
         r = await  session.get(url)
@@ -28,7 +31,7 @@ class Weather(discord.ext.commands.Cog):
             if (each_ch_num in text):
                 text = text.replace(each_ch_num+'、',f"## {each_ch_num}\n - ")
 
-        await ctx.respond(text)
+        await ctx.send(text)
 
         #################### warning message #################
 
@@ -49,6 +52,9 @@ class Weather(discord.ext.commands.Cog):
 
     @slash_command(name="week_weather",description="Weather overview for the week ahead")
     async def week_weather(self,ctx):
+        await ctx.respond(f"/weather - {ctx.author.mention}")
+
+
         url = "https://www.cwb.gov.tw/V8/C/W/index.html"
         session = AsyncHTMLSession()
         r = await  session.get(url)
@@ -60,7 +66,7 @@ class Weather(discord.ext.commands.Cog):
         text = "\n".join(text.split("\n")[1:])
         text = "# "+ text
         text = text + "\n資料來源:https://www.cwb.gov.tw/V8/C/"
-        await ctx.respond(text)
+        await ctx.send(text)
 
 
 def setup(bot):

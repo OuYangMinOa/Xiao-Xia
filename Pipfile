@@ -19,6 +19,7 @@ testcord = "*"
 pytest-asyncio = "*"
 pytest = "*"
 py-cord = {extras = ["voice"], version = "*"}
+requests-html = "*"
 
 [dev-packages]
 
