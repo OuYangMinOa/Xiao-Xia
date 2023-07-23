@@ -61,3 +61,5 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 
 # :bookmark_tabs: Informations
 * `get_covid` Get the number of confirmed cases in Taiwan
+* `weather` Get today's Weather Overview
+* `week_weather` Get weather overview for the week ahead

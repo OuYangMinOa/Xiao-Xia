@@ -40,8 +40,10 @@ class Weather(discord.ext.commands.Cog):
         for each_link in r.html.xpath("/html/body/header/div[2]/div/div/div[1]/div/div/ol")[0].links:
             print(each_link)
             next_text = next_text + f" * https://www.cwb.gov.tw{each_link}\n"
+        next_text = next_text + "\n資料來源:https://www.cwb.gov.tw/V8/C/"
         await session.close()
         await ctx.send(next_text)
+
         
 
 
@@ -57,6 +59,7 @@ class Weather(discord.ext.commands.Cog):
         await session.close()
         text = "\n".join(text.split("\n")[1:])
         text = "# "+ text
+        text = text + "\n資料來源:https://www.cwb.gov.tw/V8/C/"
         await ctx.respond(text)
 
 
