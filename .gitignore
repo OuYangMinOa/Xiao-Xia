@@ -1,8 +1,5 @@
 .env
 .DS_Store
-/data/
-/data/private_recorded/
-/data/public_recorded/
 /data/music/
 /data/attachments/
 message_collect.txt

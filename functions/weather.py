@@ -2,7 +2,6 @@ from discord.commands import slash_command, Option
 from discord.ext      import commands
 from utils.file_os import *
 import discord
-from cairosvg import svg2png
 
 from requests_html import AsyncHTMLSession
 import requests
@@ -124,10 +123,13 @@ class Weather(discord.ext.commands.Cog):
         MWS = MyWeatherSelection(ctx,towns,values)
         await ctx.respond(f"weather_pos {ctx.author.mention}", view=MWS.view, ephemeral=True)
 
-def SvgToPng(url,ouput_filename):
-    re = requests.get(url)
-    svg2png(bytestring=re.content,write_to=ouput_filename)
-    return ouput_filename
+def SvgToPng(url):
+    # print(url)
+    numbers = url.split("/")[-1][0:2]
+    
+    ouput_filename = f"data/cwbgov_pic/cwbgov{numbers}.png"
+    return "cwbgov{numbers}.png", ouput_filename
+    # https://www.cwb.gov.tw/V8/assets/img/weather_icons/weathers/svg_icon/night/.svg
 
 
 class MyWeatherSelection:
@@ -164,35 +166,35 @@ class MyWeatherSelection:
         await self.ctx.send("# " + r.html.xpath("/html/body/div[2]/main/div/div[1]/div[1]/div/h2")[0].text)
         await self.ctx.send("* " + r.html.xpath("/html/body/div[2]/main/div/div[2]/a")[0].text)
 
-        SvgToPng(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/img')[0].attrs['src']}",'output1.png')
-        file = discord.File("output1.png")
+        filename, filepath1 = SvgToPng(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/img')[0].attrs['src']}")
+        file1 = discord.File(filepath1,filename="output1.png")
         embed1=discord.Embed(title="今晚明晨")
-        embed1.set_thumbnail(url = "attachment://output1.png")
+        embed1.set_thumbnail(url = f"attachment://output1.png")
         embed1.add_field(name="溫度",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[2]/span[1]")[0].text,inline=False)
         embed1.add_field(name=":umbrella: 降雨機率",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[3]")[0].text.replace("降雨機率",'\t'),inline=False)
-        embed1.add_field(name="\u200B",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[4]")[0].text,inline=False)
-        await self.ctx.send(file=file,embed=embed1)
+        embed1.add_field(value="\u200B",name=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[4]")[0].text,inline=False)
+        await self.ctx.send(file=file1,embed=embed1)
 
 
 
-        SvgToPng(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/img')[0].attrs['src']}",'output2.png')
-        file = discord.File("output2.png")
+        filename,filepath2 = SvgToPng(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/img')[0].attrs['src']}")
+        file2 = discord.File(filepath2,filename="output2.png")
         embed2=discord.Embed(title="明日白天")
-        embed2.set_thumbnail(url = "attachment://output2.png")
+        embed2.set_thumbnail(url = f"attachment://output2.png")
         embed2.add_field(name="溫度",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[2]/span[1]")[0].text,inline=False)
         embed2.add_field(name=":umbrella: 降雨機率",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[3]")[0].text.replace("降雨機率",'\t'),inline=False)
-        embed2.add_field(name="\u200B",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[4]")[0].text,inline=False)
-        await self.ctx.send(file=file,embed=embed2)
+        embed2.add_field(value="\u200B",name=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[4]")[0].text,inline=False)
+        await self.ctx.send(file=file2,embed=embed2)
 
 
-        SvgToPng(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/img')[0].attrs['src']}",'output3.png')
-        file = discord.File("output3.png")
+        filename,filepath3 = SvgToPng(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/img')[0].attrs['src']}")
+        file3 = discord.File(filepath3,filename="output3.png")
         embed3=discord.Embed(title="明日晚上")
-        embed3.set_thumbnail(url = "attachment://output3.png")
+        embed3.set_thumbnail(url = f"attachment://output3.png")
         embed3.add_field(name="溫度",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[2]/span[1]")[0].text,inline=False)
         embed3.add_field(name=":umbrella: 降雨機率",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[3]")[0].text.replace("降雨機率",'\t'),inline=False)
-        embed3.add_field(name="\u200B",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[4]")[0].text,inline=False)
-        await self.ctx.send(file=file,embed=embed3)
+        embed3.add_field(name=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[4]")[0].text,value="\u200B",inline=False)
+        await self.ctx.send(file=file3,embed=embed3)
 
 
         await self.ctx.send(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[5]/div[1]/div/img')[0].attrs['src']}")
