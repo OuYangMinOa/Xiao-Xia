@@ -35,7 +35,7 @@ class Weather(discord.ext.commands.Cog):
 
         #################### warning message #################
 
-        next_text = "\n# 天氣特報 \n"
+        next_text = "\n# :warning:  天氣特報  :warning: \n"
         url = "https://www.cwb.gov.tw/V8/C/"
         r = await session.get(url)
 
@@ -43,7 +43,7 @@ class Weather(discord.ext.commands.Cog):
         for each_link in r.html.xpath("/html/body/header/div[2]/div/div/div[1]/div/div/ol")[0].links:
             print(each_link)
             next_text = next_text + f" * https://www.cwb.gov.tw{each_link}\n"
-        next_text = next_text + "\n資料來源:https://www.cwb.gov.tw/V8/C/"
+        next_text = next_text + "\n資料來源:中央氣象局"
         await session.close()
         await ctx.send(next_text)
 
@@ -52,7 +52,7 @@ class Weather(discord.ext.commands.Cog):
 
     @slash_command(name="week_weather",description="Weather overview for the week ahead")
     async def week_weather(self,ctx):
-        await ctx.respond(f"/weather - {ctx.author.mention}")
+        await ctx.respond(f"/week_weather - {ctx.author.mention}")
 
 
         url = "https://www.cwb.gov.tw/V8/C/W/index.html"
@@ -65,7 +65,7 @@ class Weather(discord.ext.commands.Cog):
         await session.close()
         text = "\n".join(text.split("\n")[1:])
         text = "# "+ text
-        text = text + "\n資料來源:https://www.cwb.gov.tw/V8/C/"
+        text = text + "\n資料來源:中央氣象局"
         await ctx.send(text)
 
 
