@@ -39,8 +39,9 @@ class Help(discord.ext.commands.Cog):
 
 * 📑 **INFORMATIONS**
  - `/get_covid` Get the number of confirmed cases in Taiwan.
- - `/weather` Get today's Weather Overview
- - `/week_weather` Get weather overview for the week ahead
+ - `/weather_day` Get today's Weather Overview
+ - `/weather_week` Get weather overview for the week ahead
+ - `/weather_pos` One-day weather forecast for each county and city area
 """)
 
 
@@ -68,8 +69,9 @@ class Help(discord.ext.commands.Cog):
 
 * 📑 **資訊**
  - `/get_covid` 台灣今天又確了多少。
- - `/weather` 今日的天氣資訊。
- - `/week_weather` 未來一周的天氣資訊。
+ - `/weather_day` 今日的天氣資訊。
+ - `/weather_week` 未來一周的天氣資訊。
+ - `/weather_pos` 各縣市地區的一日天氣預報
 """)
 
 

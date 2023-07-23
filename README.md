@@ -60,6 +60,7 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 * Use `/talk` so I can keep talking
 
 # :bookmark_tabs: Informations
-* `get_covid` Get the number of confirmed cases in Taiwan
-* `weather` Get today's Weather Overview
-* `week_weather` Get weather overview for the week ahead
+* `/get_covid` Get the number of confirmed cases in Taiwan
+* `/weather_day` Get today's Weather Overview (Taiwan)
+* `/weather_week` Get weather overview for the week ahead (Taiwan)
+* `/weather_pos` One-day weather forecast for each county and city area (Taiwan)
