@@ -198,6 +198,7 @@ class MyWeatherSelection:
         embed3.add_field(name=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[4]")[0].text,value="\u200B",inline=False)
         await self.ctx.send(file=file3,embed=embed3)
 
+        await session.close()
 
         await self.ctx.send(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[5]/div[1]/div/img')[0].attrs['src']}")
         
