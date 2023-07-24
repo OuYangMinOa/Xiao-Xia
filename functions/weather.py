@@ -60,19 +60,21 @@ class Weather(discord.ext.commands.Cog):
     async def weather_week(self,ctx):
         await ctx.respond(f"/weather_week - {ctx.author.mention}")
 
+        try:
+            url = "https://www.cwb.gov.tw/V8/C/W/index.html"
+            session = AsyncHTMLSession()
+            r = await  session.get(url)
 
-        url = "https://www.cwb.gov.tw/V8/C/W/index.html"
-        session = AsyncHTMLSession()
-        r = await  session.get(url)
+            await r.html.arender()
 
-        await r.html.arender()
-
-        text = r.html.xpath("/html/body/div[3]/main/div/div[1]/div/div/div[2]")[0].text
-        await session.close()
-        text = "\n".join(text.split("\n")[1:])
-        text = "# "+ text
-        text = text + "\n資料來源:中央氣象局"
-        await ctx.send(text)
+            text = r.html.xpath("/html/body/div[3]/main/div/div[1]/div/div/div[2]")[0].text
+            await session.close()
+            text = "\n".join(text.split("\n")[1:])
+            text = "# "+ text
+            text = text + "\n資料來源:中央氣象局"
+            await ctx.send(text)
+        except Exception as e:
+            logger.error(e)
 
     @slash_command(name="weather_pos",description="Weather overview for the certain position.")
     async def weather_pos(self,ctx):
