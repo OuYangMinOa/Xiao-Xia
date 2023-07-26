@@ -39,7 +39,7 @@ async def handle_message(message):
         if ('http' not in PASS_MSG[i] and ('<@' not in PASS_MSG[i]) and  len(re.findall(r'[\u4e00-\u9fff]+',PASS_MSG[i]))>0 ):
             pass_memory_arr.insert(0,PASS_MSG[i])
             count += 1
-        if (len("\n".join(pass_memory_arr)) >512):
+        if (len("\n".join(pass_memory_arr)) >400):
             break
 
     pass_memory = "\n".join(pass_memory_arr)
@@ -47,7 +47,7 @@ async def handle_message(message):
     if ("http" not in this_message) :
 
         # word = "你現在是一個來自台灣discord機器人,名字叫歐陽小俠。\n"+ f"{message.author.name}:"+ this_message+"\n小俠:"  # +pass_memory+"。\n" 
-        word = "你現在是一個來自台灣discord機器人,名字叫歐陽小俠。\n"+pass_memory+"。\n" + f"{message.author.name}:"+ this_message+"。\n小俠:"  # 
+        word = "你現在是一個來自台灣discord機器人,名字叫歐陽小俠。\n過去的對話紀錄:"+pass_memory+"。\n"+"="*10 + f"{message.author.name}:"+ this_message+"。\n小俠:"  # 
         chatgpt_result = prompt_wes_com(word)    ## prompt_openai(word)
         if chatgpt_result:
             await message.channel.send(chatgpt_result)
