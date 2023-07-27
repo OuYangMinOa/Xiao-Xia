@@ -50,7 +50,7 @@ async def handle_message(message):
         word = "你現在是一個來自台灣discord機器人,名字叫歐陽小俠，請以單句回復。\n"+f"{pass_memory}"+ f"\n{message.author.name}:"+ this_message+"。\n小俠:"  # 
         chatgpt_result = prompt_wes_com(word)    ## prompt_openai(word)
         if ("。" in chatgpt_result):
-            chatgpt_result = chatgpt_result.spli("。")[0]
+            chatgpt_result = chatgpt_result.split("。")[0]
         if chatgpt_result:
             await message.channel.send(chatgpt_result)
             logger.info(f"[*] 回復 : {chatgpt_result}")
