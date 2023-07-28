@@ -47,7 +47,7 @@ async def handle_message(message):
     if ("http" not in this_message) :
 
         # word = "你現在是一個來自台灣discord機器人,名字叫歐陽小俠。\n"+ f"{message.author.name}:"+ this_message+"\n小俠:"  # +pass_memory+"。\n" 
-        word = "你現在是一個來自台灣discord機器人,名字叫歐陽小俠，請以單句回復。\n"+f"{pass_memory}"+ f"\n{message.author.name}:"+ this_message+"。\n小俠:"  # 
+        word = "你現在是一個來自台灣discord機器人,名字叫歐陽小俠，請以單句回復。\n"+f"{pass_memory}"+ f"\n{message.author.name}:"+ this_message+"\n小俠:"  # 
         chatgpt_result = prompt_wes_com(word)    ## prompt_openai(word)
         if ("。" in chatgpt_result):
             chatgpt_result = chatgpt_result.split("。")[0]
