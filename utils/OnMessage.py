@@ -39,7 +39,7 @@ async def handle_message(message):
         if ('http' not in PASS_MSG[i] and ('<@' not in PASS_MSG[i]) and  len(re.findall(r'[\u4e00-\u9fff]+',PASS_MSG[i]))>0 ):
             pass_memory_arr.insert(0,PASS_MSG[i])
             count += 1
-        if (len("\n".join(pass_memory_arr)) >512):
+        if (len("\n".join(pass_memory_arr)) >1024):
             break
 
     pass_memory = "\n".join(pass_memory_arr[-4:])
