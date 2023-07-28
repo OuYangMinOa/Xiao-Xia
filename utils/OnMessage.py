@@ -42,6 +42,7 @@ async def handle_message(message):
         if (len("\n".join(pass_memory_arr)) >1024):
             break
 
+
     pass_memory = "\n".join(pass_memory_arr[-4:])
     # print(pass_memory)
     if ("http" not in this_message) :
