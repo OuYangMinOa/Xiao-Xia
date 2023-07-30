@@ -27,8 +27,9 @@ class Morse(discord.ext.commands.Cog):
 
     @slash_command(name="encrypt",description="Encrypt the given message")
     async def encrypt(self,ctx, message: Option(str, "word", required = True)):
-        logger.info(f"{ctx.author.username} encrypting message : {message}")
+        logger.info(f"[*] {ctx.author.name} encrypting message : {message}")
         await ctx.respond(f"/encrypt {ctx.author.mention}")
+
         if (all(x.isalpha() or x.isspace() or x.isnumeric() for x in message)):
             cipher = ''
             for letter in message:
@@ -43,7 +44,7 @@ class Morse(discord.ext.commands.Cog):
 
     @slash_command(name="decrypt",description="Decrypt the given message")
     async def decrypt(self,ctx, message: Option(str, "word", required = True)):
-        logger.info(f"{ctx.author.username} decrypting message : {message}")
+        logger.info(f"[*]  {ctx.author.name} decrypting message : {message}")
         await ctx.respond(f"/decrypt {ctx.author.mention}")
 
         message += ' '  
@@ -62,7 +63,7 @@ class Morse(discord.ext.commands.Cog):
                     decipher += list(MORSE_CODE_DICT.keys())[list(MORSE_CODE_DICT
                     .values()).index(citext)]
                     citext = ''
-        await ctx.send(decipher,ephemeral=True)
+        await ctx.send(decipher)
 
 
 
