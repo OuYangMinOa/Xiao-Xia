@@ -36,6 +36,8 @@ class Help(discord.ext.commands.Cog):
  - `/talk` so I can keep talking.
  - `/joke` say a joke.
  - `/chickensoul` Chicken Soup for the Soul.
+ - `/encrypt ` Convert the message into Morse code.
+ - `/decrypt ` Convert Morse code into messages.
 
 * 📑 **INFORMATIONS**
  - `/get_covid` Get the number of confirmed cases in Taiwan.
@@ -66,6 +68,8 @@ class Help(discord.ext.commands.Cog):
  - `/talk` 你可以繼續說話了。
  - `/joke` 講笑話給我聽聽。
  - `/chickensoul` 我需要心靈雞湯。
+ - `/encrypt ` 把文字轉成摩斯密碼.
+ - `/decrypt ` 把摩斯密碼轉成文字.
 
 * 📑 **資訊**
  - `/get_covid` 台灣今天又確了多少。

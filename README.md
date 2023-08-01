@@ -58,6 +58,8 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 # :laughing: chat
 * I will reply all message, if you want to shut it down, use `/silence` to shut me up
 * Use `/talk` so I can keep talking
+* `/encrypt ` Convert the message into Morse code.
+* `/decrypt ` Convert Morse code into messages.
 
 # :bookmark_tabs: Informations
 * `/get_covid` Get the number of confirmed cases in Taiwan
