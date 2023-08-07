@@ -52,9 +52,15 @@ class Chat:
         else:
             return "Hi"
 
+    def ClearMessage(self,msg):
+        if ("\n\n" in msg):
+            return msg.split("\n\n")[0].strip()
+        else:
+            return msg.strip()
 
     def Talk(self,name,message):
         result = prompt_wes_com(self.BuildPrompt(name,message))
+        result = self.ClearMessage(result)
         if (not result):
             logger.info("[*] Cause to prompt_wes_com failed, using random way to reply user.")
             result = self.RandomPickFromData()
