@@ -30,7 +30,7 @@ def prompt_wes_com(text):   # use my own LLM AI
 
     try:
         mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        mysocket.settimeout(30)
+        mysocket.settimeout(50)
         mysocket.connect((HOST, PORT))
         mysocket.send(text.encode())
         result = mysocket.recv(4096)
