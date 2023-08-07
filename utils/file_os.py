@@ -40,6 +40,7 @@ def addtxt(filename,msg):
         with open(filename,"w",encoding="utf-8") as f:
             out = f.write(f"{msg}\n")
         return out
+    
 def newtxt(filename,arr):
     with open(filename,"w",encoding="utf-8") as f:
         for i in range(len(arr)):
