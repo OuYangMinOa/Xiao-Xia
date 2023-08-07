@@ -12,6 +12,14 @@ from pip._vendor import requests
 
 # grab the title of single video
 def get_title(url):
+    """Get  the title of a single video
+
+    Args:
+        url (str): The youtube url
+
+    Returns:
+        str: title of single video
+    """
     this_id = re.search('(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})', url, re.M|re.I).group(1)
     print(f"[*] {this_id}")
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN')))
@@ -22,6 +30,15 @@ def get_title(url):
 
 # grab the title and url of playlist
 def grab_playlist(url,maxima_song = 25):
+    """grab the title and url of playlist
+
+    Args:
+        url (str): the url of the playlist
+        maxima_song (int, optional): the maxima song to grab. Defaults to 25.
+
+    Returns:
+        list[(str,str)]: A list of title and url
+    """
     print(url)
     playlist_id = re.search("list=(.*?)(?:&|$)", url, re.M|re.I).group(1)
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN')))
@@ -50,7 +67,14 @@ def grab_playlist(url,maxima_song = 25):
     return playlist_set
 
 async def grab_Lyrics_spotify(song_name):
+    """Grab the Lyrics on the Spotify (abandoned)
 
+    Args:
+        song_name (str): song_name
+
+    Returns:
+        str: Lyrics
+    """
 
     search_url = f"https://cse.google.com/cse?cx=partner-pub-9427451883938449%3Agd93bg-c1sx&q={song_name}#gsc.tab=0&gsc.q={song_name}&gsc.page=1"
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36'

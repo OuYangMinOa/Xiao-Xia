@@ -27,6 +27,8 @@ class Morse(discord.ext.commands.Cog):
 
     @slash_command(name="encrypt",description="Encrypt the given message")
     async def encrypt(self,ctx, message: Option(str, "word", required = True)):
+        
+
         logger.info(f"[*] {ctx.author.name} encrypting message : {message}")
         await ctx.respond(f"`/encrypt` {ctx.author.mention}")
 

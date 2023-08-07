@@ -28,6 +28,11 @@ def prompt_openai(word):
 
     
 async def handle_message(message):
+    """Handle a message input
+
+    Args:
+        message (a discord message): a discord message
+    """
     this_message = message.content.strip()
     logger.info(f"[*] {message.author.name} : {this_message}")
     if (message.channel.id in silinece_channel):

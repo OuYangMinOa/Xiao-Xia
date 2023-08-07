@@ -8,6 +8,14 @@ import urllib
 
 
 def DuckDuckSearchCommand(key):
+    """Search on duckduckgo
+
+    Args:
+        key (str): keyword to search
+
+    Returns:
+        str: Search results
+    """
     query = quote(key)
     site = urllib.request.urlopen("http://duckduckgo.com/html/?q="+query+'&kl=tw-tzh')
     data = site.read()

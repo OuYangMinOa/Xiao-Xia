@@ -16,6 +16,9 @@ class Chat:
         self.LoadMessage()
 
     def LoadMessage(self):
+        """
+        Loads the message to the memory
+        """
         if (os.path.isfile(self.DataName)):
             with open(self.DataName,'r',encoding='utf-8') as f:
                 line = f.readline()
@@ -29,6 +32,15 @@ class Chat:
                 pass
 
     def BuildPrompt(self,name,message):
+        """
+
+        Args:
+            name (str): The author name
+            message (str): author input
+
+        Returns:
+            str: The text prompt to LLM
+        """
         MemoryParaGraph= '\n'.join(self.memory)
 
         if (len(self.memory)!=0):
@@ -43,6 +55,11 @@ class Chat:
         return  word
 
     def RandomPickFromData(self):
+        """Pick a random text from the file.
+
+        Returns:
+            str: text
+        """
         DataMessageArr = readfile(self.DataName)
         if (len(DataMessageArr)>0):
             picked = random.choices()[0]
@@ -53,16 +70,33 @@ class Chat:
             return "Hi"
 
     def ClearMessage(self,msg):
+        """Clean the message
+
+        Args:
+            msg (str): the result from llm
+
+        Returns:
+            str: cleaned ,msg
+        """
         if ("\n\n" in msg):
             return msg.split("\n\n")[0].strip()
         else:
             return msg.strip()
 
     def Talk(self,name,message):
+        """Talk to LLM
+
+        Args:
+            name (str): The author name
+            message (str): author input
+
+        Returns:
+            str: the output text
+        """
         result = prompt_wes_com(self.BuildPrompt(name,message))
         result = self.ClearMessage(result)
         if (not result):
-            logger.info("[*] Cause to prompt_wes_com failed, using random way to reply user.")
+            logger.info("[*] Cause to prompt failed, using random way to reply user.")
             result = self.RandomPickFromData()
         
         addtxt( self.DataName,f"{name}:"+message.strip())

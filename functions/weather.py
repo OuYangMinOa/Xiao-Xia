@@ -130,7 +130,6 @@ class Weather(discord.ext.commands.Cog):
 def SvgToPng(url):
     # print(url)
     numbers = url.split("/")[-1][0:2]
-    
     ouput_filename = f"data/cwbgov_pic/cwbgov{numbers}.png"
     return "cwbgov{numbers}.png", ouput_filename
     # https://www.cwb.gov.tw/V8/assets/img/weather_icons/weathers/svg_icon/night/.svg

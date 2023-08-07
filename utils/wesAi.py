@@ -18,6 +18,9 @@ def prompt_wes_com(text):   # use my own LLM AI
     Returns:
         Text: AI result
     """
+
+
+    
     HOST = "192.168.0.7"
     # HOST = "127.0.0.1"
     PORT = 1564
