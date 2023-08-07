@@ -245,7 +245,7 @@ class MySelection:
         if (self.sound_class.ctx.guild.id  in music_user_guild):
             music_channel_id = music_user[list(music_user)[music_user_guild.index(self.sound_class.ctx.guild.id)]].ctx.channel.id
             if (music_user[music_channel_id].state == 1):
-                await music_user[music_channel_id].pause()
+                await music_user[music_channel_id].pause("(Stop cause sound playing)")
                 music_user[music_channel_id].state = 3
                 # await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
 

@@ -256,17 +256,17 @@ class MusicBot:
         print(self.queqed)
         await self.ctx.channel.send('Shuffled') 
 
-    async def pause(self):
+    async def pause(self,msg=""):
         self.dont_stop = 0
         if (self.state == 0):
-            await self.ctx.channel.send(':poop: No music playing, type /`play url`') 
+            await self.ctx.channel.send(f':poop: No music playing, type /`play url`') 
         elif (self.state == 1):
             if self.ctx.guild.voice_client not in self.client.voice_clients:
                 print("[*] get kicked from",self.channelid)
                 await self.clear()
             else:
                 print("[*] ===  pause ===   ",self.channelid)
-                self.wait_msg = await self.ctx.channel.send(f':poop: Music stop, type `/pause` or `/play` to continue the music  :poop:')
+                self.wait_msg = await self.ctx.channel.send(f':poop: Music stop, type `/pause` or `/play` to continue the music {msg}')
                 self.state = 2
                 self.voice.pause()
         elif (self.state==2) :
