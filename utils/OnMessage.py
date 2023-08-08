@@ -50,7 +50,7 @@ async def handle_message(message):
     # print(pass_memory)
     if ("http" not in this_message and this_message) :
 
-        chatgpt_result = chat_dict[message.channel.id].Talk(message.author.name,this_message)
+        chatgpt_result = chat_dict[message.channel.id].Talk(message.author.mention,this_message)
         if chatgpt_result:
             await message.channel.send(chatgpt_result)
             logger.info(f"[*] 回復 : {chatgpt_result}")
