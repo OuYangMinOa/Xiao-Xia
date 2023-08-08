@@ -32,6 +32,7 @@ class Help(discord.ext.commands.Cog):
  - `/search_sound` {keyword}to search sounds by keywords.
 
 * 😆 **CHAT**
+ - `/clear_talk` Clear past chat history.
  - `/silence` to shut me up in this chat.
  - `/talk` so I can keep talking.
  - `/joke` say a joke.
@@ -58,12 +59,13 @@ class Help(discord.ext.commands.Cog):
  - `/clear` 清除播放清單。
  - `/leave` 滾。
 
-* :notes: **音效**
+* :notes: **音效版**
  - `/upload_sound {name} {file}` 上傳你自己的音效。
  - `/list_sound` 查看所有的音效並撥放。
  - `/search_sound` {keyword} 用關鍵字查詢音效。
 
 * 😆 **聊天**
+ - `/clear_talk` 清空過去的聊天紀錄。                        
  - `/silence` 在此聊天頻道閉嘴。
  - `/talk` 你可以繼續說話了。
  - `/joke` 講笑話給我聽聽。

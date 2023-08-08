@@ -57,12 +57,16 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 * `/search_sound` to search sounds by keywords.
 # :laughing: chat
 * I will reply all message, if you want to shut it down, use `/silence` to shut me up
-* Use `/talk` so I can keep talking
+* Use `/clear_talk` to clear the chat history.
+* Use `/talk` so I can keep talking.
+* Use `/joke` to let me say a joke.
+* Use `/chickensoul` to let me say a chickensoul.
 * `/encrypt ` Convert the message into Morse code.
 * `/decrypt ` Convert Morse code into messages.
+
 
 # :bookmark_tabs: Informations
 * `/get_covid` Get the number of confirmed cases in Taiwan
 * `/weather_day` Get today's Weather Overview (Taiwan)
 * `/weather_week` Get weather overview for the week ahead (Taiwan)
-* `/weather_pos` One-day weather forecast for each county and city area (Taiwan)
+* `/weather_pos` One-day weather forecast for each city area (Taiwan)

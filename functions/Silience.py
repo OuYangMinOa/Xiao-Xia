@@ -1,4 +1,5 @@
-from utils.info       import silinece_channel, Silence_DATA, logger
+from utils.info       import silinece_channel, Silence_DATA, logger, chat_dict
+from utils.Chat       import Chat
 
 import utils.MusicBot     as my_mb # my class
 
@@ -36,6 +37,13 @@ class Silence(discord.ext.commands.Cog):
         except Exception as e:
             logger.error(e)
 
+
+    @slash_command(name="clear_talk",description="Clear past chat history")
+    async def clear_talk(self,ctx):
+        if (ctx.channel.id in chat_dict):
+            chat_dict[ctx.channel.id].clear_message()
+            await ctx.respond("Past chat history has been cleared")
+    
 
 
 

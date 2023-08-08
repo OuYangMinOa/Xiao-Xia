@@ -105,4 +105,10 @@ class Chat:
         self.memory.append("歐陽小俠:"+result.strip())
         
         return result
-        
+    
+
+    def clear_message(self):
+        with open(self.DataName,'w',encoding='utf-8') as f:
+            pass
+        self.memory    = deque(maxlen=MASSAGE_MEMORY_SIZE)
+        self.LoadMessage()
