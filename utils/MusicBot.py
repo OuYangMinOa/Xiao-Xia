@@ -1,6 +1,6 @@
 ## music.py
 from utils.GrabYtList import *
-from utils.info     import logger
+from utils.info     import logger, music_user
 import threading
 import discord
 import asyncio
@@ -215,7 +215,10 @@ class MusicBot:
         if (member_count == 1):
             print("[*]",self.channelid," left member : ",member_count)
             print("[*]",self.channelid," Music stop cause no one listening")
-            await self.pause()
+            # await self.pause()
+            await self.kill()
+            await self.voice.disconnect()
+            del music_user[ctx.channel.id]
 
 
     async def play_downloaded_music(self):
