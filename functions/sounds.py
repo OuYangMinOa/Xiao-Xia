@@ -115,7 +115,7 @@ class Sounds(discord.ext.commands.Cog):
                 return
 
             ctxRes =  await ctx.respond("Available sound", view=CRM.view, ephemeral=True)
-            sound_user[ctx.channel.id].ctxRes = ctxRes
+            sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
         except Exception as e:
             logger.error(e)
 
@@ -186,7 +186,8 @@ class Sounds(discord.ext.commands.Cog):
             await ctx.respond("Sound files no found", ephemeral=True)
             return
         
-        await ctx.respond(f"Keyword : {keyword}", view=view, ephemeral=True)
+        ctxRes = await ctx.respond(f"Keyword : {keyword}", view=view, ephemeral=True)
+        sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
 
 
 

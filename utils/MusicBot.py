@@ -28,6 +28,7 @@ class MusicBot:
         self.channel   = channel    # Voice channel
         self.channelid = channel.id # This Music serves channel Id
         self.floder    = "data/music"    # Folder to store music
+        self.ctxResArr = []
         self.ctx       = ctx        # ctx
         self.voice     = voice      # voice client
         self.client    = client
@@ -222,11 +223,12 @@ class MusicBot:
             if (self.ctx.channel.id in music_user): del music_user[self.ctx.channel.id]
             if (self.ctx.channel.id in sound_user): del sound_user[self.ctx.channel.id]
             if (self.ctx.channel.id in sound_user):
-                try:
-                    # sound_user[ctx.channel.id].crmView.stop()
-                    await self.ctxRes.delete_original_response()
-                except Exception as e:
-                    print(e)
+                for eachRes in self.ctxResArr:
+                    try:
+                        # sound_user[ctx.channel.id].crmView.stop()
+                        await eachRes.delete_original_response()
+                    except Exception as e:
+                        print(e)
 
 
             return True
