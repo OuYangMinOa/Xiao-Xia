@@ -221,7 +221,6 @@ class MusicBot:
             await self.kill()
             await self.voice.disconnect()
             if (self.ctx.channel.id in music_user): del music_user[self.ctx.channel.id]
-            if (self.ctx.channel.id in sound_user): del sound_user[self.ctx.channel.id]
             if (self.ctx.channel.id in sound_user):
                 for eachRes in self.ctxResArr:
                     try:
@@ -229,8 +228,7 @@ class MusicBot:
                         await eachRes.delete_original_response()
                     except Exception as e:
                         print(e)
-
-
+            if (self.ctx.channel.id in sound_user): del sound_user[self.ctx.channel.id]
             return True
         return False
     
@@ -239,7 +237,7 @@ class MusicBot:
         async def WhileChecking():
             while True:
                 res = await self.check()
-                await asyncio.sleep(60 * 60)
+                await asyncio.sleep(10)
                 if (res):
                     break
         def LoopChecking():
