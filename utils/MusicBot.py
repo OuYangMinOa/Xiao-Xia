@@ -1,9 +1,10 @@
 ## music.py
 from utils.GrabYtList import *
-from utils.info     import logger, music_user
+from utils.info     import logger, music_user, sound_user
 import threading
 import discord
 import asyncio
+import time
 from pydub import AudioSegment
 # import youtube_dl
 import yt_dlp as youtube_dl
@@ -18,8 +19,7 @@ def match_target_amplitude(sound, target_dBFS):
     change_in_dBFS = target_dBFS - sound.dBFS
     return sound.apply_gain(change_in_dBFS)
 
-class MusicBot:
-    
+class MusicBot:   
     def __init__(self,channel, voice , ctx, client):
         self.music_msg = None       # The message for current music
         self.loop      = False      # Enable loop or not
@@ -209,16 +209,41 @@ class MusicBot:
     async def check(self):
         # define the voice channel
         if (self.live == False):
-            return
+            return False
+        # print(self.channel.voice_states)
         member_count = len(self.channel.voice_states)
-        print("[*]",self.channelid," left member : ",member_count)
+        print(f"[*] {self.channelid}, left member : {member_count}")
         if (member_count == 1):
-            print("[*]",self.channelid," left member : ",member_count)
-            print("[*]",self.channelid," Music stop cause no one listening")
+            logger.info(f"[*] {self.channelid}, left member : {member_count}")
+            logger.info(f"[*] {self.channelid}, Music stop cause no one listening")
             # await self.pause()
             await self.kill()
             await self.voice.disconnect()
-            del music_user[ctx.channel.id]
+            if (self.ctx.channel.id in music_user): del music_user[self.ctx.channel.id]
+            if (self.ctx.channel.id in sound_user): del sound_user[self.ctx.channel.id]
+            if (self.ctx.channel.id in sound_user):
+                try:
+                    # sound_user[ctx.channel.id].crmView.stop()
+                    await self.ctxRes.delete_original_response()
+                except Exception as e:
+                    print(e)
+
+
+            return True
+        return False
+    
+
+    def StartChecking(self):
+        async def WhileChecking():
+            while True:
+                res = await self.check()
+                await asyncio.sleep(60 * 60)
+                if (res):
+                    break
+        def LoopChecking():
+            self.client.loop.create_task(WhileChecking())
+        
+        threading.Thread(target=LoopChecking,daemon=True).start()
 
 
     async def play_downloaded_music(self):

@@ -126,12 +126,27 @@ class Music(discord.ext.commands.Cog):
         if ctx.guild.voice_client not in self.bot.voice_clients:
             await ctx.send("I already leaved ...")
             return
+        
         if (ctx.channel.id in music_user):
-            await ctx.send("Leaving the voice channel ...")
+            # await ctx.send("Leaving the voice channel ...")
             await music_user[ctx.channel.id].kill()
             await music_user[ctx.channel.id].voice.disconnect()
             logger.info("[*] leaving", channel.id)
             del music_user[ctx.channel.id]
+
+
+        if (ctx.channel.id in sound_user):
+            try:
+                # sound_user[ctx.channel.id].crmView.stop()
+                await sound_user[ctx.channel.id].ctxRes.delete_original_response()
+            except Exception as e:
+                print(e)
+            # await ctx.send("Leaving the voice channel ...")
+            await sound_user[ctx.channel.id].kill()
+            await sound_user[ctx.channel.id].voice.disconnect()
+            logger.info(f"[*] leaving {channel.id}")
+            del sound_user[ctx.channel.id]
+            
 
     @slash_command(name="clear",description="clear the music")
     async def clear(self,ctx):
@@ -150,10 +165,11 @@ class Music(discord.ext.commands.Cog):
             return
 
         if (ctx.channel.id in music_user):
-            logger.info(f"[*] {channel.id} cleared")
+            logger.info(f"[*] Music : {channel.id} cleared")
             await music_user[ctx.channel.id].clear()
         else:
             await ctx.send("I'm not singing")
+
 
     @slash_command(name="skip",description="skip the current music")
     async def skip(self,ctx):

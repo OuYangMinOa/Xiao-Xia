@@ -60,7 +60,7 @@ class Sounds(discord.ext.commands.Cog):
         ##  connect to a voice channel
         try:
             if not ctx.author.voice:
-                await ctx.send('you are not connected to a voice channel')
+                await ctx.respond('you are not connected to a voice channel')
                 return
             else:
                 channel = ctx.author.voice.channel
@@ -99,11 +99,14 @@ class Sounds(discord.ext.commands.Cog):
                     logger.info("[*] rejoin the voice channel")
                     voice =  await channel.connect()
                     sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
+
+                sound_user[ctx.channel.id].StartChecking()
             else:
                 print("[*] moving to voice channel")
                 voice =  await channel.connect()
                 print("[*] voice channel connected")
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
+                sound_user[ctx.channel.id].StartChecking()
 
             CRM = BuildSoundSelect(ctx.guild.id, sound_user[ctx.channel.id])
 
@@ -111,7 +114,8 @@ class Sounds(discord.ext.commands.Cog):
                 await ctx.respond("you haven't upload any sound files")
                 return
 
-            await ctx.respond("Available sound", view=CRM.view, ephemeral=True)
+            ctxRes =  await ctx.respond("Available sound", view=CRM.view, ephemeral=True)
+            sound_user[ctx.channel.id].ctxRes = ctxRes
         except Exception as e:
             logger.error(e)
 
@@ -119,7 +123,7 @@ class Sounds(discord.ext.commands.Cog):
     @slash_command( name="search_sound",description="Search sound file")
     async def search_sound(self,ctx, keyword:Option(str, "The keywords", required = True)):
         if not ctx.author.voice:
-            await ctx.send('you are not connected to a voice channel')
+            await ctx.respond('you are not connected to a voice channel')
             return
         else:
             channel = ctx.author.voice.channel
@@ -172,7 +176,7 @@ class Sounds(discord.ext.commands.Cog):
                 file.append( os.path.basename(path) )
 
         options = [ discord.SelectOption(label=label[i])for i in range(len(label))]
-        view = discord.ui.View(timeout=24*60*60*7)
+        view = discord.ui.View(timeout=24*60*60)
         for i in range(len(options)//24+1):
             if (len(label[24*(i):24*(i+1)])!=0):
                 this_select = MySelection(sound_user[ctx.channel.id],label[24*(i):24*(i+1)] ,file[24*(i):24*(i+1)] ).select
@@ -199,7 +203,7 @@ class BuildSoundSelect():
         self.sound_class = sound_class
         self.label, self.sounds = self.getsounds(channel_id)
         options = [ discord.SelectOption(label=self.label[i])for i in range(len(self.label))]
-        self.view = discord.ui.View(timeout=24*60*60*7)
+        self.view = discord.ui.View(timeout=24*60*60) # timeout -> one day
 
         for i in range(len(options)//24+1):
             if (len(self.label[24*(i):24*(i+1)])!=0):
