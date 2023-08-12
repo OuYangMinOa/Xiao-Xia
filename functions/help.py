@@ -18,7 +18,7 @@ class Help(discord.ext.commands.Cog):
     @slash_command(name="help_en",description="Show all commands")
     async def help_en(self,ctx):
         await  ctx.respond("""* :notes: **MUSIC**
- - `/play {url}` to play music on youtube.
+ - `/play {url}` play music (youtube or spotify).
  - `/skip` to skip the song.
  - `/pause` to pause the song.
  - `/list` to show the playlist.
@@ -47,11 +47,11 @@ class Help(discord.ext.commands.Cog):
  - `/weather_pos` One-day weather forecast for each county and city area
 """)
 
-
+    # @slash_command(name="幫助",description="幫助訊息")
     @slash_command(name="help_zhtw",description="幫助訊息")
     async def help_zhtw(self,ctx):
         await  ctx.respond("""* :notes: **音樂**
- - `/play {url}` 播放油管上的音樂。
+ - `/play {url}` 播放音樂 (youtube 或 spotify)。
  - `/skip` 跳過。
  - `/pause` 暫停。
  - `/list` 看撥放清單。

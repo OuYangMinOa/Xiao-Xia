@@ -370,11 +370,41 @@ class MusicBot:
         print("[*]",self.channelid," Adding Thread done.")
         print(f"[*] Qeuqed {len(self.queqed)} songs ->",self.channelid)
 
+    def addThreadSpotify(self,url):
+        print("[*] Adding rest in this thread ... ")
+        try:
+            output = GrabSongListFromSpotify(url,start=5)
+        except:
+            print(f"[*] {self.channelid} somthing goes wrong while grabing the song")
+            return
+        for each in output:
+            self.queqed.append(each)
+        print("[*]",self.channelid," Adding Thread done.")
+        print(f"[*] Qeuqed {len(self.queqed)} songs ->",self.channelid)
+
+
     async def add(self,url):
         self.dont_stop = 0
         try:
             print("[*]", url)
-            if ("list" in url):
+            
+            if (self.live == False):
+                print("[*] I'm dead")
+                return
+            
+            if ("http" not in url):
+                tempWord = await self.ctx.send(f'Searching for {url} ... ')
+                self.queqed.append(youtubeSearch(url))
+                await tempWord.delete()
+
+
+            elif ("spotify" in url):  
+                self.queqed.extend( GrabSongListFromSpotify(url,start=0,end=5) )
+
+                threading.Thread(target = self.addThreadSpotify, args=(url,),daemon=True).start()
+                print("[*] Queqed :",self.queqed)
+
+            elif ("list" in url):
                 print("[*] Adding a play list in", self.channelid)
                 try:
                     output = grab_playlist(url,10)
@@ -396,10 +426,6 @@ class MusicBot:
                 this_title = get_title(url)
                 print(f"[*] Adding a single video {this_title} in", self.channelid)
                 self.queqed.append((this_title,url))
-
-            if (self.live == False):
-                print("[*] I'm dead")
-                return
 
             print("\n[*]",self.channelid,"-> Enqueued :",len(self.queqed), "the remaining songs will continue add in the background")
 

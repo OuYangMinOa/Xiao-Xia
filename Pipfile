@@ -20,6 +20,7 @@ pytest-asyncio = "*"
 pytest = "*"
 py-cord = {extras = ["voice"], version = "*"}
 requests-html = "*"
+spotipy = "*"
 
 [dev-packages]
 

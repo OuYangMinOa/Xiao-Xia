@@ -7,6 +7,9 @@ import os
 import re
 import bs4
 import json
+import time
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 import requests
 from pip._vendor import requests
 
@@ -22,7 +25,7 @@ def get_title(url):
     """
     this_id = re.search('(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})', url, re.M|re.I).group(1)
     print(f"[*] {this_id}")
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN')))
+    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN2')))
     request = youtube.videos().list(
         part = "snippet",
         id = this_id)
@@ -41,7 +44,7 @@ def grab_playlist(url,maxima_song = 25):
     """
     print(url)
     playlist_id = re.search("list=(.*?)(?:&|$)", url, re.M|re.I).group(1)
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN')))
+    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN2')))
     request = youtube.playlistItems().list(
         part = "snippet",
         playlistId = playlist_id,
@@ -119,13 +122,54 @@ async def grab_Lyrics_spotify(song_name):
     output = output + "Lyrics from Animelyrics.com\n"
     return Found, output
 
-if __name__ == "__main__":
-    # pass
-    print(
-        get_title(r"https://www.youtube.com/watch?v=vcGbefQBvJ4")
-        )
+def youtubeSearch(keyword):
+    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN2')))
+    response = youtube.search().list(q=keyword,
+                                    part="id,snippet",
+                                    maxResults=5
+                                    ).execute().get("items", [])
+    # print(response)
+    for record in response:
+        if record["id"]["kind"] == "youtube#video":
+            title = record["snippet"]["title"]
+            youtube_id = record["id"]["videoId"]
+            youtube_url = f"https://www.youtube.com/watch?v={youtube_id}"
+            break
+    return (title,youtube_url)
 
-    print(get_title('http://youtu.be/NLqAF9hrVbY'))
+def GrabSongListFromSpotify(url,start=0,end=100):
+    auth_manager = SpotifyClientCredentials()
+    sp = spotipy.Spotify(auth_manager=auth_manager)
+    
+    spId = url.split('/')[-1]
+    print(spId)
+
+    if ("track" in url):
+        results = sp.track(spId)
+        # print(results['name'],results['artists'][0]['name'])
+        return youtubeSearch(results['name']+'-'+results['artists'][0]['name'])
+
+    if ("artist" in url):
+        results = sp.artist_top_tracks(spId)
+        output = []
+        for eachItem in results['tracks'][start:end]:
+            output.append(youtubeSearch(eachItem['name']+'-'+eachItem['artists'][0]['name']))
+            time.sleep(0.1)
+        return output
+    
+
+    if ("playlist" in url):
+        results = sp.playlist_tracks(spId)
+        output = []
+        for eachItem in results['items'][start:end]:
+            output.append(youtubeSearch(eachItem['track']['name']+'-'+eachItem['track']['artists'][0]['name']))
+            time.sleep(0.1)
+        return output
+
+if __name__ == "__main__":
+    pass
+
+    # print(get_title('http://youtu.be/NLqAF9hrVbY'))
     # import asyncio
     # loop2 = asyncio.new_event_loop()
     # loop = asyncio.get_event_loop()

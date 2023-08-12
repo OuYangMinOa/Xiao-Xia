@@ -24,7 +24,7 @@ class Music(discord.ext.commands.Cog):
         if (ctx.channel.id in music_user):
             await music_user[ctx.channel.id].pause()
 
-    @slash_command(name="play",description="play the music")
+    @slash_command(name="play",description="play the music (supporting spotify and youtube)")
     async def play(self,ctx,  url: Option(str, "The youtube url", required = False)):
         if (not url):
             await ctx.respond(f'/play\n- {ctx.author.mention}')
