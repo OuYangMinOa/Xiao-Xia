@@ -1,6 +1,8 @@
 ## music.py
 from utils.GrabYtList import *
 from utils.info     import logger, music_user, sound_user, MUSIC_folder
+from pytube import YouTube
+
 import threading
 import discord
 import asyncio
@@ -129,7 +131,7 @@ class MusicBot:
 
                 logger.info("\n[*] ------------ download successful ------------")
             except Exception as e:
-                logger.error("[*] ----- error -----")
+                logger.error("[*] ----- error ----- try to use pytube.")
                 logger.error(e)
                 print("[*] redownloaded in 5 second")
                 try:
@@ -139,7 +141,8 @@ class MusicBot:
                         info = ydl.extract_info(this_song_url, download=False)
                         if (not info['is_live']):
                             logger.info(f"[*] Downloading {this_song_url} due to it not a live")
-                            ydl.download([this_song_url])
+                            # ydl.download([this_song_url])
+                            YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=song_path)
                         else:
                             logger.info(f"[*] {this_song_url} is a live stream")
                             song_path = info['formats'][0]['url']
