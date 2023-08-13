@@ -33,7 +33,7 @@ def get_title(url):
                 id = this_id)
             return request.execute()["items"][0]['snippet']['title']
         except Exception as e:
-            logger.error(e)
+            logger.error(f"[*] keynum {keynum} failed")
     logger.info(f"[*] ALL keynum failed")
 
 # grab the title and url of playlist
@@ -76,7 +76,8 @@ def grab_playlist(url,maxima_song = 25):
                 playlist_set.append(this_set)
             return playlist_set
         except Exception as e:
-            logger.error(e)
+            logger.error(f"[*] keynum {keynum} failed")
+
     logger.info(f"[*] ALL keynum failed")
 
 async def grab_Lyrics_spotify(song_name):
@@ -157,7 +158,7 @@ def youtubeSearch(keyword,useKeyword=True):
             else:
                 return (title,youtube_url)
         except Exception as e:
-            logger.error(e)
+            logger.error(f"[*] keynum {keynum} failed")
     logger.info(f"[*] ALL keynum failed")
 
 
