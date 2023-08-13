@@ -221,7 +221,7 @@ class BuildSoundSelect():
         for path in glob(f'{save_folder}/*.*'):
             if (path.endswith('mp3') or path.endswith('wav') ):
                 self.count += 1
-
+                
                 label.append(os.path.basename(path[:-4]))
                 file.append( os.path.basename(path) )
 
