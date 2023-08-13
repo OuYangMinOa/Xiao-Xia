@@ -39,7 +39,7 @@ class Music(discord.ext.commands.Cog):
             channel = ctx.author.voice.channel
 
         sound_guild_id = [sound_user[x].ctx.guild.id for x in sound_user]
-        print(sound_guild_id)
+        # print(sound_guild_id)
 
         if (ctx.channel.id in music_user):
             if (music_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
@@ -57,7 +57,7 @@ class Music(discord.ext.commands.Cog):
                 music_user[ctx.channel.id] = my_mb.MusicBot(channel, voice , ctx, self.bot)
 
             if (not url):
-                print("[*] no url specified",music_user[ctx.channel.id].state)
+                logger.info("[*] no url specified",music_user[ctx.channel.id].state)
 
                 if (ctx.guild.id in sound_guild_id):
                     sound_channel_id = sound_user[list(sound_user)[sound_guild_id.index(ctx.guild.id)]].ctx.channel.id
@@ -71,17 +71,16 @@ class Music(discord.ext.commands.Cog):
                 await music_user[ctx.channel.id].add(url) 
         else:
             try:
-                print("[*] moving to voice channel")
-
+                # print("[*] moving to voice channel")
                 if (ctx.guild.id in sound_guild_id):
-                    print("[*] moving to voice channel 2222 ")
+                    # print("[*] moving to voice channel 2222 ")
                     sound_channel_id = sound_user[list(sound_user)[sound_guild_id.index(ctx.guild.id)]].ctx.channel.id
                     # print(sound_channel_id)
                     voice = sound_user[sound_channel_id].voice
                     await sound_user[sound_channel_id].clear()
                 else:
                     voice =  await channel.connect()
-                print("[*] voice channel connected")
+                # print("[*] voice channel connected")
                 MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
                 logger.info(f"[*] creating Class id : {id(MB)} for serving channel {channel.id}")
                 music_user[ctx.channel.id] = MB
@@ -140,7 +139,7 @@ class Music(discord.ext.commands.Cog):
                 # sound_user[ctx.channel.id].crmView.stop()
                 await sound_user[ctx.channel.id].ctxRes.delete_original_response()
             except Exception as e:
-                print(e)
+                logger.error(e)
             # await ctx.send("Leaving the voice channel ...")
             await sound_user[ctx.channel.id].kill()
             await sound_user[ctx.channel.id].voice.disconnect()

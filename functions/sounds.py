@@ -38,7 +38,7 @@ class Sounds(discord.ext.commands.Cog):
             await attachment.save(f"{save_folder}/{filename}.{file_extend}") 
 
             await ctx.respond(f"{filename}.{file_extend} received.")
-            logger.info(f"[*] {filename}.{file_extend} received.")
+            logger.info(f"[*] {filename}.{file_extend} received."+ f' - {ctx.author.name}')
 
 
             ####  re normalize the attachment file dfbs
@@ -113,6 +113,8 @@ class Sounds(discord.ext.commands.Cog):
             if (len(CRM.label)==0):
                 await ctx.respond("you haven't upload any sound files")
                 return
+            
+            logger.info(f"[*] list sound"+ f' - {ctx.author.name}')
 
             ctxRes =  await ctx.respond("Available sound", view=CRM.view, ephemeral=True)
             sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
@@ -185,6 +187,7 @@ class Sounds(discord.ext.commands.Cog):
         if (len(label)==0):
             await ctx.respond("Sound files no found", ephemeral=True)
             return
+        logger.info(f"[*] search sound"+ f'{keyword}  - {ctx.author.name}')
         
         ctxRes = await ctx.respond(f"Keyword : {keyword}", view=view, ephemeral=True)
         sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
@@ -254,7 +257,7 @@ class MySelection:
                 music_user[music_channel_id].state = 3
                 # await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
 
-        print(self.sound_class.queqed)
+        logger.info(self.sound_class.queqed)
         await self.sound_class._next()
 
 

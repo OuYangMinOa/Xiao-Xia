@@ -15,6 +15,7 @@ class Weather(discord.ext.commands.Cog):
     @slash_command(name="weather_day",description="Today's Weather Overview")
     async def weather_day(self,ctx):
         await ctx.respond(f"/weather_day - {ctx.author.mention}")
+        logger.info(f"/weather_day - {ctx.author.name}")
         try:
             url = "https://www.cwb.gov.tw/V8/C/W/index.html"
             session = AsyncHTMLSession()
@@ -45,7 +46,6 @@ class Weather(discord.ext.commands.Cog):
 
             await r.html.arender()
             for each_link in r.html.xpath("/html/body/header/div[2]/div/div/div[1]/div/div/ol")[0].links:
-                print(each_link)
                 next_text = next_text + f" * https://www.cwb.gov.tw{each_link}\n"
             next_text = next_text + "\n資料來源:中央氣象局"
             await session.close()
@@ -61,6 +61,7 @@ class Weather(discord.ext.commands.Cog):
     @slash_command(name="weather_week",description="Weather overview for the week ahead")
     async def weather_week(self,ctx):
         await ctx.respond(f"/weather_week - {ctx.author.mention}")
+        logger.info(f"/weather_week - {ctx.author.name}")
 
         try:
             url = "https://www.cwb.gov.tw/V8/C/W/index.html"
@@ -124,6 +125,7 @@ class Weather(discord.ext.commands.Cog):
                 "10016",
                 "09020",
                 "09007",]
+        logger.info(f"/weather_pos - {ctx.author.name}")
         MWS = MyWeatherSelection(ctx,towns,values)
         await ctx.respond(f"weather_pos {ctx.author.mention}", view=MWS.view, ephemeral=True)
 

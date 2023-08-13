@@ -65,7 +65,7 @@ class MusicBot:
     # play next music
     async def _next(self):
         if (len(self.queqed) == 0):
-            print("[*] Queqed song is finish")
+            logger.info("[*] Queqed song is finish")
             if (self.loop): # refill the music queqed for play with Played music
                 self.queqed = self.passed
                 self.passed = []
@@ -78,7 +78,7 @@ class MusicBot:
         self.passed.append(self.this_song)
         
 
-        print("[*] playing  :", self.this_song[0],"in", self.channelid)
+        logger.info(f"[*] playing  : {self.this_song[0]} in + {self.channelid}")
         this_song_url   = self.this_song[1]
         this_song_name  = self.this_song[0]
 
@@ -290,16 +290,16 @@ class MusicBot:
             await self.ctx.channel.send(f':poop: No music playing, type /`play url`') 
         elif (self.state == 1):
             if self.ctx.guild.voice_client not in self.client.voice_clients:
-                print("[*] get kicked from",self.channelid)
+                logger.info("[*] get kicked from",self.channelid)
                 await self.clear()
             else:
-                print("[*] ===  pause ===   ",self.channelid)
+                logger.info("[*] ===  pause ===   ",self.channelid)
                 self.wait_msg = await self.ctx.channel.send(f':poop: Music stop, type `/pause` or `/play` to continue the music {msg}')
                 self.state = 2
                 self.voice.pause()
         elif (self.state==2) :
-            print("[*] ===  continue ===   " ,self.channelid)
-            print("[*] plaing", self.this_song[0],"in", self.channelid)
+            logger.info(f"[*] ===  continue ===   {self.channelid}")
+            logger.info(f"[*] plaing {self.this_song[0]} in  {self.channelid}")
             if (self.wait_msg):
                 await self.wait_msg.delete()
                 self.wait_msg = None
@@ -308,8 +308,9 @@ class MusicBot:
 
 
         elif (self.state==3) :
-            print("[*] ===  continue ===   " ,self.channelid)
-            print("[*] plaing", self.this_song[0],"in", self.channelid)
+            logger.info(f"[*] ===  continue ===   {self.channelid}")
+            logger.info(f"[*] plaing {self.this_song[0]} in  {self.channelid}")
+
             if (self.wait_msg):
                 await self.wait_msg.delete()
                 self.wait_msg = None
@@ -323,16 +324,16 @@ class MusicBot:
 
     async def skipnums(self,num):
         num = int(num)
-        print(f"[*] {self.channelid} skipping {num} of songs")
+        logger.info(f"[*] {self.channelid} skipping {num} of songs")
         try:
-            print(f"[*] skipping 1 : {self.this_song[0]}")
+            logger.info(f"[*] skipping 1 : {self.this_song[0]}")
         except:
             pass
 
         for i in range(num-1):
             if (len(self.queqed)>0):
                 this_song  = self.queqed.pop(0) # get the song
-                print(f"[*] skipping {i+2} : {this_song[0]}")
+                logger.info(f"[*] skipping {i+2} : {this_song[0]}")
                 self.passed.append(this_song)
 
         self.dont_stop = 0
@@ -355,41 +356,41 @@ class MusicBot:
         if (self.voice.is_playing()):
             self.voice.pause()
         self.state = 0
-        print("[*]",self.channelid," Skipped ")
+        logger.info(f"[*] {self.channelid} Skipped ")
         await self._next()
 
     def add_thread(self,url):
-        print("[*] Adding rest in this thread ... ")
+        logger.info("[*] Youtube : Adding rest in this thread ... ")
         try:
             output = grab_playlist(url,512)
         except:
-            print(f"[*] {self.channelid} somthing goes wrong while grabing the song")
+            logger.info(f"[*] {self.channelid} somthing goes wrong while grabing the song")
             return
         for each in output[10:512]:
             self.queqed.append(each)
-        print("[*]",self.channelid," Adding Thread done.")
-        print(f"[*] Qeuqed {len(self.queqed)} songs ->",self.channelid)
+        logger.info("[*] {self.channelid} Adding Thread done.")
+        logger.info(f"[*] Qeuqed {len(self.queqed)} songs -> {self.channelid}")
 
     def addThreadSpotify(self,url):
-        print("[*] Adding rest in this thread ... ")
+        logger.info("[*] SPotify : Adding rest in this thread ... ")
         try:
             output = GrabSongListFromSpotify(url,start=5)
         except:
-            print(f"[*] {self.channelid} somthing goes wrong while grabing the song")
+            logger.info(f"[*] {self.channelid} somthing goes wrong while grabing the song")
             return
         for each in output:
             self.queqed.append(each)
-        print("[*]",self.channelid," Adding Thread done.")
-        print(f"[*] Qeuqed {len(self.queqed)} songs ->",self.channelid)
+        logger.info("[*] {self.channelid} Adding Thread done.")
+        logger.info(f"[*] Qeuqed {len(self.queqed)} songs -> {self.channelid}")
 
 
     async def add(self,url):
         self.dont_stop = 0
         try:
-            print("[*]", url)
+            logger.info("[*]", url)
             
             if (self.live == False):
-                print("[*] I'm dead")
+                logger.info("[*] I'm dead")
                 return
             
             if ("http" not in url):
@@ -402,17 +403,16 @@ class MusicBot:
                 self.queqed.extend( GrabSongListFromSpotify(url,start=0,end=5) )
 
                 threading.Thread(target = self.addThreadSpotify, args=(url,),daemon=True).start()
-                print("[*] Queqed :",self.queqed)
-
+                logger.info("[*] Queqed : {self.queqed}")
             elif ("list" in url):
-                print("[*] Adding a play list in", self.channelid)
+                logger.info("[*] Adding a play list in {self.channelid}")
                 try:
                     output = grab_playlist(url,10)
-                    print("[*] grab_playlist successful")
+                    logger.info("[*] grab_playlist successful")
 
                 except Exception as e:
-                    print(f"[*] somthing goes wrong while grabing the song")
-                    print(e)
+                    logger.info(f"[*] somthing goes wrong while grabing the song")
+                    logger.error(e)
                     await self.ctx.send(f'oops... somthing goes wrong, I cannot this music')
                     await self.ctx.send('Try "!play music" to play local music')
                     return
@@ -420,19 +420,19 @@ class MusicBot:
                     self.queqed.append(each)
 
                 threading.Thread(target = self.add_thread, args=(url,),daemon=True).start()
-                print("[*] Queqed :",self.queqed)
+                logger.info("[*] Queqed : {self.queqed}")
 
             else:
                 this_title = get_title(url)
-                print(f"[*] Adding a single video {this_title} in", self.channelid)
+                logger.info(f"[*] Adding a single video {this_title} in {self.channelid}")
                 self.queqed.append((this_title,url))
 
-            print("\n[*]",self.channelid,"-> Enqueued :",len(self.queqed), "the remaining songs will continue add in the background")
+            logger.info(f"\n[*] {self.channelid} -> Enqueued : {len(self.queqed)} the remaining songs will continue add in the background")
 
             if (self.state ==0):
                 await self._next()
         except Exception as e:
-            print(e)
+            logger.error(e)
             #await self.ctx.send(f'oops... somthing goes wrong, I cannot play all the music')
         
     async def clear(self):
@@ -441,7 +441,7 @@ class MusicBot:
                 await self.music_msg.delete()
                 self.music_msg = None
         except Exception as e:
-            print(e)
+            logger.error(e)
         self.state = 0
         self.voice.pause()
         self.queqed = []

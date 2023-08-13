@@ -42,7 +42,7 @@ def grab_playlist(url,maxima_song = 25):
     Returns:
         list[(str,str)]: A list of title and url
     """
-    print(url)
+    # logger.info(url)
     playlist_id = re.search("list=(.*?)(?:&|$)", url, re.M|re.I).group(1)
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN2')))
     request = youtube.playlistItems().list(
@@ -142,7 +142,7 @@ def GrabSongListFromSpotify(url,start=0,end=100):
     sp = spotipy.Spotify(auth_manager=auth_manager)
     
     spId = url.split('/')[-1]
-    print(spId)
+    logger.info(f"Id: {spId}")
 
     if ("track" in url):
         results = sp.track(spId)
