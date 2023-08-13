@@ -160,7 +160,7 @@ def youtubeSearch(keyword,useKeyword=True):
         except Exception as e:
             logger.error(f"[*] keynum {keynum} failed")
     logger.info(f"[*] ALL keynum failed")
-
+    return None
 
 def GrabSongListFromSpotify(url,start=0,end=100):
     auth_manager = SpotifyClientCredentials()
@@ -178,7 +178,9 @@ def GrabSongListFromSpotify(url,start=0,end=100):
         results = sp.artist_top_tracks(spId)
         output = []
         for eachItem in results['tracks'][start:end]:
-            output.append(youtubeSearch(eachItem['name']+'-'+eachItem['artists'][0]['name']))
+            thisResult = youtubeSearch(eachItem['name']+'-'+eachItem['artists'][0]['name'])
+            if (thisResult):
+                output.append(thisResult)
             time.sleep(0.1)
         return output
     
@@ -187,7 +189,9 @@ def GrabSongListFromSpotify(url,start=0,end=100):
         results = sp.playlist_tracks(spId)
         output = []
         for eachItem in results['items'][start:end]:
-            output.append(youtubeSearch(eachItem['track']['name']+'-'+eachItem['track']['artists'][0]['name']))
+            thisResult = youtubeSearch(eachItem['track']['name']+'-'+eachItem['track']['artists'][0]['name'])
+            if (thisResult):
+                output.append(thisResult)
             time.sleep(0.1)
         return output
 
