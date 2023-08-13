@@ -25,7 +25,7 @@ class Weather(discord.ext.commands.Cog):
             image_links = ""
             for i in r.html.xpath("/html/body/div[3]/main/div/div[3]/a"):
                 image_links = 'https://www.cwb.gov.tw'+list(i.links)[0]
-
+            print(image_links)
             text = r.html.xpath("/html/body/div[3]/main/div/div[1]/div/div/div[1]/div")[0].text
             ####################  handle text ####################
             text = "\n".join(text.split("\n")[1:])
