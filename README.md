@@ -44,6 +44,8 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 # :notes: Music
 
 * `/play {url}` to play music (youtube or spotify).
+* `/platlist` show all playlist
+* `/save_platlist {name}` save current playlist
 * `/skip` to skip the song.
 * `/pause` to pause the song.
 * `/list` to show the playlist

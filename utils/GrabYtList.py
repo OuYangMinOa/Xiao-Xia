@@ -1,5 +1,5 @@
 import googleapiclient.discovery
-from utils.info     import logger
+from utils.info     import logger, MUSIC_folder
 from os import getenv
 from json import loads
 import numpy
@@ -122,7 +122,12 @@ async def grab_Lyrics_spotify(song_name):
     output = output + "Lyrics from Animelyrics.com\n"
     return Found, output
 
-def youtubeSearch(keyword):
+def youtubeSearch(keyword,useKeyword=True):
+
+    if (useKeyword):
+        if (  os.path.isfile(os.path.join(MUSIC_folder,keyword))):
+            return (keyword,"")
+
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN2')))
     response = youtube.search().list(q=keyword,
                                     part="id,snippet",
@@ -135,7 +140,11 @@ def youtubeSearch(keyword):
             youtube_id = record["id"]["videoId"]
             youtube_url = f"https://www.youtube.com/watch?v={youtube_id}"
             break
-    return (title,youtube_url)
+    if (useKeyword):
+        return (keyword,youtube_url)
+    else:
+        return (title,youtube_url)
+
 
 def GrabSongListFromSpotify(url,start=0,end=100):
     auth_manager = SpotifyClientCredentials()

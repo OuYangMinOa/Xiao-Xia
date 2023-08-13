@@ -1,6 +1,6 @@
 ## music.py
 from utils.GrabYtList import *
-from utils.info     import logger, music_user, sound_user
+from utils.info     import logger, music_user, sound_user, MUSIC_folder
 import threading
 import discord
 import asyncio
@@ -8,7 +8,7 @@ import time
 from pydub import AudioSegment
 # import youtube_dl
 import yt_dlp as youtube_dl
-
+import os
 
 youtube_dl.utils.bug_reports_message = lambda: ''
 
@@ -22,12 +22,13 @@ def match_target_amplitude(sound, target_dBFS):
 class MusicBot:   
     def __init__(self,channel, voice , ctx, client):
         self.music_msg = None       # The message for current music
+        self.wait_msg  = None # The message for
         self.loop      = False      # Enable loop or not
         self.volume    = 1
         self.live      = True       # Kill this Musicbot if self.live = False
         self.channel   = channel    # Voice channel
         self.channelid = channel.id # This Music serves channel Id
-        self.floder    = "data/music"    # Folder to store music
+        self.floder    = MUSIC_folder    # Folder to store music
         self.ctxResArr = []
         self.ctx       = ctx        # ctx
         self.voice     = voice      # voice client
@@ -237,7 +238,7 @@ class MusicBot:
         async def WhileChecking():
             while True:
                 res = await self.check()
-                await asyncio.sleep(10)
+                await asyncio.sleep(600)
                 if (res):
                     break
         def LoopChecking():
@@ -290,10 +291,10 @@ class MusicBot:
             await self.ctx.channel.send(f':poop: No music playing, type /`play url`') 
         elif (self.state == 1):
             if self.ctx.guild.voice_client not in self.client.voice_clients:
-                logger.info("[*] get kicked from",self.channelid)
+                logger.info(f"[*] get kicked from {self.channelid}")
                 await self.clear()
             else:
-                logger.info("[*] ===  pause ===   ",self.channelid)
+                logger.info(f"[*] ===  pause ===   {self.channelid}")
                 self.wait_msg = await self.ctx.channel.send(f':poop: Music stop, type `/pause` or `/play` to continue the music {msg}')
                 self.state = 2
                 self.voice.pause()
@@ -368,7 +369,7 @@ class MusicBot:
             return
         for each in output[10:512]:
             self.queqed.append(each)
-        logger.info("[*] {self.channelid} Adding Thread done.")
+        logger.info(f"[*] {self.channelid} Adding Thread done.")
         logger.info(f"[*] Qeuqed {len(self.queqed)} songs -> {self.channelid}")
 
     def addThreadSpotify(self,url):
@@ -380,14 +381,13 @@ class MusicBot:
             return
         for each in output:
             self.queqed.append(each)
-        logger.info("[*] {self.channelid} Adding Thread done.")
+        logger.info(f"[*] {self.channelid} Adding Thread done.")
         logger.info(f"[*] Qeuqed {len(self.queqed)} songs -> {self.channelid}")
-
 
     async def add(self,url):
         self.dont_stop = 0
         try:
-            logger.info("[*]", url)
+            logger.info(f"[*] {url}")
             
             if (self.live == False):
                 logger.info("[*] I'm dead")
@@ -395,7 +395,7 @@ class MusicBot:
             
             if ("http" not in url):
                 tempWord = await self.ctx.send(f'Searching for {url} ... ')
-                self.queqed.append(youtubeSearch(url))
+                self.queqed.append(youtubeSearch(url,useKeyword=False))
                 await tempWord.delete()
 
 
@@ -403,9 +403,9 @@ class MusicBot:
                 self.queqed.extend( GrabSongListFromSpotify(url,start=0,end=5) )
 
                 threading.Thread(target = self.addThreadSpotify, args=(url,),daemon=True).start()
-                logger.info("[*] Queqed : {self.queqed}")
+                logger.info(f"[*] Queqed : {self.queqed}")
             elif ("list" in url):
-                logger.info("[*] Adding a play list in {self.channelid}")
+                logger.info(f"[*] Adding a play list in {self.channelid}")
                 try:
                     output = grab_playlist(url,10)
                     logger.info("[*] grab_playlist successful")
@@ -420,7 +420,7 @@ class MusicBot:
                     self.queqed.append(each)
 
                 threading.Thread(target = self.add_thread, args=(url,),daemon=True).start()
-                logger.info("[*] Queqed : {self.queqed}")
+                logger.info(f"[*] Queqed : {self.queqed}")
 
             else:
                 this_title = get_title(url)
@@ -440,9 +440,16 @@ class MusicBot:
             if (self.music_msg):
                 await self.music_msg.delete()
                 self.music_msg = None
+            if (self.wait_msg):
+                await self.wait_msg.delete()
+                self.wait_msg = None
         except Exception as e:
             logger.error(e)
+
+        
+
         self.state = 0
         self.voice.pause()
         self.queqed = []
         self.passed = []
+

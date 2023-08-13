@@ -6,6 +6,7 @@ message_collect.txt
 silence_channel.txt
 /logs/
 /data/message/
+/data/playlist/
 output1.png
 output2.png
 output3.png
