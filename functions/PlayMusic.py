@@ -242,7 +242,7 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name='save_playlist',description="Save current playlist")
     async def savePlaylist(self,ctx, name : Option(str, "The name of the playlist", required = True)):
-        await ctx.respond(f'`save_playlist`  - {ctx.author.mention}')
+        await ctx.respond(f'/save_playlist  - {ctx.author.mention}')
         logger.info(f'[*] save_playlist - {ctx.author.name}')
         music_guild_id = [music_user[x].ctx.guild.id for x in music_user]
 
@@ -266,7 +266,7 @@ class Music(discord.ext.commands.Cog):
             with open(Playlist_filename,"w",encoding='utf-8') as f:
                 f.write(msg.strip())
 
-            await ctx.send(f"Playlist saved")
+            await ctx.send(f"Playlist {name} saved, use `/playlist` to check it.")
             logger.info(f"[*] playlist save in {Playlist_filename}")
         else:
             await ctx.send(f"I not even in the vocie channel...")

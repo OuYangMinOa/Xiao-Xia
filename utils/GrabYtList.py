@@ -23,13 +23,18 @@ def get_title(url):
     Returns:
         str: title of single video
     """
-    this_id = re.search('(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})', url, re.M|re.I).group(1)
-    print(f"[*] {this_id}")
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN2')))
-    request = youtube.videos().list(
-        part = "snippet",
-        id = this_id)
-    return request.execute()["items"][0]['snippet']['title']
+    for keynum in [1,2,3,4,5]:
+        try:
+            this_id = re.search('(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})', url, re.M|re.I).group(1)
+            print(f"[*] {this_id}")
+            youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv(f'YOUTUBE_DEVELOPMENT_TOKEN{keynum}')))
+            request = youtube.videos().list(
+                part = "snippet",
+                id = this_id)
+            return request.execute()["items"][0]['snippet']['title']
+        except Exception as e:
+            logger.error(e)
+    logger.info(f"[*] ALL keynum failed")
 
 # grab the title and url of playlist
 def grab_playlist(url,maxima_song = 25):
@@ -43,31 +48,36 @@ def grab_playlist(url,maxima_song = 25):
         list[(str,str)]: A list of title and url
     """
     # logger.info(url)
-    playlist_id = re.search("list=(.*?)(?:&|$)", url, re.M|re.I).group(1)
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN2')))
-    request = youtube.playlistItems().list(
-        part = "snippet",
-        playlistId = playlist_id,
-        maxResults = maxima_song
-    )
-    response = request.execute()
-    playlist_items = []
-    Total_number   = 0
-    while request is not None:
-        response = request.execute()
-        playlist_items += response["items"]
-        request = youtube.playlistItems().list_next(request, response)
-        Total_number += 1
-        if (Total_number == maxima_song):
-            break
-    playlist_set = []
-    for i in playlist_items:
-        this_set = (
-            i['snippet']['title'],
-            f"https://www.youtube.com/watch?v={i['snippet']['resourceId']['videoId']}"
+    for keynum in [1,2,3,4,5]:
+        try:
+            playlist_id = re.search("list=(.*?)(?:&|$)", url, re.M|re.I).group(1)
+            youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv(f'YOUTUBE_DEVELOPMENT_TOKEN{keynum}')))
+            request = youtube.playlistItems().list(
+                part = "snippet",
+                playlistId = playlist_id,
+                maxResults = maxima_song
             )
-        playlist_set.append(this_set)
-    return playlist_set
+            response = request.execute()
+            playlist_items = []
+            Total_number   = 0
+            while request is not None:
+                response = request.execute()
+                playlist_items += response["items"]
+                request = youtube.playlistItems().list_next(request, response)
+                Total_number += 1
+                if (Total_number == maxima_song):
+                    break
+            playlist_set = []
+            for i in playlist_items:
+                this_set = (
+                    i['snippet']['title'],
+                    f"https://www.youtube.com/watch?v={i['snippet']['resourceId']['videoId']}"
+                    )
+                playlist_set.append(this_set)
+            return playlist_set
+        except Exception as e:
+            logger.error(e)
+    logger.info(f"[*] ALL keynum failed")
 
 async def grab_Lyrics_spotify(song_name):
     """Grab the Lyrics on the Spotify (abandoned)
@@ -124,26 +134,31 @@ async def grab_Lyrics_spotify(song_name):
 
 def youtubeSearch(keyword,useKeyword=True):
 
-    if (useKeyword):
-        if (  os.path.isfile(os.path.join(MUSIC_folder,keyword))):
-            return (keyword,"")
+    for keynum in [1,2,3,4,5]:
+        try:
+            if (useKeyword):
+                if (  os.path.isfile(os.path.join(MUSIC_folder,keyword))):
+                    return (keyword,"")
 
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv('YOUTUBE_DEVELOPMENT_TOKEN2')))
-    response = youtube.search().list(q=keyword,
-                                    part="id,snippet",
-                                    maxResults=5
-                                    ).execute().get("items", [])
-    # print(response)
-    for record in response:
-        if record["id"]["kind"] == "youtube#video":
-            title = record["snippet"]["title"]
-            youtube_id = record["id"]["videoId"]
-            youtube_url = f"https://www.youtube.com/watch?v={youtube_id}"
-            break
-    if (useKeyword):
-        return (keyword,youtube_url)
-    else:
-        return (title,youtube_url)
+            youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv(f'YOUTUBE_DEVELOPMENT_TOKEN{keynum}')))
+            response = youtube.search().list(q=keyword,
+                                            part="id,snippet",
+                                            maxResults=5
+                                            ).execute().get("items", [])
+            # print(response)
+            for record in response:
+                if record["id"]["kind"] == "youtube#video":
+                    title = record["snippet"]["title"]
+                    youtube_id = record["id"]["videoId"]
+                    youtube_url = f"https://www.youtube.com/watch?v={youtube_id}"
+                    break
+            if (useKeyword):
+                return (keyword,youtube_url)
+            else:
+                return (title,youtube_url)
+        except Exception as e:
+            logger.error(e)
+    logger.info(f"[*] ALL keynum failed")
 
 
 def GrabSongListFromSpotify(url,start=0,end=100):

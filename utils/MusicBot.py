@@ -376,7 +376,8 @@ class MusicBot:
         logger.info("[*] SPotify : Adding rest in this thread ... ")
         try:
             output = GrabSongListFromSpotify(url,start=5)
-        except:
+        except Exception as e:
+            logger.error(e)
             logger.info(f"[*] {self.channelid} somthing goes wrong while grabing the song")
             return
         for each in output:
