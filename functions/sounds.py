@@ -116,7 +116,7 @@ class Sounds(discord.ext.commands.Cog):
             
             logger.info(f"[*] list sound"+ f' - {ctx.author.name}')
 
-            ctxRes =  await ctx.respond("Available sound", view=CRM.view, ephemeral=True)
+            ctxRes =  await ctx.respond(f"Available sound (total:{CRM.count})", view=CRM.view, ephemeral=True)
             sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
         except Exception as e:
             logger.error(e)
@@ -208,7 +208,7 @@ class BuildSoundSelect():
         self.label, self.sounds = self.getsounds(channel_id)
         options = [ discord.SelectOption(label=self.label[i])for i in range(len(self.label))]
         self.view = discord.ui.View(timeout=24*60*60) # timeout -> one day
-
+        self.count = 0
         for i in range(len(options)//24+1):
             if (len(self.label[24*(i):24*(i+1)])!=0):
                 this_select = MySelection(self.sound_class,self.label[24*(i):24*(i+1)] ,self.sounds[24*(i):24*(i+1)] ).select
@@ -216,11 +216,12 @@ class BuildSoundSelect():
 
     def getsounds(self,channel_id):
         save_folder = os.path.join("data/attachments", str(channel_id))
-
         label, file = [], []
 
         for path in glob(f'{save_folder}/*.*'):
             if (path.endswith('mp3') or path.endswith('wav') ):
+                self.count += 1
+
                 label.append(os.path.basename(path[:-4]))
                 file.append( os.path.basename(path) )
 
