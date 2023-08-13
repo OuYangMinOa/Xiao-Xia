@@ -111,6 +111,7 @@ class MusicBot:
             try:
                 print("[*] downloading ->", this_song_name,"\n")
                 with youtube_dl.YoutubeDL(self.ytl) as ydl:
+                    ydl.cache.remove()
                     # ydl.download([this_song_url])
                     info = ydl.extract_info(this_song_url, download=False)
                     if (not info['is_live']):
@@ -134,6 +135,7 @@ class MusicBot:
                 try:
                     print("[*] redownloading ->", this_song_name)
                     with youtube_dl.YoutubeDL(self.ytl) as ydl:
+                        ydl.cache.remove()
                         info = ydl.extract_info(this_song_url, download=False)
                         if (not info['is_live']):
                             logger.info(f"[*] Downloading {this_song_url} due to it not a live")

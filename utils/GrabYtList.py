@@ -144,7 +144,7 @@ def youtubeSearch(keyword,useKeyword=True):
             youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv(f'YOUTUBE_DEVELOPMENT_TOKEN{keynum}')))
             response = youtube.search().list(q=keyword,
                                             part="id,snippet",
-                                            maxResults=5
+                                            maxResults=1
                                             ).execute().get("items", [])
             # print(response)
             for record in response:
