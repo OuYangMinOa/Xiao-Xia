@@ -130,7 +130,7 @@ class MusicBot:
                 #     normalized_sound.export(song_path)
                 # except:
                 #     pass
-
+                
                 logger.info("\n[*] ------------ download successful ------------")
             except Exception as e:
                 logger.error(e)
@@ -139,10 +139,12 @@ class MusicBot:
                 try:
                     print("[*] redownloading ->", this_song_name)
                     if (is_live):
+                        song_path = song_path + ".mp3"
                         YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=song_path)
                         print("[*] download successful")
                     else:
                         await self._next()
+                        await self.dowloading.delete()
                         return
                     # try:
                     #     sound = AudioSegment.from_file(song_path)
