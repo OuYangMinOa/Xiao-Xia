@@ -103,7 +103,10 @@ class MusicBot:
 
         song_path  = os.path.join(self.floder , this_song_name)
         print(song_path)
-        if ( not os.path.isfile(song_path)):
+        
+        if (os.path.isfile(song_path+".mp3")):
+            song_path = song_path + ".mp3"
+        elif ( not os.path.isfile(song_path)):
             self.ytl  = {
                 'format': 'bestaudio/best',
                 "outtmpl" : f"{self.floder}/{this_song_name}",
@@ -140,6 +143,7 @@ class MusicBot:
                     print("[*] redownloading ->", this_song_name)
                     if (is_live):
                         song_path = song_path + ".mp3"
+                        logger.info(f"[*] Download to {song_path}")
                         YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=song_path)
                         print("[*] download successful")
                     else:
