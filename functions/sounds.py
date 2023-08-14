@@ -68,19 +68,20 @@ class Sounds(discord.ext.commands.Cog):
             music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
 
             if (ctx.channel.id in sound_user):  # in sound_user
-                if (sound_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
-                    await sound_user[ctx.channel.id].voice.move_to(channel)
-                    logger.info(f"[*] move {sound_user[ctx.channel.id].channelid} -> {channel.id}")
-                    sound_user[ctx.channel.id].channel    = channel
-                    sound_user[ctx.channel.id].channelid  = channel.id
-                    sound_user[ctx.channel.id].ctx        = ctx
-
                 if ctx.guild.voice_client not in self.bot.voice_clients:   # in music_user but not in any voice channel
                     await sound_user[ctx.channel.id].kill()
                     del sound_user[ctx.channel.id]
                     logger.info("[*] rejoin the voice channel")
                     voice =  await channel.connect()
                     sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
+                elif (sound_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
+                    await sound_user[ctx.channel.id].voice.move_to(channel)
+                    logger.info(f"[*] move {sound_user[ctx.channel.id].channelid} -> {channel.id}")
+                    sound_user[ctx.channel.id].channel    = channel
+                    sound_user[ctx.channel.id].channelid  = channel.id
+                    sound_user[ctx.channel.id].ctx        = ctx
+
+                
 
 
             elif (ctx.guild.id in music_user_guild):  # in music_user (a simple transfer)
@@ -133,13 +134,6 @@ class Sounds(discord.ext.commands.Cog):
         music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
 
         if (ctx.channel.id in sound_user):  # in sound_user
-            if (sound_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
-                await sound_user[ctx.channel.id].voice.move_to(channel)
-                logger.info(f"[*] move {sound_user[ctx.channel.id].channelid} -> {channel.id}")
-                sound_user[ctx.channel.id].channel    = channel
-                sound_user[ctx.channel.id].channelid  = channel.id
-                sound_user[ctx.channel.id].ctx        = ctx
-
             if ctx.guild.voice_client not in self.bot.voice_clients:   # in music_user but not in any voice channel
                 await sound_user[ctx.channel.id].kill()
                 del sound_user[ctx.channel.id]
@@ -147,16 +141,18 @@ class Sounds(discord.ext.commands.Cog):
                 voice =  await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
 
+            elif (sound_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
+                await sound_user[ctx.channel.id].voice.move_to(channel)
+                logger.info(f"[*] move {sound_user[ctx.channel.id].channelid} -> {channel.id}")
+                sound_user[ctx.channel.id].channel    = channel
+                sound_user[ctx.channel.id].channelid  = channel.id
+                sound_user[ctx.channel.id].ctx        = ctx
+
+            
+
         elif (ctx.guild.id in music_user_guild):  # in music_user (a simple transfer)
             music_channel_id = music_user[list(music_user)[music_user_guild.index(ctx.guild.id)]].ctx.channel.id
 
-            if (music_user[music_channel_id].channelid != channel.id):  # in same channel but not in same voice channel
-                await music_user[music_channel_id].voice.move_to(channel)
-                logger.info(f"[*]  music_user : {music_user[music_channel_id].channelid} -> sound_user : {channel.id}")
-
-            sound_user[music_channel_id] = SoundBot(channel, music_user[music_channel_id].voice , ctx, self.bot)
-
-                # del music_user[ctx.channel.id]
 
             if ctx.guild.voice_client not in self.bot.voice_clients:   
                 await music_user[ctx.channel.id].kill()
@@ -164,6 +160,16 @@ class Sounds(discord.ext.commands.Cog):
                 logger.info("[*] rejoin the voice channel")
                 voice =  await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
+
+
+            elif (music_user[music_channel_id].channelid != channel.id):  # in same channel but not in same voice channel
+                await music_user[music_channel_id].voice.move_to(channel)
+                logger.info(f"[*]  music_user : {music_user[music_channel_id].channelid} -> sound_user : {channel.id}")
+                sound_user[music_channel_id] = SoundBot(channel, music_user[music_channel_id].voice , ctx, self.bot)
+
+                # del music_user[ctx.channel.id]
+
+            
         else:
             print("[*] moving to voice channel")
             voice =  await channel.connect()

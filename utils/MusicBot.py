@@ -452,8 +452,6 @@ class MusicBot:
         except Exception as e:
             logger.error(e)
 
-        
-
         self.state = 0
         self.voice.pause()
         self.queqed = []

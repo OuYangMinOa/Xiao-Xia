@@ -26,7 +26,7 @@ def get_title(url):
     for keynum in [1,2,3,4,5]:
         try:
             this_id = re.search('(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})', url, re.M|re.I).group(1)
-            print(f"[*] {this_id}")
+            # print(f"[*] {this_id}")
             youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = str(os.getenv(f'YOUTUBE_DEVELOPMENT_TOKEN{keynum}')))
             request = youtube.videos().list(
                 part = "snippet",

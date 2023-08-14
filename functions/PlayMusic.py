@@ -43,19 +43,22 @@ class Music(discord.ext.commands.Cog):
         # print(sound_guild_id)
 
         if (ctx.channel.id in music_user):
-            if (music_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
+            
+            if ctx.guild.voice_client not in self.bot.voice_clients:   # in same channel but not in any voice channel
+                logger.info("[*] rejoin the voice channel")
+                await music_user[ctx.channel.id].kill()
+                del music_user[ctx.channel.id]
+                voice =  await channel.connect()
+                music_user[ctx.channel.id] = my_mb.MusicBot(channel, voice , ctx, self.bot)
+
+            elif (music_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
                 await music_user[ctx.channel.id].voice.move_to(channel)
                 logger.info(f"[*] move {music_user[ctx.channel.id].channelid} -> {channel.id}")
                 music_user[ctx.channel.id].channel    = channel
                 music_user[ctx.channel.id].channelid  = channel.id
                 music_user[ctx.channel.id].ctx        = ctx
 
-            if ctx.guild.voice_client not in self.bot.voice_clients:   # in same channel but not in any voice channel
-                await music_user[ctx.channel.id].kill()
-                del music_user[ctx.channel.id]
-                logger.info("[*] rejoin the voice channel")
-                voice =  await channel.connect()
-                music_user[ctx.channel.id] = my_mb.MusicBot(channel, voice , ctx, self.bot)
+            
 
             if (not url):
                 logger.info("[*] no url specified",music_user[ctx.channel.id].state)
