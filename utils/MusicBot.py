@@ -112,11 +112,13 @@ class MusicBot:
             self.dowloading = await self.ctx.send(f'... Downloading {this_song_name}')
             try:
                 print("[*] downloading ->", this_song_name,"\n")
+                is_live = True
                 with youtube_dl.YoutubeDL(self.ytl) as ydl:
                     ydl.cache.remove()
                     # ydl.download([this_song_url])
                     info = ydl.extract_info(this_song_url, download=False)
                     if (not info['is_live']):
+                        is_live = False
                         logger.info(f"[*] Downloading {this_song_url} due to it not a live")
                         ydl.download([this_song_url])
                     else:
@@ -131,22 +133,17 @@ class MusicBot:
 
                 logger.info("\n[*] ------------ download successful ------------")
             except Exception as e:
-                logger.error("[*] ----- error ----- try to use pytube.")
                 logger.error(e)
+                logger.error("[*] ----- error ----- try to use pytube.")
                 print("[*] redownloaded in 5 second")
                 try:
                     print("[*] redownloading ->", this_song_name)
-                    with youtube_dl.YoutubeDL(self.ytl) as ydl:
-                        ydl.cache.remove()
-                        info = ydl.extract_info(this_song_url, download=False)
-                        if (not info['is_live']):
-                            logger.info(f"[*] Downloading {this_song_url} due to it not a live")
-                            # ydl.download([this_song_url])
-                            YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=song_path)
-                        else:
-                            logger.info(f"[*] {this_song_url} is a live stream")
-                            song_path = info['formats'][0]['url']
-
+                    if (is_live):
+                        YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=song_path)
+                        print("[*] download successful")
+                    else:
+                        await self._next()
+                        return
                     # try:
                     #     sound = AudioSegment.from_file(song_path)
                     #     normalized_sound = match_target_amplitude(sound, -20.0)
@@ -154,14 +151,13 @@ class MusicBot:
                     # except:
                     #     pass
 
-                    print("[*] download successful")
                 except Exception as e:
                     error_     = await self.ctx.channel.send(f':weary:  Error occurred again')
                     redownload = await self.ctx.channel.send(f':weary:  Skipping this song ... {this_song_name}')
                     logger.info("[*] error heppened again")
-                    logger.info("[*] play next song in 5second")
+                    logger.info("[*] play next song")
                     logger.error(e)
-
+                    time.sleep(1)
                     await redownload.delete()
                     await error_.delete()
                     await self.dowloading.delete()
