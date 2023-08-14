@@ -11,6 +11,9 @@ import time
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import requests
+
+
+from pytube import YouTube, Playlist
 from pip._vendor import requests
 
 # grab the title of single video
@@ -23,6 +26,14 @@ def get_title(url):
     Returns:
         str: title of single video
     """
+    ########## Pytube
+    try:
+        return YouTube(url).title
+    except Exception as e:
+        logger.error(f"[*] Pytube faild to grab {url} title")
+
+
+    ##########  googleapiclient
     for keynum in [1,2,3,4,5]:
         try:
             this_id = re.search('(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})', url, re.M|re.I).group(1)
@@ -36,6 +47,9 @@ def get_title(url):
             logger.error(f"[*] keynum {keynum} failed")
     logger.info(f"[*] ALL keynum failed")
 
+
+
+
 # grab the title and url of playlist
 def grab_playlist(url,maxima_song = 25):
     """grab the title and url of playlist
@@ -48,6 +62,8 @@ def grab_playlist(url,maxima_song = 25):
         list[(str,str)]: A list of title and url
     """
     # logger.info(url)
+    
+
     for keynum in [1,2,3,4,5]:
         try:
             playlist_id = re.search("list=(.*?)(?:&|$)", url, re.M|re.I).group(1)
@@ -80,6 +96,22 @@ def grab_playlist(url,maxima_song = 25):
 
     logger.info(f"[*] ALL keynum failed")
 
+    try:
+        logger.info("[*] Grabbing playlist with pytube")
+        p = Playlist(url)
+        count = 0
+        playlist_set = []
+        for item in p.videos:
+            if (count>=maxima_song):
+                break
+            playlist_set.append(
+                (item.title,item.watch_url)
+                )
+            time.sleep(0.01)
+            count += 1
+        return playlist_set
+    except Exception as e:
+        logger.error(f"[*] Pytube faild to grab {url} yt playlist")
 async def grab_Lyrics_spotify(song_name):
     """Grab the Lyrics on the Spotify (abandoned)
 

@@ -141,7 +141,7 @@ class MusicBot:
                         # song_path = song_path + ".mp3"
                         logger.info(f"[*] Download to {song_path}")
                         YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=self.floder,filename=this_song_name)
-                        print("[*] download successful")
+                        logger.info("\n[*] ------------ download successful ------------")
                     else:
                         await self._next()
                         await self.dowloading.delete()
