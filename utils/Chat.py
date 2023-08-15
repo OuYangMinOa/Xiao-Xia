@@ -78,8 +78,9 @@ class Chat:
         Returns:
             str: cleaned ,msg
         """
-        if ("\n\n" in msg):
-            return msg.split("\n\n")[0].strip()
+        split_msg = "歐陽小俠:"
+        if (split_msg in msg):
+            return "\n".join(msg.split(split_msg)[0:2]).strip()
         else:
             return msg.strip()
 
