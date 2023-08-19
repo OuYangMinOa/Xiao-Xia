@@ -28,6 +28,7 @@ def get_title(url):
     """
     ########## Pytube
     try:
+        logger.info(f"[*] USing pytube ")
         return YouTube(url).title
     except Exception as e:
         logger.error(f"[*] Pytube faild to grab {url} title")
@@ -112,6 +113,8 @@ def grab_playlist(url,maxima_song = 25):
         return playlist_set
     except Exception as e:
         logger.error(f"[*] Pytube faild to grab {url} yt playlist")
+
+
 async def grab_Lyrics_spotify(song_name):
     """Grab the Lyrics on the Spotify (abandoned)
 

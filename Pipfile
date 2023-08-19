@@ -21,6 +21,7 @@ pytest = "*"
 py-cord = {extras = ["voice"], version = "*"}
 requests-html = "*"
 spotipy = "*"
+pytube = "*"
 
 [dev-packages]
 

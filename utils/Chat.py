@@ -79,10 +79,12 @@ class Chat:
             str: cleaned ,msg
         """
         split_msg = "歐陽小俠:"
-        if (split_msg in msg):
-            return "\n".join(msg.split(split_msg)[0:2]).strip()
-        else:
-            return msg.strip()
+        if (msg):
+            if (split_msg in msg):
+                return "\n".join(msg.split(split_msg)[0:2]).strip()
+            else:
+                return msg.strip()
+        return msg
 
     def Talk(self,name,message):
         """Talk to LLM
