@@ -141,7 +141,8 @@ class Music(discord.ext.commands.Cog):
         if (ctx.channel.id in sound_user):
             try:
                 # sound_user[ctx.channel.id].crmView.stop()
-                await sound_user[ctx.channel.id].ctxRes.delete_original_response()
+                for eachctx in sound_user[ctx.channel.id].ctxResArr:
+                    await eachctx.delete_original_response()
             except Exception as e:
                 logger.error(e)
             # await ctx.send("Leaving the voice channel ...")
