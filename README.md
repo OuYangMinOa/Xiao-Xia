@@ -6,7 +6,7 @@
 ![](https://img.shields.io/github/pipenv/locked/dependency-version/ncuphysics/hack_bot/py-cord)
 ![](https://img.shields.io/bower/l/mi)
 
-# Build your own discord bot
+# Build your own discord bot        
 
 If you want to build your own bot, the bot is develop base on [python](https://www.python.org). Python3 is require for installation and ffmpeg for audio procession. Here are the procedure to run Xiao-xia locally.
 
