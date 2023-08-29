@@ -37,8 +37,8 @@ if __name__ == '__main__':
             extension = f"functions.{filename[:-3]}"
             bot.load_extension(extension)
 
-    # from utils.wesAi import prompt_wes_com
-    # print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
+    from utils.wesAi import prompt_wes_com
+    print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
 
 
 bot.run(token)

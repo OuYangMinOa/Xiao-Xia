@@ -24,7 +24,7 @@ def prompt_wes_com(text):   # use my own LLM AI
     
     HOST = "192.168.0.7"
     # HOST = "127.0.0.1"
-    PORT = 1564
+    PORT = 8088
 
 
     # time.sleep(1)
@@ -52,7 +52,7 @@ def prompt_wes_com(text):   # use my own LLM AI
         "top_p":0.2,
         "temperature":1,
         }
-    response  = requests.post("http://192.168.0.10:8088/prompt",json=prompt)
+    response  = requests.post(f"http://{HOST}:{PORT}/prompt",json=prompt)
     reJson = response.json()
 
     if (reJson["status"] =="ok"):
