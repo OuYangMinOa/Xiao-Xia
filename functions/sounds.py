@@ -9,6 +9,7 @@ from pydub            import AudioSegment
 
 import utils.MusicBot     as my_mb # my class
 import discord
+import asyncio
 import os
 
 
@@ -57,7 +58,8 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command(name="list_sound",description="list all the sounds in this channel")
     async def list_sound(self,ctx):
-        await ctx.response.defer(ephemeral=True)
+        await asyncio.sleep(0.1)
+        await ctx.response.defer()
 
         ##  connect to a voice channel
         try:
@@ -118,9 +120,16 @@ class Sounds(discord.ext.commands.Cog):
                 return
             
             logger.info(f"[*] list sound"+ f' - {ctx.author.name}')
+
             
-            ctxRes =  await ctx.respond(f"Available sound (total:{CRM.count})", view=CRM.view, ephemeral=True)
-            sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
+            ctxResMess =  await ctx.respond(f"Available sound (total:{CRM.count})")
+            sound_user[ctx.channel.id].ctxResArr.append(ctxResMess)
+            for eachView in CRM.views:
+                ctxRes =  await ctx.send(view=eachView)
+                sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
+
+            
+
         except Exception as e:
             logger.error(e)
 
@@ -218,12 +227,23 @@ class BuildSoundSelect():
         self.sound_class = sound_class
         self.label, self.sounds = self.getsounds(channel_id)
         options = [ discord.SelectOption(label=self.label[i])for i in range(len(self.label))]
-        self.view = discord.ui.View(timeout=24*60*60) # timeout -> one day
+        self.views = []
+
+        # self.view = discord.ui.View(timeout=24*60*60) # timeout -> one day
         
+        self.view = discord.ui.View(timeout=24*60*60)
+        self.views.append(self.view)
+        counter = 0
         for i in range(len(options)//24+1):
             if (len(self.label[24*(i):24*(i+1)])!=0):
                 this_select = MySelection(self.sound_class,self.label[24*(i):24*(i+1)] ,self.sounds[24*(i):24*(i+1)] ).select
-                self.view.add_item(this_select)
+                self.views[-1].add_item(this_select)
+                counter += 1
+                if(counter==5):
+                    self.view = discord.ui.View(timeout=24*60*60)
+                    self.views.append(self.view)
+                    counter = 0
+            
 
     def getsounds(self,channel_id):
         save_folder = os.path.join("data/attachments", str(channel_id))
