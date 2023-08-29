@@ -24,7 +24,7 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command( name="upload_sound",description="upload sound file")
     async def upload_sound(self,ctx, filename : Option(str, "The name of the sound", required = True), file: discord.Attachment):
-        await ctx.response.defer(ephemeral=True)
+        await ctx.respond(f"/upload_sound - {ctx.author.mention}",ephemeral=True)
         if file:
         # Check if there are any attachments
             attachment = file
@@ -58,8 +58,7 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command(name="list_sound",description="list all the sounds in this channel")
     async def list_sound(self,ctx):
-        await asyncio.sleep(0.1)
-        await ctx.response.defer()
+        await ctx.respond(f"/list_sound - {ctx.author.mention}",ephemeral=True)
 
         ##  connect to a voice channel
         try:
@@ -136,7 +135,7 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command( name="search_sound",description="Search sound file")
     async def search_sound(self,ctx, keyword:Option(str, "The keywords", required = True)):
-        await ctx.response.defer(ephemeral=True)
+        await ctx.respond(f"/search_sound - {ctx.author.mention}",ephemeral=True)
         
         if not ctx.author.voice:
             await ctx.respond('you are not connected to a voice channel')
