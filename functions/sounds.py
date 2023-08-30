@@ -138,7 +138,7 @@ class Sounds(discord.ext.commands.Cog):
 
             thisCount = 1
             for eachView in CRM.views:
-                ctxRes =  await ctx.send(f"({thisCount}/{CRM.views})",view=eachView)
+                ctxRes =  await ctx.send(f"({thisCount}/{len(CRM.views)})",view=eachView)
                 sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
                 thisCount += 1
 
