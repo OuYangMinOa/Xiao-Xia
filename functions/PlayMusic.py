@@ -295,9 +295,9 @@ class Music(discord.ext.commands.Cog):
     async def playlist(self,ctx):
         logger.info(f'[*] load_playlist - {ctx.author.name}')
 
-        await ctx.response.defer(ephemeral=True)
-        while True:
+        for _ in range(10):
             try:
+                await ctx.response.defer(ephemeral=True)
                 await ctx.respond(f'playlist - {ctx.author.mention}')
                 break
             except:

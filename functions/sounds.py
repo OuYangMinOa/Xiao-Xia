@@ -24,9 +24,16 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command( name="upload_sound",description="upload sound file")
     async def upload_sound(self,ctx, filename : Option(str, "The name of the sound", required = True), file: discord.Attachment):
-        logger.info("upload_sound {ctx.author.name}")
-        await ctx.response.defer()
-        await ctx.respond(f"/upload_sound - {ctx.author.mention}",ephemeral=True)
+        logger.info(f"upload_sound {ctx.author.name}")
+        for _ in range(10):
+            try:
+                await ctx.response.defer()
+                await ctx.respond(f"/upload_sound - {ctx.author.mention}",ephemeral=True)
+                break
+            except:
+                print("[*] retrying...")
+
+
         if file:
         # Check if there are any attachments
             attachment = file
@@ -60,7 +67,7 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command(name="list_sound",description="list all the sounds in this channel")
     async def list_sound(self,ctx):
-        logger.info("list_sound {ctx.author.name}")
+        logger.info(f"list_sound {ctx.author.name}")
         await ctx.response.defer(ephemeral=True)
         while True:
             try:
