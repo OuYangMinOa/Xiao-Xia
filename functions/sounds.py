@@ -150,6 +150,7 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command( name="search_sound",description="Search sound file")
     async def search_sound(self,ctx, keyword:Option(str, "The keywords", required = True)):
+        await ctx.response.defer( ephemeral=True)
         await ctx.respond(f"/search_sound - {ctx.author.mention}",ephemeral=True)
         
         if not ctx.author.voice:
@@ -224,9 +225,6 @@ class Sounds(discord.ext.commands.Cog):
         
         ctxRes = await ctx.respond(f"Keyword : {keyword}", view=view, ephemeral=True)
         sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
-
-
-
 
 
 class SoundBot(my_mb.MusicBot):
