@@ -425,7 +425,7 @@ class Music(discord.ext.commands.Cog):
 
         logger.info(f"[*] Build sound successful !!")
 
-        await music_user[ctx.channel.id].pause("(Stop cause I'm saying something)",)
+        await music_user[ctx.channel.id].pause("(Stop cause I'm saying something)")
 
         tempqueqe = music_user[ctx.channel.id].queqed
         temppasse = music_user[ctx.channel.id].passed
