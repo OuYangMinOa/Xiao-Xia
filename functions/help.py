@@ -32,7 +32,8 @@ class Help(discord.ext.commands.Cog):
  - `/upload_sound {name} {file}` to upload your own sound.
  - `/list_sound` to list all available sound and play it.
  - `/search_sound` {keyword}to search sounds by keywords.
-
+ - `/say` to say the word.
+                           
 * 😆 **CHAT**
  - `/clear_talk` Clear past chat history.
  - `/silence` to shut me up in this chat.
@@ -67,6 +68,7 @@ class Help(discord.ext.commands.Cog):
  - `/upload_sound {name} {file}` 上傳你自己的音效。
  - `/list_sound` 查看所有的音效並撥放。
  - `/search_sound` {keyword} 用關鍵字查詢音效。
+ - `/say` 讓我說出你要我說的話.
 
 * 😆 **聊天**
  - `/clear_talk` 清空過去的聊天紀錄。                        
