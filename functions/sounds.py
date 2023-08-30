@@ -24,6 +24,8 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command( name="upload_sound",description="upload sound file")
     async def upload_sound(self,ctx, filename : Option(str, "The name of the sound", required = True), file: discord.Attachment):
+        logger.info("upload_sound {ctx.author.name}")
+        await ctx.response.defer()
         await ctx.respond(f"/upload_sound - {ctx.author.mention}",ephemeral=True)
         if file:
         # Check if there are any attachments
@@ -58,7 +60,9 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command(name="list_sound",description="list all the sounds in this channel")
     async def list_sound(self,ctx):
-        await ctx.respond(f"/list_sound - {ctx.author.mention}",ephemeral=True)
+        logger.info("list_sound {ctx.author.name}")
+        await ctx.defer(ephemeral=True)
+        await ctx.respond(f"/list_sound - {ctx.author.mention}")
 
         ##  connect to a voice channel
         try:

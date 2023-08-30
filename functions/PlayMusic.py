@@ -166,6 +166,7 @@ class Music(discord.ext.commands.Cog):
     async def clear(self,ctx):
         logger.info(f"[*] clear {ctx.author.name}")
 
+        await ctx.response.defer(ephemeral=True)
         await ctx.respond('clear' + f' - {ctx.author.mention}' )
 
 
@@ -294,8 +295,13 @@ class Music(discord.ext.commands.Cog):
     async def playlist(self,ctx):
         logger.info(f'[*] load_playlist - {ctx.author.name}')
 
-        await ctx.defer(ephemeral=True)
-        await ctx.respond(f'playlist - {ctx.author.mention}')
+        await ctx.response.defer(ephemeral=True)
+        while True:
+            try:
+                await ctx.respond(f'playlist - {ctx.author.mention}')
+                break
+            except:
+                print("[*] retrying...")
 
 
         if not ctx.author.voice:
@@ -346,6 +352,7 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name="say",description="Let me say something")
     async def say(self,ctx, word:Option(str,"THe word you want me to say",required=True)):
         logger.info(f'[*] say - {ctx.author.name}')
+        await ctx.response.defer(ephemeral=True)
         await ctx.respond(f'[*] say - {ctx.author.name}')
 
         if not ctx.author.voice:
