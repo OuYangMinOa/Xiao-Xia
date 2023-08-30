@@ -282,9 +282,7 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="playlist",description="list all the playlist")
     async def playlist(self,ctx):
-        await ctx.response.defer()
-
-        # await ctx.send(f'`\load_playlist` - {ctx.author.mention}')
+        await ctx.respond(f'playlist - {ctx.author.mention}')
         logger.info(f'[*] load_playlist - {ctx.author.name}')
 
 
