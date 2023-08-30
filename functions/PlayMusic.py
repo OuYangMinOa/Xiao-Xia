@@ -18,6 +18,8 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="pause",description="Pause the music")
     async def pause(self,ctx):
+        logger.info(f"[*] pause {ctx.author.name}")
+
         await ctx.respond("pause" + f' - {ctx.author.mention}')
         voice = ctx.author.voice
         if not voice:
@@ -102,6 +104,8 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="list",description="List all the music")
     async def list(self,ctx):
+        logger.info(f"[*] list {ctx.author.name}")
+
         await ctx.respond( f'list - {ctx.author.mention}')
 
 
@@ -122,6 +126,8 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="leave",description="leave the voice channel")
     async def leave(self,ctx):
+        logger.info(f"[*] leave {ctx.author.name}")
+
         await ctx.respond('leave' + f' - {ctx.author.mention}')
 
 
@@ -158,6 +164,7 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="clear",description="clear the music")
     async def clear(self,ctx):
+        logger.info(f"[*] clear {ctx.author.name}")
 
         await ctx.respond('clear' + f' - {ctx.author.mention}' )
 
@@ -181,6 +188,7 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="skip",description="skip the current music")
     async def skip(self,ctx):
+        logger.info(f"[*] skip {ctx.author.name}")
 
         await ctx.respond('skip' + f' - {ctx.author.mention}')
 
@@ -202,6 +210,7 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="loop",description="loop the music list")
     async def loop(self,ctx):
+        logger.info(f"[*] loop {ctx.author.name}")
         await ctx.respond('loop'  + f' - {ctx.author.mention}')
 
         
@@ -229,7 +238,8 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name="skipnums",description="skip the current music")
     async def skipnums(self,ctx,  nums: Option(int, "The number of music you want to skip", required = True)):
 
-        await ctx.respond('skipnums' + f' - {ctx.author.mention}')
+        logger.info('[*] skipnums' + f' {ctx.author.name}')
+        await ctx.respond('skipnums' + f' {ctx.author.mention}')
 
 
         if not ctx.author.voice:
@@ -250,8 +260,8 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name='save_playlist',description="Save current playlist")
     async def savePlaylist(self,ctx, name : Option(str, "The name of the playlist", required = True)):
-        await ctx.respond(f'/save_playlist  - {ctx.author.mention}')
         logger.info(f'[*] save_playlist - {ctx.author.name}')
+        await ctx.respond(f'/save_playlist  - {ctx.author.mention}')
         music_guild_id = [music_user[x].ctx.guild.id for x in music_user]
 
         if (ctx.guild.id in music_guild_id):
@@ -282,8 +292,10 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="playlist",description="list all the playlist")
     async def playlist(self,ctx):
-        await ctx.respond(f'playlist - {ctx.author.mention}')
         logger.info(f'[*] load_playlist - {ctx.author.name}')
+
+        await ctx.defer(ephemeral=True)
+        await ctx.respond(f'playlist - {ctx.author.mention}')
 
 
         if not ctx.author.voice:
