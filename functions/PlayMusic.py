@@ -414,6 +414,7 @@ class Music(discord.ext.commands.Cog):
 
 
 
+        logger.info(f"[*] creating sound .... ")
         os.makedirs(MUSIC_folder,exist_ok=True)
         filename = f"{MUSIC_folder}//{ctx.guild.id}.mp3"
 
@@ -422,17 +423,22 @@ class Music(discord.ext.commands.Cog):
         communicate = edge_tts.Communicate(word, VOICE)
         await communicate.save(filename)
 
-        await music_user[ctx.channel.id].pause("(Stop cause I'm saying something)",)
+        logger.info(f"[*] Build sound successful !!")
 
-        music_user[ctx.channel.id].state = 3
+        await music_user[ctx.channel.id].pause("(Stop cause I'm saying something)",)
 
         tempqueqe = music_user[ctx.channel.id].queqed
         temppasse = music_user[ctx.channel.id].passed
 
         music_user[ctx.channel.id].passed = []
-        music_user[ctx.channel.id].queqed = [(f"{ctx.guild.id}.mp3",""),]
+        music_user[ctx.channel.id].queqed = [ (f"{ctx.guild.id}.mp3",""),]
+        print(music_user[ctx.channel.id].queqed )
+        logger.info(f"[*] Try to play sound .... ")
+
 
         await music_user[ctx.channel.id]._next()
+
+        music_user[ctx.channel.id].state = 3
 
         music_user[ctx.channel.id].queqed = tempqueqe
         music_user[ctx.channel.id].passed = temppasse
