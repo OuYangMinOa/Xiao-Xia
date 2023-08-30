@@ -67,6 +67,12 @@ class MusicBot:
 
     # play next music
     async def _next(self):
+        threading.Thread(target=self.thread_next,daemon=True).start()
+
+    def thread_next(self):
+        self.client.loop.create_task(self._next2())
+
+    async def _next2(self):
         if (len(self.queqed) == 0):
             logger.info("[*] Queqed song is finish")
             if (self.loop): # refill the music queqed for play with Played music
@@ -254,6 +260,7 @@ class MusicBot:
             return True
 
         return False
+    
     
 
     def StartChecking(self):
