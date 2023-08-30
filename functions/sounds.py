@@ -68,13 +68,14 @@ class Sounds(discord.ext.commands.Cog):
     @slash_command(name="list_sound",description="list all the sounds in this channel")
     async def list_sound(self,ctx):
         logger.info(f"list_sound {ctx.author.name}")
-        await ctx.response.defer(ephemeral=True)
-        while True:
+        for _ in range(10):
             try:
+                await ctx.response.defer()
                 await ctx.respond(f"/list_sound - {ctx.author.mention}")
                 break
             except:
                 print("[*] retrying...")
+
 
         ##  connect to a voice channel
         try:
