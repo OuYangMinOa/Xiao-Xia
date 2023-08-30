@@ -62,8 +62,6 @@ class Sounds(discord.ext.commands.Cog):
     async def list_sound(self,ctx):
         logger.info("list_sound {ctx.author.name}")
         await ctx.response.defer(ephemeral=True)
-
-        await ctx.response.defer(ephemeral=True)
         while True:
             try:
                 await ctx.respond(f"/list_sound - {ctx.author.mention}")
