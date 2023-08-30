@@ -420,7 +420,7 @@ class Music(discord.ext.commands.Cog):
 
         ## say something
         VOICE = "zh-CN-YunxiNeural"
-        communicate = edge_tts.Communicate(word, VOICE)
+        communicate = edge_tts.Communicate(word, VOICE,rate= "-5%",volume="+20%")
         await communicate.save(filename)
 
         logger.info(f"[*] Build sound successful !!")
