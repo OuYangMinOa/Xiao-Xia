@@ -22,6 +22,7 @@ py-cord = {extras = ["voice"], version = "*"}
 requests-html = "*"
 spotipy = "*"
 pytube = "*"
+edge-tts = "*"
 
 [dev-packages]
 

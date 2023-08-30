@@ -37,7 +37,7 @@ class MusicBot:
         self.client    = client
         self.queqed    = []         # music queqed for play
         self.passed    = []         # Played music
-        self.state     = 0          # 0:not playing , 1:playing , 2:pause, 3:need to skip to continue
+        self.state     = 0          # 0:not playing , 1:playing , 2:pause, 3:need to use next_() to continue
         self.rejoin_c  = 0          # rejoin every 20 songs
         self.dont_stop = 0          # will play untill dont_stop = 3 to check again
 
@@ -214,7 +214,7 @@ class MusicBot:
     async def check(self):
         # define the voice channel
         if (self.live == False):
-            return False
+            return True
         # print(self.channel.voice_states)
         member_count = len(self.channel.voice_states)
         print(f"[*] {self.channelid}, left member : {member_count}")
@@ -232,8 +232,27 @@ class MusicBot:
                         await eachRes.delete_original_response()
                     except Exception as e:
                         print(e)
+                        logger.error(f"[*] Delete original response : {e}")
             if (self.ctx.channel.id in sound_user): del sound_user[self.ctx.channel.id]
             return True
+        
+
+        ## if left the channel
+        if (self.ctx.guild.voice_client not in self.client.voice_clients):
+            logger.info("[*] bot not in voice client")
+            self.kill()
+            if (self.ctx.channel.id in music_user): del music_user[self.ctx.channel.id]
+            if (self.ctx.channel.id in sound_user):
+                for eachRes in self.ctxResArr:
+                    try:
+                        # sound_user[ctx.channel.id].crmView.stop()
+                        await eachRes.delete_original_response()
+                    except Exception as e:
+                        print(e)
+                        logger.error(f"[*] Delete original response : {e}")
+            if (self.ctx.channel.id in sound_user): del sound_user[self.ctx.channel.id]
+            return True
+
         return False
     
 
@@ -291,7 +310,8 @@ class MusicBot:
     async def pause(self,msg=""):
         self.dont_stop = 0
         if (self.state == 0):
-            await self.ctx.channel.send(f':poop: No music playing, type /`play url`') 
+            # await self.ctx.channel.send(f':poop: No music playing, type /`play url`') 
+            pass
         elif (self.state == 1):
             if self.ctx.guild.voice_client not in self.client.voice_clients:
                 logger.info(f"[*] get kicked from {self.channelid}")
@@ -318,13 +338,8 @@ class MusicBot:
             if (self.wait_msg):
                 await self.wait_msg.delete()
                 self.wait_msg = None
-            self.state = 1
-
-            self.this_song  = self.passed.pop(0)
-            self.queqed.insert(0,self.this_song)
-
-            
-            await self.skip()
+            self.state = 1            
+            await self._next()
 
     async def skipnums(self,num):
         num = int(num)
@@ -449,6 +464,15 @@ class MusicBot:
                 self.wait_msg = None
         except Exception as e:
             logger.error(e)
+
+        for eachRes in self.ctxResArr:
+            try:
+                # sound_user[ctx.channel.id].crmView.stop()
+                await eachRes.delete_original_response()
+            except Exception as e:
+                print(e)
+                logger.error(f"[*] Delete original response : {e}")
+
 
         self.state = 0
         self.voice.pause()

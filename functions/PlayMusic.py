@@ -2,10 +2,12 @@ from discord.commands import slash_command, Option
 from discord.ext      import commands
 
 from utils.info     import logger
-from utils.info       import music_user, sound_user, Playlist_folder
+from utils.info       import music_user, sound_user, Playlist_folder, MUSIC_folder
+
 from utils.PlayListSelection import PlayListSelection
 
 import utils.MusicBot     as my_mb # my class
+import edge_tts
 import discord
 import os
 
@@ -39,10 +41,10 @@ class Music(discord.ext.commands.Cog):
         else:
             channel = ctx.author.voice.channel
 
-        sound_guild_id = [sound_user[x].ctx.guild.id for x in sound_user]
+        sound_guild_id = [sound_user[x].ctx.guild.id for x in sound_user]  #  use for check if bot is in the sound dict
         # print(sound_guild_id)
 
-        if (ctx.channel.id in music_user):
+        if (ctx.channel.id in music_user):  #  if bot is in the music dict
             
             if ctx.guild.voice_client not in self.bot.voice_clients:   # in same channel but not in any voice channel
                 logger.info("[*] rejoin the voice channel")
@@ -63,7 +65,7 @@ class Music(discord.ext.commands.Cog):
             if (not url):
                 logger.info("[*] no url specified",music_user[ctx.channel.id].state)
 
-                if (ctx.guild.id in sound_guild_id):
+                if (ctx.guild.id in sound_guild_id):  # if bot is in the sound dict
                     sound_channel_id = sound_user[list(sound_user)[sound_guild_id.index(ctx.guild.id)]].ctx.channel.id
                     await sound_user[sound_channel_id].clear()
 
@@ -76,14 +78,16 @@ class Music(discord.ext.commands.Cog):
         else:
             try:
                 # print("[*] moving to voice channel")
-                if (ctx.guild.id in sound_guild_id):
+                if (ctx.guild.id in sound_guild_id):  # if bot is in the sound dict
                     # print("[*] moving to voice channel 2222 ")
-                    sound_channel_id = sound_user[list(sound_user)[sound_guild_id.index(ctx.guild.id)]].ctx.channel.id
+                    sound_channel_id = sound_user[list(sound_user)[sound_guild_id.index(ctx.guild.id)]].ctx.channel.id # FInd the client channel id
                     # print(sound_channel_id)
                     voice = sound_user[sound_channel_id].voice
                     await sound_user[sound_channel_id].clear()
                 else:
                     voice =  await channel.connect()
+
+                ############## Build the Music object 
                 # print("[*] voice channel connected")
                 MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
                 logger.info(f"[*] creating Class id : {id(MB)} for serving channel {channel.id}")
@@ -278,6 +282,8 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="playlist",description="list all the playlist")
     async def playlist(self,ctx):
+        await ctx.response.defer()
+
         # await ctx.send(f'`\load_playlist` - {ctx.author.mention}')
         logger.info(f'[*] load_playlist - {ctx.author.name}')
 
@@ -327,7 +333,80 @@ class Music(discord.ext.commands.Cog):
             await ctx.respond(f"Available playlist", view=PLS.view)
 
 
+    @slash_command(name="say",description="Let me say something")
+    async def say(self,ctx, word:Option(str,"THe word you want me to say",required=True)):
+        logger.info(f'[*] say - {ctx.author.name}')
+        await ctx.respond(f'[*] say - {ctx.author.name}')
+
+        if not ctx.author.voice:
+            await ctx.send('you are not connected to a voice channel')
+            return
+        else:
+            channel = ctx.author.voice.channel
+
+        sound_guild_id = [sound_user[x].ctx.guild.id for x in sound_user]  #  use for check if bot is in the sound dict
 
 
+        if (ctx.channel.id in music_user):  #  if bot is in the music dict
+            
+            if ctx.guild.voice_client not in self.bot.voice_clients:   # in same channel but not in any voice channel
+                logger.info("[*] rejoin the voice channel")
+                await music_user[ctx.channel.id].kill()
+                del music_user[ctx.channel.id]
+                voice =  await channel.connect()
+                music_user[ctx.channel.id] = my_mb.MusicBot(channel, voice , ctx, self.bot)
+
+            elif (music_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
+                await music_user[ctx.channel.id].voice.move_to(channel)
+                logger.info(f"[*] move {music_user[ctx.channel.id].channelid} -> {channel.id}")
+                music_user[ctx.channel.id].channel    = channel
+                music_user[ctx.channel.id].channelid  = channel.id
+                music_user[ctx.channel.id].ctx        = ctx
+
+
+        else:
+            try:
+                if (ctx.guild.id in sound_guild_id):  # if bot is in the sound dict
+                    sound_channel_id = sound_user[list(sound_user)[sound_guild_id.index(ctx.guild.id)]].ctx.channel.id # FInd the client channel id
+                    voice = sound_user[sound_channel_id].voice
+                    await sound_user[sound_channel_id].clear()
+                else:
+                    voice =  await channel.connect()
+                ############## Build the Music object 
+                MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
+                logger.info(f"[*] creating Class id : {id(MB)} for serving channel {channel.id}")
+                music_user[ctx.channel.id] = MB
+            except Exception as e:
+                logger.error(e)
+
+
+
+        os.makedirs(MUSIC_folder,exist_ok=True)
+        filename = f"{MUSIC_folder}//{ctx.guild.id}.mp3"
+
+        ## say something
+        VOICE = "zh-CN-YunxiNeural"
+        communicate = edge_tts.Communicate(word, VOICE)
+        await communicate.save(filename)
+
+        await music_user[ctx.channel.id].pause("(Stop cause I'm saying something)",)
+
+        music_user[ctx.channel.id].state = 3
+
+        tempqueqe = music_user[ctx.channel.id].queqed
+        temppasse = music_user[ctx.channel.id].passed
+
+        music_user[ctx.channel.id].passed = []
+        music_user[ctx.channel.id].queqed = [(f"{ctx.guild.id}.mp3",""),]
+
+        await music_user[ctx.channel.id]._next()
+
+        music_user[ctx.channel.id].queqed = tempqueqe
+        music_user[ctx.channel.id].passed = temppasse
+
+        
+
+
+        
 def setup(bot):
     bot.add_cog(Music(bot))
