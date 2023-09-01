@@ -2,7 +2,6 @@
 from utils.info       import logger
 from discord.commands import slash_command, Option
 from discord.ext      import commands
-
 import discord
 
 MORSE_CODE_DICT = { 'A':'.-', 'B':'-...',

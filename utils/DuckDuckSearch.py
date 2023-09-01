@@ -39,4 +39,4 @@ def DuckDuckSearchCommand(key):
 
 
 if __name__ == "__main__":
-    duckduckSearch("weather")
+    DuckDuckSearchCommand("weather")

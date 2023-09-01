@@ -1,22 +1,14 @@
 # OnMessage.py
-from utils.DuckDuckSearch import DuckDuckSearchCommand
-from utils.file_os        import readfile    , addtxt
-from utils.info           import MASSAGE_DATA, PASS_MSG, silinece_channel, logger, MASSAGE_FOLDER, chat_dict
-from utils.wesAi          import prompt_wes_com
+from utils.info           import silinece_channel, logger, MASSAGE_FOLDER, chat_dict
 from utils.Chat           import Chat
-import openai
-import random
 import os
-import re
 
-
-
-
-openai.api_key = str(os.getenv('OPENAI_TOKEN'))
 
 
 
 def prompt_openai(word):
+    import openai
+    openai.api_key = str(os.getenv('OPENAI_TOKEN'))
     try:
         completion = openai.Completion.create(engine="text-davinci-003",temperature= 0.5, prompt=word,max_tokens=1024)
         return completion.choices[0].text

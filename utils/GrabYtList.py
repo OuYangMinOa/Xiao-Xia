@@ -1,12 +1,8 @@
 import googleapiclient.discovery
 from utils.info     import logger, MUSIC_folder
-from os import getenv
-from json import loads
-import numpy
 import os
 import re
 import bs4
-import json
 import time
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials

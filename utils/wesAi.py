@@ -1,10 +1,7 @@
 # on raspi
 from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger
 
-import time
-import socket
 import requests
-import threading
 
 def is_port_in_use(port: int) -> bool:
     import socket
@@ -28,25 +25,6 @@ def prompt_wes_com(text):   # use my own LLM AI
     PORT = 8088
 
 
-    # time.sleep(1)
-    # while is_port_in_use(PORT):
-    #     time.sleep(5)
-
-    ## Socket way
-    # try:
-    #     mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #     mysocket.settimeout(50)
-    #     mysocket.connect((HOST, PORT))
-    #     mysocket.send(text.encode())
-    #     result = mysocket.recv(4096)
-    #     mysocket.close()
-
-    #     return result.decode()
-    # except Exception as e:
-    #     logger.error(e)
-    #     return None
-    
-
     ## change to use restful api
     prompt = {
         "promptWord":text,
@@ -61,8 +39,6 @@ def prompt_wes_com(text):   # use my own LLM AI
     else:
         logger.error(reJson["status"])
         return None
-
-
 
 
 if __name__ == "__main__":

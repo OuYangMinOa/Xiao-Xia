@@ -1,9 +1,5 @@
 from utils.info       import silinece_channel, Silence_DATA, logger, chat_dict
-from utils.Chat       import Chat
-
-import utils.MusicBot     as my_mb # my class
-
-from discord.commands import slash_command, Option
+from discord.commands import slash_command
 from discord.ext      import commands
 from utils.file_os import *
 import discord

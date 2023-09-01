@@ -1,8 +1,7 @@
-from discord.commands import slash_command, Option
+from discord.commands import slash_command
 from discord.ext      import commands
-from utils.OnMessage  import prompt_openai
-from utils.file_os    import readfile    , addtxt
-from utils.info       import  MASSAGE_DATA, PASS_MSG
+from utils.file_os    import addtxt
+from utils.info       import MASSAGE_DATA, PASS_MSG
 from utils.info       import logger
 from utils.wesAi      import prompt_wes_com
 import utils.Covid as my_Cd

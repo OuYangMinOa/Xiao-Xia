@@ -1,5 +1,3 @@
-from functools import partial
-from operator  import ne, eq
 import os
 
 def readfile(filename,type=str):

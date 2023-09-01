@@ -1,4 +1,3 @@
-from utils.info       import silinece_channel
 from discord.commands import slash_command, Option
 from discord.ext      import commands
 from utils.info       import logger
@@ -68,7 +67,7 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command(name="list_sound",description="list all the sounds in this channel")
     async def list_sound(self,ctx):
-        await ctx.response.defer( ephemeral=True)
+        # await ctx.response.defer( ephemeral=True)
         await ctx.respond(f"/list_sound - {ctx.author.mention}")
         logger.info(f"list_sound {ctx.author.name}")
 
