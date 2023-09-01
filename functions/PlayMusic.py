@@ -194,8 +194,8 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="skip",description="skip the current music")
     async def skip(self,ctx):
-        logger.info(f"[*] skip {ctx.author.name}")
         await ctx.response.defer( ephemeral=True)
+        logger.info(f"[*] skip {ctx.author.name}")
 
         await ctx.respond('skip' + f' - {ctx.author.mention}')
 
@@ -217,8 +217,8 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="loop",description="loop the music list")
     async def loop(self,ctx):
-        logger.info(f"[*] loop {ctx.author.name}")
         await ctx.respond('loop'  + f' - {ctx.author.mention}')
+        logger.info(f"[*] loop {ctx.author.name}")
 
         
         if not ctx.author.voice:
@@ -245,8 +245,8 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name="skipnums",description="skip the current music")
     async def skipnums(self,ctx,  nums: Option(int, "The number of music you want to skip", required = True)):
 
-        logger.info('[*] skipnums' + f' {ctx.author.name}')
         await ctx.response.defer( ephemeral=True)
+        logger.info('[*] skipnums' + f' {ctx.author.name}')
 
         await ctx.respond('skipnums' + f' {ctx.author.mention}')
 
@@ -269,8 +269,8 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name='save_playlist',description="Save current playlist")
     async def savePlaylist(self,ctx, name : Option(str, "The name of the playlist", required = True)):
-        logger.info(f'[*] save_playlist - {ctx.author.name}')
         await ctx.response.defer( ephemeral=True)
+        logger.info(f'[*] save_playlist - {ctx.author.name}')
 
         await ctx.respond(f'/save_playlist  - {ctx.author.mention}')
         music_guild_id = [music_user[x].ctx.guild.id for x in music_user]
@@ -303,7 +303,6 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="playlist",description="list all the playlist")
     async def playlist(self,ctx):
-        logger.info(f'[*] load_playlist - {ctx.author.name}')
 
         # for _ in range(10):
         #     try:
@@ -314,7 +313,7 @@ class Music(discord.ext.commands.Cog):
         #         print("[*] retrying...")
 
         await ctx.response.defer( ephemeral=True)
-
+        logger.info(f'[*] load_playlist - {ctx.author.name}')
         await ctx.respond(f'playlist - {ctx.author.mention}')
         
 
@@ -366,8 +365,8 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="say",description="Let me say something")
     async def say(self,ctx, word:Option(str,"THe word you want me to say",required=True)):
-        logger.info(f'[*] say - {ctx.author.name}')
         await ctx.response.defer( ephemeral=True)
+        logger.info(f'[*] say - {ctx.author.name}')
 
         await ctx.respond(f'[*] say - {ctx.author.name}')
 

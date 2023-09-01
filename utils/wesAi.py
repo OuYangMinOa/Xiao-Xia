@@ -13,13 +13,14 @@ def is_port_in_use(port: int) -> bool:
 
 
 def prompt_wes_com(text):   # use my own LLM AI
+    """_summary_
 
-    """Prompt messages to my AI
+    Args:
+        text (_type_): _description_
 
     Returns:
-        Text: AI result
+        _type_: _description_
     """
-
 
     
     HOST = "192.168.0.7"
