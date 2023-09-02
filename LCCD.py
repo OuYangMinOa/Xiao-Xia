@@ -24,14 +24,17 @@ def main():
 
 
 def git_pull_change():
-    this_repo    = '.'
-    repo = git.Repo(this_repo)
-    current = repo.head.commit
+    try:
+        this_repo    = '.'
+        repo = git.Repo(this_repo)
+        current = repo.head.commit
 
-    repo.remotes.origin.pull()
+        repo.remotes.origin.pull(force=True)
+    except Exception as e:
+        logger.error(e)
+        # input("wait for fix ...")
 
     if current == repo.head.commit:
-
         return False
     else:
         logger.info("[*] Repo changed! Activated.")
