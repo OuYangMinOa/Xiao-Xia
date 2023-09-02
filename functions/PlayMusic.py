@@ -247,7 +247,7 @@ class Music(discord.ext.commands.Cog):
         # await ctx.response.defer( ephemeral=True)
         logger.info('[*] skipnums' + f' {ctx.author.name}')
 
-        await ctx.respond('skipnums' + f' {ctx.author.mention}')
+        await ctx.response.send_message('skipnums' + f' {ctx.author.mention}')
 
 
         if not ctx.author.voice:
@@ -367,7 +367,7 @@ class Music(discord.ext.commands.Cog):
         # await ctx.response.defer( ephemeral=True)
         logger.info(f'[*] say - {ctx.author.name}')
 
-        await ctx.respond(f'[*] say - {ctx.author.name}')
+        await ctx.response.send_message(f'[*] say - {ctx.author.name}')
 
         if not ctx.author.voice:
             await ctx.send('you are not connected to a voice channel')
