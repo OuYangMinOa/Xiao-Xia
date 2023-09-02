@@ -235,10 +235,12 @@ class MusicBot:
             if (self.ctx.channel.id in sound_user):
                 for eachRes in self.ctxResArr:
                     try:
-                        # sound_user[ctx.channel.id].crmView.stop()
-                        await eachRes.delete_original_response()
+                        if (isinstance(eachRes,discord.WebhookMessage) or isinstance(eachRes,discord.Message)):
+                            await eachRes.delete()
+                        else:
+                            await eachRes.delete_original_response()
+                        
                     except Exception as e:
-                        print(e)
                         logger.error(f"[*] Delete original response : {e}")
             if (self.ctx.channel.id in sound_user): del sound_user[self.ctx.channel.id]
             return True
@@ -252,10 +254,11 @@ class MusicBot:
             if (self.ctx.channel.id in sound_user):
                 for eachRes in self.ctxResArr:
                     try:
-                        # sound_user[ctx.channel.id].crmView.stop()
-                        await eachRes.delete_original_response()
+                        if (isinstance(eachRes,discord.WebhookMessage) or isinstance(eachRes,discord.Message)):
+                            await eachRes.delete()
+                        else:
+                            await eachRes.delete_original_response()
                     except Exception as e:
-                        print(e)
                         logger.error(f"[*] Delete original response : {e}")
             if (self.ctx.channel.id in sound_user): del sound_user[self.ctx.channel.id]
             return True
@@ -475,10 +478,12 @@ class MusicBot:
 
         for eachRes in self.ctxResArr:
             try:
-                # sound_user[ctx.channel.id].crmView.stop()
-                await eachRes.delete_original_response()
+                if (isinstance(eachRes,discord.WebhookMessage) or isinstance(eachRes,discord.Message)):
+                    await eachRes.delete()
+                else:
+                    await eachRes.delete_original_response()
+                self.ctxResArr.remove(eachRes)
             except Exception as e:
-                print(e)
                 logger.error(f"[*] Delete original response : {e}")
 
 

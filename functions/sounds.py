@@ -115,14 +115,11 @@ class Sounds(discord.ext.commands.Cog):
                     logger.info("[*] rejoin the voice channel")
                     voice =  await channel.connect()
                     sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-
-                sound_user[ctx.channel.id].StartChecking()
             else:
                 print("[*] moving to voice channel")
                 voice =  await channel.connect()
                 print("[*] voice channel connected")
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-                sound_user[ctx.channel.id].StartChecking()
 
             CRM = BuildSoundSelect(ctx.guild.id, sound_user[ctx.channel.id])
 
@@ -140,6 +137,7 @@ class Sounds(discord.ext.commands.Cog):
             for eachView in CRM.views:
                 ctxRes =  await ctx.send(f"({thisCount}/{len(CRM.views)})",view=eachView)
                 sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
+                print(type(ctxRes))
                 thisCount += 1
 
             

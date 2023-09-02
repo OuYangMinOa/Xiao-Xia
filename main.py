@@ -1,8 +1,10 @@
 # main.py
 from utils.OnMessage import prompt_openai, handle_message
-from utils.info     import logger
-
+from utils.info      import logger
 from traceback       import format_exception
+
+from functions.PlayMusic       import StartChecking
+
 
 import discord
 import dotenv
@@ -40,7 +42,7 @@ if __name__ == '__main__':
     # from utils.wesAi import prompt_wes_com
     # print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
 
-
+StartChecking(bot)
 bot.run(token)
 
 

@@ -7,8 +7,10 @@ from utils.info       import music_user, sound_user, Playlist_folder, MUSIC_fold
 from utils.PlayListSelection import PlayListSelection
 
 import utils.MusicBot     as my_mb # my class
+import threading
 import edge_tts
 import discord
+import asyncio
 import os
 
 
@@ -148,17 +150,23 @@ class Music(discord.ext.commands.Cog):
             # await ctx.send("Leaving the voice channel ...")
             await music_user[ctx.channel.id].kill()
             await music_user[ctx.channel.id].voice.disconnect()
-            logger.info("[*] leaving", channel.id)
+            logger.info("[*] leaving  {channel.id}")
             del music_user[ctx.channel.id]
 
 
-        if (ctx.channel.id in sound_user):
-            try:
+        if (ctx.channel.id in sound_user):  
+
                 # sound_user[ctx.channel.id].crmView.stop()
-                for eachctx in sound_user[ctx.channel.id].ctxResArr:
-                    await eachctx.delete_original_response()
-            except Exception as e:
-                logger.error(e)
+            for eachctx in sound_user[ctx.channel.id].ctxResArr:
+                try:
+                    if (isinstance(eachctx,discord.WebhookMessage) or isinstance(eachctx,discord.Message)):
+                        await eachctx.delete()
+                    else:
+                        await eachctx.delete_original_response()
+                    sound_user[ctx.channel.id].ctxResArr.remove(eachctx)
+                except Exception as e:
+                    logger.error(f"[*] Delete original response : {e}")
+
             # await ctx.send("Leaving the voice channel ...")
             await sound_user[ctx.channel.id].kill()
             await sound_user[ctx.channel.id].voice.disconnect()
@@ -447,3 +455,18 @@ class Music(discord.ext.commands.Cog):
         
 def setup(bot):
     bot.add_cog(Music(bot))
+
+
+def StartChecking(bot):
+    async def WhileChecking():
+        while True:
+            for eachKey in music_user.copy():
+                await music_user[eachKey].check()
+            for eachKey in sound_user.copy():
+                await sound_user[eachKey].check()
+            await asyncio.sleep(10)
+            
+    def LoopChecking():
+        bot.loop.create_task(WhileChecking())
+    
+    threading.Thread(target=LoopChecking,daemon=True).start()
