@@ -8,6 +8,7 @@ from functions.PlayMusic       import StartChecking
 
 import discord
 import dotenv
+import time
 import os
 
 
@@ -16,7 +17,11 @@ import os
 dotenv.load_dotenv()
 
 token = str(os.getenv("DISCORD_TOKEN"))
-bot = discord.Bot(intents=discord.Intents.all(),)
+
+intents = discord.Intents.default()
+
+
+bot = discord.Bot(intents=intents,)
 
 
 @bot.event
@@ -38,10 +43,9 @@ if __name__ == '__main__':
         if filename.endswith(".py"):
             extension = f"functions.{filename[:-3]}"
             bot.load_extension(extension)
-
     # from utils.wesAi import prompt_wes_com
     # print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
-
+print("[*] Wait for `bot.run` to complete")
 StartChecking(bot)
 bot.run(token)
 

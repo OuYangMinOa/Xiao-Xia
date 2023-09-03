@@ -62,6 +62,16 @@ class MusicBot:
     #         await self.ctx.send("Example : !lyrics 数码宝贝大冒险进化插曲 brave heart -> !lyrics brave heart")
     # kill this class
     async def kill(self):
+        for eachRes in self.ctxResArr:
+            try:
+                if (isinstance(eachRes,discord.WebhookMessage) or isinstance(eachRes,discord.Message)):
+                    await eachRes.delete()
+                else:
+                    await eachRes.delete_original_response()
+                self.ctxResArr.remove(eachRes)
+            except Exception as e:
+                logger.error(f"[*] Delete original response : {e}")
+
         await self.clear()
         self.live   = False
 
@@ -475,17 +485,6 @@ class MusicBot:
                 self.wait_msg = None
         except Exception as e:
             logger.error(e)
-
-        for eachRes in self.ctxResArr:
-            try:
-                if (isinstance(eachRes,discord.WebhookMessage) or isinstance(eachRes,discord.Message)):
-                    await eachRes.delete()
-                else:
-                    await eachRes.delete_original_response()
-                self.ctxResArr.remove(eachRes)
-            except Exception as e:
-                logger.error(f"[*] Delete original response : {e}")
-
 
         self.state = 0
         self.voice.pause()
