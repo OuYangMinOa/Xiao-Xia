@@ -32,12 +32,12 @@ async def on_ready():
 
 @bot.before_invoke
 async def before_invoke(ctx):
-    await asyncio.sleep(1.2)
-    try:
-        await ctx.defer( ephemeral=True)
-    except Exception as e:
-        pass
-    await asyncio.sleep(1)
+    for i in range(20):
+        try:
+            await ctx.defer( ephemeral=True)
+            return
+        except Exception as e:
+            await asyncio.sleep(0.2)
 
 
 
