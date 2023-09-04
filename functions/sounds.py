@@ -68,7 +68,11 @@ class Sounds(discord.ext.commands.Cog):
     @slash_command(name="list_sound",description="list all the sounds in this channel")
     async def list_sound(self,ctx):
         print(ctx.response.is_done())
-        # await ctx.response.defer( ephemeral=True)
+        
+        await asyncio.sleep(1)
+        await ctx.response.defer( ephemeral=True)
+        await asyncio.sleep(1)
+
         await ctx.respond(f"/list_sound - {ctx.author.mention}")
         logger.info(f"list_sound {ctx.author.name}")
 
