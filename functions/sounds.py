@@ -69,9 +69,7 @@ class Sounds(discord.ext.commands.Cog):
     async def list_sound(self,ctx):
         print(ctx.response.is_done())
         
-        await asyncio.sleep(1)
-        await ctx.response.defer( ephemeral=True)
-        await asyncio.sleep(1)
+        
 
         await ctx.respond(f"/list_sound - {ctx.author.mention}")
         logger.info(f"list_sound {ctx.author.name}")
@@ -154,7 +152,7 @@ class Sounds(discord.ext.commands.Cog):
     @slash_command( name="search_sound",description="Search sound file")
     async def search_sound(self,ctx, keyword:Option(str, "The keywords", required = True)):
         
-        await ctx.response.defer( ephemeral=True)
+        # await ctx.response.defer( ephemeral=True)
         await ctx.respond(f"/search_sound - {ctx.author.mention}",ephemeral=True)
         
         if not ctx.author.voice:

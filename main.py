@@ -5,7 +5,7 @@ from traceback       import format_exception
 
 from functions.PlayMusic       import StartChecking
 
-
+import asyncio
 import discord
 import dotenv
 import time
@@ -28,6 +28,15 @@ bot = discord.Bot(intents=intents,)
 async def on_ready():
     # print(f'We have logged in as {bot.user}')
     logger.info(f'We have logged in as {bot.user}')
+
+
+@bot.before_invoke
+async def before_invoke(ctx):
+    await asyncio.sleep(1)
+    await ctx.response.defer( ephemeral=True)
+    await asyncio.sleep(1)
+
+
 
 @bot.event
 async def on_message(message):
