@@ -39,6 +39,8 @@ async def before_invoke(ctx):
 async def on_message(message):
     if message.author == bot.user:
         return  
+    if message.author.bot:
+        return
     await handle_message(message)
 
 
