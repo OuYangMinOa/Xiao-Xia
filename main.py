@@ -33,7 +33,10 @@ async def on_ready():
 @bot.before_invoke
 async def before_invoke(ctx):
     await asyncio.sleep(1.2)
-    await ctx.defer( ephemeral=True)
+    try:
+        await ctx.defer( ephemeral=True)
+    except Exception as e:
+        pass
     await asyncio.sleep(1)
 
 
