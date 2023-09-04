@@ -10,7 +10,7 @@ import git
 
 def main():
     while True:
-
+        
         logger.info("[*] Starting server ...")
         p = subprocess.Popen(['python', 'main.py'])
         try:
@@ -41,6 +41,7 @@ def git_pull_change():
         return True
 
 if __name__ == '__main__':
+    git_pull_change()
     main()
 
 

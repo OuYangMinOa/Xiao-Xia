@@ -69,7 +69,7 @@ class Chat:
         else:
             return "Hi"
 
-    def ClearMessage(self,msg):
+    def ClearMessage(self,msg,name):
         """Clean the message
 
         Args:
@@ -78,12 +78,16 @@ class Chat:
         Returns:
             str: cleaned ,msg
         """
-        split_msg = "歐陽小俠:"
+        split_msg  = "歐陽小俠:"
+        split_msg2 = f"{name}:"
         if (msg):
             if (split_msg in msg):
-                return "\n".join(msg.split(split_msg)[0:2]).strip()
-            else:
-                return msg.strip()
+                msg = "\n".join(msg.split(split_msg)[0:2]).strip()
+            if (split_msg2 in msg):
+                msg = "\n".join(msg.split(split_msg2)[0:2]).strip()
+
+
+            msg =  msg.strip()
         return msg
 
     def Talk(self,name,message):
@@ -97,7 +101,7 @@ class Chat:
             str: the output text
         """
         result = prompt_wes_com(self.BuildPrompt(name,message))
-        result = self.ClearMessage(result)
+        result = self.ClearMessage(result,name)
         if (not result):
             logger.info("[*] Cause to prompt failed, using random way to reply user.")
             result = self.RandomPickFromData()
