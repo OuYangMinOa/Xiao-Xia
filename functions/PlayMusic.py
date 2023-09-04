@@ -375,7 +375,7 @@ class Music(discord.ext.commands.Cog):
         # await ctx.response.defer( ephemeral=True)
         logger.info(f'[*] say - {ctx.author.name}')
 
-        await ctx.response.send_message(f'[*] say - {ctx.author.name}')
+        await ctx.respond(f'[*] say - {ctx.author.name}')
 
         if not ctx.author.voice:
             await ctx.send('you are not connected to a voice channel')
