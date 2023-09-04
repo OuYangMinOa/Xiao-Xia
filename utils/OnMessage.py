@@ -25,6 +25,7 @@ async def handle_message(message):
     Args:
         message (a discord message): a discord message
     """
+    print( message.content)
     this_message = message.content.strip()
     logger.info(f"[*] {message.author.name} : {this_message}")
     if (message.channel.id in silinece_channel):

@@ -18,7 +18,7 @@ dotenv.load_dotenv()
 
 token = str(os.getenv("DISCORD_TOKEN"))
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 
 
 bot = discord.Bot(intents=intents,)
@@ -55,6 +55,7 @@ if __name__ == '__main__':
     # from utils.wesAi import prompt_wes_com
     # print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
 print("[*] Wait for `bot.run` to complete")
+print(os.getpid())
 StartChecking(bot)
 bot.run(token)
 
