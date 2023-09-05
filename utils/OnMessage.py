@@ -1,6 +1,8 @@
 # OnMessage.py
 from utils.info           import silinece_channel, logger, MASSAGE_FOLDER, chat_dict
 from utils.Chat           import Chat
+
+import threading
 import os
 
 
@@ -18,6 +20,12 @@ def prompt_openai(word):
         return prompt_openai("\n".join(word.split('\n')[:-1]))
 
 
+
+def ThreadHandleMessage(bot,message):
+        def LoopChecking():
+            bot.loop.create_task(handle_message(message))
+    
+        threading.Thread(target=LoopChecking,daemon=True).start()
     
 async def handle_message(message):
     """Handle a message input

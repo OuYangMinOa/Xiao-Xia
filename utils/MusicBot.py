@@ -274,8 +274,6 @@ class MusicBot:
             return True
 
         return False
-    
-    
 
     def StartChecking(self):
         async def WhileChecking():

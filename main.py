@@ -1,5 +1,5 @@
 # main.py
-from utils.OnMessage import prompt_openai, handle_message
+from utils.OnMessage import prompt_openai, handle_message, ThreadHandleMessage
 from utils.info      import logger
 from traceback       import format_exception
 
@@ -41,7 +41,8 @@ async def on_message(message):
         return  
     if message.author.bot:
         return
-    await handle_message(message)
+    # await handle_message(message)
+    ThreadHandleMessage(bot,message)
 
 
 
