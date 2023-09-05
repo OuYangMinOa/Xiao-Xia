@@ -470,3 +470,11 @@ def StartChecking(bot):
         bot.loop.create_task(WhileChecking())
     
     threading.Thread(target=LoopChecking,daemon=True).start()
+
+
+async def DeleteAllResponse():
+    print("\n[*] Clear all responses")
+    for eachKey in music_user.copy():
+        await music_user[eachKey].check()
+    for eachKey in sound_user.copy():
+        await sound_user[eachKey].check()

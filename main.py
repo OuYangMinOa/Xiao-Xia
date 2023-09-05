@@ -3,11 +3,12 @@ from utils.OnMessage import prompt_openai, handle_message, ThreadHandleMessage
 from utils.info      import logger
 from traceback       import format_exception
 
-from functions.PlayMusic       import StartChecking
+from functions.PlayMusic       import StartChecking, DeleteAllResponse
 
 import asyncio
 import discord
 import dotenv
+import atexit
 import time
 import os
 
@@ -20,8 +21,14 @@ token = str(os.getenv("DISCORD_TOKEN"))
 
 intents = discord.Intents.all()
 
+class MyBot(discord.Bot):
+    async def async_cleanup(self):  # example cleanup function
+        print("Cleaning up!")
+    async def close(self):
+        await DeleteAllResponse()
+        await super().close()
 
-bot = discord.Bot(intents=intents,)
+bot = MyBot(intents=intents,)
 
 
 @bot.event
@@ -54,13 +61,11 @@ if __name__ == '__main__':
             bot.load_extension(extension)
     # from utils.wesAi import prompt_wes_com
     # print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
-print("[*] Wait for `bot.run` to complete")
-print(os.getpid())
-StartChecking(bot)
-bot.run(token)
+    print("[*] Wait for `bot.run` to complete")
+    print(os.getpid())
+    StartChecking(bot)
 
-
-
+    bot.run(token)
 
 
 
