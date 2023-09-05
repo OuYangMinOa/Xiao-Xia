@@ -62,7 +62,7 @@ class Chat:
         """
         DataMessageArr = readfile(self.DataName)
         if (len(DataMessageArr)>0):
-            picked = random.choices()[0]
+            picked = random.choices(DataMessageArr)[0]
             if (":" in picked): 
                 picked = picked.split(":")[-1]
             return picked
