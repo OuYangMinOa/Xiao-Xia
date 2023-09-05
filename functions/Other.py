@@ -18,7 +18,7 @@ class Others(discord.ext.commands.Cog):
         await ctx.respond("joke"+ f' - {ctx.author.mention}')
 
         logger.info("joke"+ f' - {ctx.author.name}')
-        this_joke = prompt_wes_com('Q:請你說個笑話\nA:')
+        this_joke = await prompt_wes_com('Q:請你說個笑話\nA:')
 
 
         PASS_MSG.append(f"{ctx.author.name}:請你說個笑話")
@@ -38,7 +38,7 @@ class Others(discord.ext.commands.Cog):
         await ctx.respond("chickensoul"+ f' - {ctx.author.mention}')
         logger.info("chickensoul"+ f' - {ctx.author.name}')
 
-        this_chicken = prompt_wes_com('Q:請你說個一句心靈雞湯\nA:')
+        this_chicken = await prompt_wes_com('Q:請你說個一句心靈雞湯\nA:')
 
         PASS_MSG.append(f"{ctx.author.name}:請你說個一句心靈雞湯")
         PASS_MSG.append("小俠:"+this_chicken)

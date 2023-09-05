@@ -4,6 +4,7 @@ from utils.file_os        import readfile    , addtxt
 from utils.info           import MASSAGE_FOLDER, MASSAGE_MEMORY_SIZE, logger, XioaXiaContent, XioaXiaName
 from collections          import deque
 
+import threading
 import random
 import os
 
@@ -13,6 +14,7 @@ class Chat:
         self.channelId = channelId
         self.DataName  = os.path.join(MASSAGE_FOLDER, f"{channelId}.txt")
         self.memory    = deque(maxlen=MASSAGE_MEMORY_SIZE)
+        self.result    = None
         self.LoadMessage()
 
     def LoadMessage(self):
@@ -90,7 +92,7 @@ class Chat:
             msg =  msg.strip()
         return msg
 
-    def Talk(self,name,message):
+    async def Talk(self,name,message):
         """Talk to LLM
 
         Args:
@@ -100,7 +102,9 @@ class Chat:
         Returns:
             str: the output text
         """
-        result = prompt_wes_com(self.BuildPrompt(name,message))
+        ThisPrompt = self.BuildPrompt(name,message)
+        result =  await prompt_wes_com(ThisPrompt)
+
         result = self.ClearMessage(result,name)
         if (not result):
             logger.info("[*] Cause to prompt failed, using random way to reply user.")

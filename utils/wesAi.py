@@ -2,6 +2,9 @@
 from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger
 
 import requests
+from aiohttp import ClientSession
+
+
 
 def is_port_in_use(port: int) -> bool:
     import socket
@@ -9,7 +12,7 @@ def is_port_in_use(port: int) -> bool:
         return s.connect_ex(('localhost', port)) == 0
 
 
-def prompt_wes_com(text):   # use my own LLM AI
+async def prompt_wes_com(text):   # use my own LLM AI
     """_summary_
 
     Args:
@@ -32,7 +35,11 @@ def prompt_wes_com(text):   # use my own LLM AI
         "temperature":1,
         }
     try:
-        response  = requests.post(f"http://{HOST}:{PORT}/prompt",json=prompt,timeout=10)
+        # response  = requests.post(f"http://{HOST}:{PORT}/prompt",json=prompt,timeout=10)
+
+        async with ClientSession() as session:
+            async with session.post(f"http://{HOST}:{PORT}/prompt",json=prompt,timeout=10) as resp:
+                resp = await resp.text()
     except:
         return None
     reJson = response.json()

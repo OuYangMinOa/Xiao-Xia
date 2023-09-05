@@ -21,10 +21,10 @@ def prompt_openai(word):
 
 
 
-def ThreadHandleMessage(bot,message):
-        def LoopChecking():
+async def ThreadHandleMessage(bot,message):
+        def InHandle():
             bot.loop.create_task(handle_message(message))
-        threading.Thread(target=LoopChecking,daemon=True).start()
+        threading.Thread(target=InHandle,daemon=True).start()
     
 async def handle_message(message):
     """Handle a message input
@@ -32,7 +32,7 @@ async def handle_message(message):
     Args:
         message (a discord message): a discord message
     """
-    print( message.content)
+    # print( message.content)
     this_message = message.content.strip()
     logger.info(f"[*] {message.author.name} : {this_message}")
     if (message.channel.id in silinece_channel):
@@ -50,7 +50,7 @@ async def handle_message(message):
     # print(pass_memory)
     if ("http" not in this_message and this_message) :
 
-        chatgpt_result = chat_dict[message.channel.id].Talk(message.author.name,this_message)
+        chatgpt_result = await chat_dict[message.channel.id].Talk(message.author.name,this_message)
         if chatgpt_result:
             await message.channel.send(chatgpt_result)
             logger.info(f"[*] 回復 : {chatgpt_result}")
