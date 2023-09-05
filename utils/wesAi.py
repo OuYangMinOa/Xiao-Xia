@@ -31,7 +31,10 @@ def prompt_wes_com(text):   # use my own LLM AI
         "top_p":0.2,
         "temperature":1,
         }
-    response  = requests.post(f"http://{HOST}:{PORT}/prompt",json=prompt,timeout=60)
+    try:
+        response  = requests.post(f"http://{HOST}:{PORT}/prompt",json=prompt,timeout=10)
+    except:
+        return None
     reJson = response.json()
 
     if (reJson["status"] =="ok"):

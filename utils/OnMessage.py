@@ -24,7 +24,6 @@ def prompt_openai(word):
 def ThreadHandleMessage(bot,message):
         def LoopChecking():
             bot.loop.create_task(handle_message(message))
-    
         threading.Thread(target=LoopChecking,daemon=True).start()
     
 async def handle_message(message):
