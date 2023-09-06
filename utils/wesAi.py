@@ -39,10 +39,10 @@ async def prompt_wes_com(text):   # use my own LLM AI
 
         async with ClientSession() as session:
             async with session.post(f"http://{HOST}:{PORT}/prompt",json=prompt,timeout=10) as resp:
-                resp = await resp.text()
+                reJson = await resp.json()
     except:
         return None
-    reJson = resp.json()
+    # reJson = resp.json()
 
     if (reJson["status"] =="ok"):
         return reJson["data"]["ouput"]
