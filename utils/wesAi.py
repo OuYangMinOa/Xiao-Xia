@@ -42,7 +42,7 @@ async def prompt_wes_com(text):   # use my own LLM AI
                 resp = await resp.text()
     except:
         return None
-    reJson = response.json()
+    reJson = resp.json()
 
     if (reJson["status"] =="ok"):
         return reJson["data"]["ouput"]
