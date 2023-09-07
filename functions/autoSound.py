@@ -114,7 +114,7 @@ def speech_to_text(path):
                 text = "*inaudible*"
         except:
             text = ''
-        return text, ''
+        return [text,], ''
     # normalized_sound = match_target_amplitude(sound, -20.0)
     # nonsilent_data = detect_nonsilent(sound, min_silence_len=500, silence_thresh=-50, seek_step=50)
     # folder_name = "audio-chunks"
