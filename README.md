@@ -58,6 +58,9 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 * `/list_sound` to list all available sound and play it.
 * `/search_sound` to search sounds by keywords.
 * `/say` to say the word.
+* `/autosound` Automatically detect voice and play sound effects board
+* `/stop_autosound` Stop autosound
+
 # :laughing: chat
 * I will reply all message, if you want to shut it down, use `/silence` to shut me up
 * Use `/clear_talk` to clear the chat history.
@@ -73,3 +76,8 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 * `/weather_day` Get today's Weather Overview (Taiwan)
 * `/weather_week` Get weather overview for the week ahead (Taiwan)
 * `/weather_pos` One-day weather forecast for each city area (Taiwan)
+
+# :bookmark_tabs: Informations
+* `/vote` vote
+* `/ping` Show latency
+* `/骰子` dice

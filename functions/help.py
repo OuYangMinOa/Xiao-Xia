@@ -47,6 +47,8 @@ class Help(discord.ext.commands.Cog):
  - `/weather_day` Get today's Weather Overview
  - `/weather_week` Get weather overview for the week ahead
  - `/weather_pos` One-day weather forecast for each county and city area
+
+* 📑 **FUNCTIONS**                            
  - `/vote` vote
  - `/ping` Show latency
  - `/骰子` dice
