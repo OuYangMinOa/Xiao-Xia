@@ -189,7 +189,8 @@ class SoundAssist:
             audio = AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2)
             audio.export(this_file, format='wav')
             result, timeline = speech_to_text(this_file)
-            print(user_id,":",result)
+            if not all( [len(i)==0 for i in result] ):
+                print(user_id,":",result)
             all_result.append(result)
             all_time.append(timeline)
         
@@ -198,9 +199,9 @@ class SoundAssist:
         for eachSound,eachFile in zip(self.label, self.file):
             for eachTextArr in all_result:
                 for eachText in eachTextArr:
-                    thisLen = len(list(set(eachText)&set(eachSound)))
+                    thisLen = len(list(set(eachText)&set(eachSound.lower())))
                     if ( thisLen>=2 ):
-                        print(eachText, eachSound, thisLen)
+                        print(f"{thisLen} -> {eachSound}")
                         if (thisLen > choseLen):
                             choseFile = eachFile
                             choseLen  = thisLen
