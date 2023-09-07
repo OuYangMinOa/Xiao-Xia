@@ -203,6 +203,7 @@ class SoundAssist:
                         print(eachText, eachSound, thisLen)
                         if (thisLen > choseLen):
                             choseFile = eachFile
+                            choseLen  = thisLen
                         # await self.soundClass.playSound(eachFile)
                         # self.waitProcess = False
                         # return

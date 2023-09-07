@@ -30,6 +30,8 @@ class Help(discord.ext.commands.Cog):
  - `/list_sound` to list all available sound and play it.
  - `/search_sound` {keyword}to search sounds by keywords.
  - `/say` to say the word.
+ - `/autosound` Automatically detect voice and play sound effects board
+ - `/stop_autosound` Stop autosound
                            
 * 😆 **CHAT**
  - `/clear_talk` Clear past chat history.
@@ -45,6 +47,9 @@ class Help(discord.ext.commands.Cog):
  - `/weather_day` Get today's Weather Overview
  - `/weather_week` Get weather overview for the week ahead
  - `/weather_pos` One-day weather forecast for each county and city area
+ - `/vote` vote
+ - `/ping` Show latency
+ - `/骰子` dice
 """)
 
     # @slash_command(name="幫助",description="幫助訊息")
@@ -66,6 +71,8 @@ class Help(discord.ext.commands.Cog):
  - `/list_sound` 查看所有的音效並撥放。
  - `/search_sound` {keyword} 用關鍵字查詢音效。
  - `/say` 讓我說出你要我說的話.
+ - `/autosound` 自動偵測語音 然後撥放音效板
+ - `/stop_autosound` 停止 autosound
 
 * 😆 **聊天**
  - `/clear_talk` 清空過去的聊天紀錄。                        
@@ -80,7 +87,12 @@ class Help(discord.ext.commands.Cog):
  - `/get_covid` 台灣今天又確了多少。
  - `/weather_day` 今日的天氣資訊。
  - `/weather_week` 未來一周的天氣資訊。
- - `/weather_pos` 各縣市地區的一日天氣預報
+ - `/weather_pos` 各縣市地區的一日天氣預報。
+                           
+* 📑 **功能**                     
+ - `/vote` 投票
+ - `/ping` 顯示跟機器人的延遲
+ - `/骰子` 骰骰子
 """)
 
 
