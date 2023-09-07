@@ -1,7 +1,7 @@
 from discord.commands import slash_command, Option
 from discord.ext      import commands
 from utils.info       import logger
-from utils.info       import sound_user, music_user
+from utils.info       import sound_user, music_user, recording
 from glob             import glob
 from pydub            import AudioSegment
 
@@ -252,6 +252,14 @@ class SoundBot(my_mb.MusicBot):
 
         logger.info(self.queqed)
         await self._next()
+
+    async def leave(self):
+        record_user_guild = [recording[x ].ctx.guild.id for x in recording]
+        if (self.ctx.guild.id in record_user_guild):
+            record_channel_id = recording[list(recording)[record_user_guild.index(self.ctx.guild.id)]].ctx.channel.id
+            await recording[record_channel_id].kill()
+
+        await super().leave()
 
 class BuildSoundSelect():
     def __init__(self,channel_id ,sound_class,*args , **kwargs):

@@ -173,6 +173,8 @@ class SoundAssist:
             
             if self.ctx.guild.voice_client not in self.bot.voice_clients:
                 self.kill()
+        print("Record Stop")
+        
 
     async def once_done(self, sink: discord.sinks, channel: discord.TextChannel, *args):
         self.waitProcess = True
@@ -194,8 +196,8 @@ class SoundAssist:
             audio = AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2)
             audio.export(this_file, format='wav')
             result, timeline = speech_to_text(this_file)
+            print("[*]",user_id,":",result)
             if not all( [len(i)==0 for i in result] ):
-                print("[*]",user_id,":",result)
                 for eachSound,eachFile in zip(self.label, self.file):
                     for eachText in result:
                         intersected = list(set(eachText)&set(eachSound.lower()))
