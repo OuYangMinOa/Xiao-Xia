@@ -233,15 +233,22 @@ class SoundAssist:
                 print("[*]",user_id,":",result)
                 if not all( [len(i)==0 for i in result] ):
                     for eachText in result:
-                        if (len(eachText)>=1):
+                        if (len(eachText)>=2):
                             for eachSound,eachFile in zip(self.label, self.file):
                                 intersected = list(set(eachText)&set(eachSound.lower()))
                                 thisLen = len(intersected)
-                                if ( thisLen>=1 ):
+                                if ( thisLen>=2 ):
                                     print(f"\t{thisLen} -> {eachSound}")
                                     if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
                                         choseFile = eachFile
                                         choseLen  = thisLen
+
+                        if (len(eachText)==1):
+                            for eachSound,eachFile in zip(self.label, self.file):
+                                if ( eachText in eachSound ):
+                                    print(f"\t{1} -> {eachSound}")
+                                    if (random.random()>0.3):
+                                        choseFile = eachFile
 
             if (choseFile and self.soundClass.state == 0):
                 await self.soundClass.playSound(choseFile)
