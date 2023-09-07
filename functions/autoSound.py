@@ -138,8 +138,8 @@ class SoundAssist:
             if (path.endswith('mp3') or path.endswith('wav') ):
                 label.append(os.path.basename(path[:-4]))
                 file.append( os.path.basename(path) )
-        label = sorted(label, key=lambda x: len(x))
-        file  = sorted(file , key=lambda x: len(label[file.index(x)] ))
+        # label = sorted(label, key=lambda x: len(x))
+        # file  = sorted(file , key=lambda x: len(label[file.index(x)] ))
 
         self.label, self.file =  label, file
 
