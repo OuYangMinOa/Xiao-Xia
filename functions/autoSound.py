@@ -198,7 +198,14 @@ class SoundAssist:
                 print("[*]",user_id,":",result)
                 for eachSound,eachFile in zip(self.label, self.file):
                     for eachText in result:
-                        thisLen = len(list(set(eachText)&set(eachSound.lower())))
+                        intersecword = list(set(eachText)&set(eachSound.lower()))
+                        thisLen = len(intersecword)
+                        showtext = ""
+                        for tmpt in eachText:
+                            if (tmpt in intersecword ):
+                                showtext = showtext + f"\033[42m{tmpt}\033[0m"
+                            else:
+                                showtext = showtext + tmpt
                         if ( thisLen>=2 ):
                             print(f"\t{thisLen} -> {eachSound}")
                             if (thisLen > choseLen):
