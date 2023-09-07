@@ -94,7 +94,7 @@ class MusicBot:
                 return
         if (self.music_msg):
             try:
-                self.music_msg.delete()
+                await self.music_msg.delete()
             except:
                 pass
 
