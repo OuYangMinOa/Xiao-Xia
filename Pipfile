@@ -23,6 +23,7 @@ requests-html = "*"
 spotipy = "*"
 pytube = "*"
 edge-tts = "*"
+speechrecognition = "*"
 
 [dev-packages]
 

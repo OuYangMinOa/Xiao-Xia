@@ -26,7 +26,7 @@ class Sounds(discord.ext.commands.Cog):
         for _ in range(10):
             try:
                 # await ctx.response.defer()
-                await ctx.respond(f"/upload_sound - {ctx.author.mention}",ephemeral=True)
+                await ctx.respond(f"/upload_sound - {ctx.author.mention}",ephemeral=True,delete_after=10)
                 break
             except:
                 print("[*] retrying...")
@@ -71,7 +71,7 @@ class Sounds(discord.ext.commands.Cog):
         
         
 
-        ThisRespond = await ctx.respond(f"/list_sound - {ctx.author.mention}",delete_after=30)
+        ThisRespond = await ctx.respond(f"/list_sound - {ctx.author.mention}",delete_after=10)
         logger.info(f"list_sound {ctx.author.name}")
 
 
@@ -237,6 +237,22 @@ class SoundBot(my_mb.MusicBot):
         self.floder = f"data/attachments/{ctx.guild.id}"
         self.loop   = False
 
+    async def playSound(self,thisFile):
+        await self.clear()
+        self.queqed = [(thisFile,''), ]
+
+        music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
+
+        if (self.ctx.guild.id  in music_user_guild):
+            music_channel_id = music_user[list(music_user)[music_user_guild.index(self.sound_class.ctx.guild.id)]].ctx.channel.id
+            if (music_user[music_channel_id].state == 1):
+                await music_user[music_channel_id].pause("(Stop cause sound playing)")
+                music_user[music_channel_id].state = 3
+                # await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
+
+        logger.info(self.queqed)
+        await self._next()
+
 class BuildSoundSelect():
     def __init__(self,channel_id ,sound_class,*args , **kwargs):
         self.count = 0
@@ -294,19 +310,21 @@ class MySelection:
     async def callback(self, interaction):
         await self.sound_class.clear()
         which_chosen = self.label.index(self.select.values[0])
-        self.sound_class.queqed = [(self.sounds[which_chosen],''), ]
+        await self.sound_class.playSound(self.sounds[which_chosen])
 
-        music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
+        # self.sound_class.queqed = [(self.sounds[which_chosen],''), ]
 
-        if (self.sound_class.ctx.guild.id  in music_user_guild):
-            music_channel_id = music_user[list(music_user)[music_user_guild.index(self.sound_class.ctx.guild.id)]].ctx.channel.id
-            if (music_user[music_channel_id].state == 1):
-                await music_user[music_channel_id].pause("(Stop cause sound playing)")
-                music_user[music_channel_id].state = 3
-                # await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
+        # music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
 
-        logger.info(self.sound_class.queqed)
-        await self.sound_class._next()
+        # if (self.sound_class.ctx.guild.id  in music_user_guild):
+        #     music_channel_id = music_user[list(music_user)[music_user_guild.index(self.sound_class.ctx.guild.id)]].ctx.channel.id
+        #     if (music_user[music_channel_id].state == 1):
+        #         await music_user[music_channel_id].pause("(Stop cause sound playing)")
+        #         music_user[music_channel_id].state = 3
+        #         # await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
+
+        # logger.info(self.sound_class.queqed)
+        # await self.sound_class._next()
 
 
 def setup(bot):
