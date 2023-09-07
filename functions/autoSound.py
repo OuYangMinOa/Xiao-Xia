@@ -180,7 +180,7 @@ class SoundAssist:
             return
         # recorded_users = [  # A list of recorded users
         #     (await self.bot.fetch_user(user_id)).name
-        #     for user_id, audio in sink.audio_data.items()
+        #     for user_id, audio in sink.audio  _data.items()
         # ]
 
         end_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
@@ -198,16 +198,16 @@ class SoundAssist:
                 print("[*]",user_id,":",result)
                 for eachSound,eachFile in zip(self.label, self.file):
                     for eachText in result:
-                        intersecword = list(set(eachText)&set(eachSound.lower()))
-                        thisLen = len(intersecword)
-                        showtext = ""
-                        for tmpt in eachText:
-                            if (tmpt in intersecword ):
-                                showtext = showtext + f"\033[42m{tmpt}\033[0m"
+                        intersected = list(set(eachText)&set(eachSound.lower()))
+                        thisLen = len(intersected)
+                        show_text = ""
+                        for tempt in eachSound:
+                            if (tempt in intersected ):
+                                show_text = show_text + f"\033[42m{tempt}\033[0m"
                             else:
-                                showtext = showtext + tmpt
+                                show_text = show_text + tempt
                         if ( thisLen>=2 ):
-                            print(f"\t{thisLen} -> {showtext}")
+                            print(f"\t{thisLen} -> {show_text}")
                             if (thisLen > choseLen):
                                 choseFile = eachFile
                                 choseLen  = thisLen
