@@ -11,6 +11,7 @@ from glob             import glob
 import speech_recognition as sr
 import discord
 import asyncio
+import random
 import time
 import os
 
@@ -214,7 +215,7 @@ class SoundAssist:
                         thisLen = len(intersected)
                         if ( thisLen>=2 ):
                             print(f"\t{thisLen} -> {eachSound}")
-                            if (thisLen > choseLen):
+                            if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
                                 choseFile = eachFile
                                 choseLen  = thisLen
 
