@@ -175,9 +175,9 @@ class SoundAssist:
             # discord.Sink(encoding='wav', filters={'time': 0}),
             self.once_done,  # What to do once done.
             self.ctx.channel)
-            await asyncio.sleep(5)
+            await asyncio.sleep(3)
             self.voice.stop_recording()
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.1)
             
             if self.ctx.guild.voice_client not in self.bot.voice_clients:
                 self.kill()
