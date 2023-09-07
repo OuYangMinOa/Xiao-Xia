@@ -206,18 +206,14 @@ class SoundAssist:
             result, timeline = speech_to_text(this_file)
             print("[*]",user_id,":",result)
             if not all( [len(i)==0 for i in result] ):
-                for eachSound,eachFile in zip(self.label, self.file):
-                    for eachText in result:
+                for eachText in result:
+                    if (len(eachText)<2):
+                            continue
+                    for eachSound,eachFile in zip(self.label, self.file):
                         intersected = list(set(eachText)&set(eachSound.lower()))
                         thisLen = len(intersected)
-                        show_text = ""
-                        for tempt in eachSound:
-                            if (tempt in intersected ):
-                                show_text = show_text + f"\033[42m{tempt}\033[0m"
-                            else:
-                                show_text = show_text + tempt
                         if ( thisLen>=2 ):
-                            print(f"\t{thisLen} -> {show_text}")
+                            print(f"\t{thisLen} -> {eachSound}")
                             if (thisLen > choseLen):
                                 choseFile = eachFile
                                 choseLen  = thisLen
