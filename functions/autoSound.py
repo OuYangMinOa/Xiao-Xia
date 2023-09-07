@@ -70,9 +70,7 @@ class Record(discord.ext.commands.Cog):
     @slash_command(name="stop_autosound",description="結束 - 自動偵測語音播放音效版")
     async def stopAutoSounding(self,ctx):
         await ctx.respond(f"stop_autosound -{ctx.author.mention}",delete_after=10)
-        recording[ctx.guild.id].alive = False
-        # recording[ctx.guild.id].voice.stop_recording()
-        del recording[ctx.guild.id]
+        recording[ctx.guild.id].kill()
 
 
 def setup(bot):
@@ -149,10 +147,14 @@ class SoundAssist:
     async def StartKeepListening(self):
         self.bot.loop.create_task(self.threadRecord())
 
+    def kill(self):
+        self.alive = False
+        del recording[self.ctx.guild.id]
+
     async def threadRecord(self):
         print("Start Keep recording")
         
-        while self.alive:
+        while self.alive :
             while self.soundClass.state == 1 or self.waitProcess:
                 await asyncio.sleep(1)
             self.voice.start_recording(
@@ -163,6 +165,9 @@ class SoundAssist:
             await asyncio.sleep(5)
             self.voice.stop_recording()
             await asyncio.sleep(1)
+            
+            if self.ctx.guild.voice_client not in self.bot.voice_clients:
+                self.kill()
 
     async def once_done(self, sink: discord.sinks, channel: discord.TextChannel, *args):
         self.waitProcess = True
@@ -188,14 +193,22 @@ class SoundAssist:
             all_result.append(result)
             all_time.append(timeline)
         
+        choseLen, choseFile = 0, None
 
         for eachSound,eachFile in zip(self.label, self.file):
             for eachTextArr in all_result:
                 for eachText in eachTextArr:
                     # print(eachText, eachSound, list(set(eachText)&set(eachSound)))
-                    if ( len(list(set(eachText)&set(eachSound)))>=2 ):
-                        await self.soundClass.playSound(eachFile)
-                        self.waitProcess = False
-                        return
+                    thisLen = len(list(set(eachText)&set(eachSound)))
+                    if ( thisLen>=2 ):
+                        if (thisLen > choseLen):
+                            choseFile = eachFile
+                        # await self.soundClass.playSound(eachFile)
+                        # self.waitProcess = False
+                        # return
+        if (choseFile):
+            await self.soundClass.playSound(choseFile)
+
+
         self.waitProcess = False
         
