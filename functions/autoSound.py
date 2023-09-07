@@ -29,8 +29,9 @@ class Record(discord.ext.commands.Cog):
             else:
                 channel = ctx.author.voice.channel
 
-            music_user_guild = [music_user[x].ctx.guild.id for x in music_user]
-            sound_user_guild = [sound_user[x].ctx.guild.id for x in sound_user]  #  use for check if bot is in the sound dict
+            music_user_guild  = [music_user[x].ctx.guild.id for x in music_user]
+            record_user_guild = [recording[x ].ctx.guild.id for x in recording]
+            sound_user_guild  = [sound_user[x].ctx.guild.id for x in sound_user]  #  use for check if bot is in the sound dict
             
             if (ctx.guild.id in sound_user_guild):  # in sound_user
                 sound_channel_id = sound_user[list(sound_user)[sound_user_guild.index(ctx.guild.id)]].ctx.channel.id
@@ -44,6 +45,10 @@ class Record(discord.ext.commands.Cog):
                 voice = music_user[music_channel_id].voice
                 await music_user[music_channel_id].pause()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
+            elif (ctx.guild.id in record_user_guild):
+                # recording
+                record_channel_id = recording[list(recording)[record_user_guild.index(ctx.guild.id)]].ctx.channel.id
+                pass
             else:
                 voice = await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
@@ -182,33 +187,25 @@ class SoundAssist:
         day_folder =  os.path.join(self.saveFolder, f'{self.start_time}~{end_time}')
         os.makedirs(day_folder,exist_ok=True)
         
-        all_result = []  # save recognize words
-        all_time   = []  # save recognize words time
+        choseLen, choseFile = 0, None
+
         for user_id, audio in sink.audio_data.items():
             this_file = os.path.join(day_folder,f'{user_id}.wav')
             audio = AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2)
             audio.export(this_file, format='wav')
             result, timeline = speech_to_text(this_file)
             if not all( [len(i)==0 for i in result] ):
-                print(user_id,":",result)
-            all_result.append(result)
-            all_time.append(timeline)
-        
-        choseLen, choseFile = 0, None
+                print("[*]",user_id,":",result)
+                for eachSound,eachFile in zip(self.label, self.file):
+                    for eachText in result:
+                        thisLen = len(list(set(eachText)&set(eachSound.lower())))
+                        if ( thisLen>=2 ):
+                            print(f"\t{thisLen} -> {eachSound}")
+                            if (thisLen > choseLen):
+                                choseFile = eachFile
+                                choseLen  = thisLen
 
-        for eachSound,eachFile in zip(self.label, self.file):
-            for eachTextArr in all_result:
-                for eachText in eachTextArr:
-                    thisLen = len(list(set(eachText)&set(eachSound.lower())))
-                    if ( thisLen>=2 ):
-                        print(f"{thisLen} -> {eachSound}")
-                        if (thisLen > choseLen):
-                            choseFile = eachFile
-                            choseLen  = thisLen
-                        # await self.soundClass.playSound(eachFile)
-                        # self.waitProcess = False
-                        # return
-        if (choseFile):
+        if (choseFile and self.soundClass.state == 0):
             await self.soundClass.playSound(choseFile)
 
 
