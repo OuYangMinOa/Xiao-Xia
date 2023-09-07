@@ -97,7 +97,7 @@ class MusicBot:
                 self.music_msg.delete()
             except:
                 pass
-            
+
 
         self.state = 1
         self.this_song  = self.queqed.pop(0) # get the song
@@ -182,7 +182,7 @@ class MusicBot:
                     logger.info("[*] error heppened again")
                     logger.info("[*] play next song")
                     logger.error(e)
-                    time.sleep(1)
+                    await asyncio.sleep(1)
                     await redownload.delete()
                     await error_.delete()
                     await self.dowloading.delete()

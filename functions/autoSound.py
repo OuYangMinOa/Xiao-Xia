@@ -201,7 +201,7 @@ class SoundAssist:
         # ]
 
         end_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
-        day_folder =  os.path.join(self.saveFolder, f'{self.start_time}~{end_time}')
+        day_folder =  self.saveFolder
         os.makedirs(day_folder,exist_ok=True)
         
         choseLen, choseFile = 0, None

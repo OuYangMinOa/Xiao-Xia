@@ -2,7 +2,7 @@ from discord.commands import slash_command, Option
 from discord.ext      import commands
 
 from utils.info     import logger
-from utils.info       import music_user, sound_user, Playlist_folder, MUSIC_folder
+from utils.info       import music_user, sound_user, Playlist_folder, MUSIC_folder, recording
 
 from utils.PlayListSelection import PlayListSelection
 
@@ -464,6 +464,8 @@ def StartChecking(bot):
                 await music_user[eachKey].check()
             for eachKey in sound_user.copy():
                 await sound_user[eachKey].check()
+            for eachKey in recording.copy():
+                await recording[eachKey].check()
             await asyncio.sleep(1800)
 
     def LoopChecking():
@@ -478,3 +480,4 @@ async def DeleteAllResponse():
         await music_user[eachKey].check()
     for eachKey in sound_user.copy():
         await sound_user[eachKey].check()
+    
