@@ -192,8 +192,8 @@ class SoundAssist:
         print("Start Keep recording")
         
         while self.alive :
-            # while self.soundClass.state == 1 or self.waitProcess:
-            #     await asyncio.sleep(0.1)
+            while self.soundClass.state == 1 or self.waitProcess:
+                await asyncio.sleep(0.1)
             try:
                 self.voice.start_recording(
                 discord.sinks.WaveSink(),  # The sink type to use.
