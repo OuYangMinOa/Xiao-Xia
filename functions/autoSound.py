@@ -3,7 +3,7 @@ from discord.commands import slash_command, Option
 from pydub.silence    import split_on_silence, detect_nonsilent
 from discord.ext      import commands
 from pydub            import AudioSegment
-from .sounds          import SoundBot
+from .sounds          import SoundBot, match_target_amplitude
 from datetime         import datetime
 from glob             import glob
 
@@ -70,7 +70,7 @@ class Record(discord.ext.commands.Cog):
 
         recording.update({ctx.guild.id: SRS})
         
-        await SRS.threadRecord()
+        await SRS.StartKeepListening()
         # vc.start_recording(
         #     discord.sinks.WaveSink(),  # The sink type to use.
         #     # discord.Sink(encoding='wav', filters={'time': 0}),
@@ -97,38 +97,56 @@ def speech_to_text(path):
         silence_thresh = sound.dBFS-20,
         keep_silence=100,
     )
-    # normalized_sound = match_target_amplitude(sound, -20.0)
-    nonsilent_data = detect_nonsilent(sound, min_silence_len=500, silence_thresh=-50, seek_step=50)
     folder_name = "audio-chunks"
-    if not os.path.isdir(folder_name):
-        os.mkdir(folder_name)
-    whole_text = []
-    time_text  = []
-
-    for i, chunk in enumerate(nonsilent_data, start=1):
-        this_time = [chunk_ for chunk_ in chunk]
-        time_text.append(this_time)
-        audio_chunk  = sound[this_time[0]:this_time[1]]
-
-        chunk_filename = os.path.join(folder_name, f"chunk{i}.wav")
-        audio_chunk.export(chunk_filename, format="wav")
-
-        with sr.AudioFile(chunk_filename) as source:
+    normalized_sound = match_target_amplitude(sound, -20.0)
+    chunk_filename = os.path.join(folder_name, f"chunk{i}.wav")
+    audio_chunk = normalized_sound
+    audio_chunk.export(chunk_filename, format="wav")
+    with sr.AudioFile(chunk_filename) as source:
+        try:
+            audio_listened = r.record(source)
             try:
-                audio_listened = r.record(source)
-                try:
-                    text = r.recognize_google(audio_listened, language = 'zh-tw', show_all=True)
-                    if text['alternative'][0]['confidence'] < 0.7:
-                        text['alternative'][0]['transcript'] = "*inaudible*"
-                    text = text['alternative'][0]['transcript']
-                except sr.UnknownValueError as e:
-                    text = "*inaudible*"
-                else:                
-                    whole_text.append(text)
-            except:
-                whole_text.append('')
-                continue
-    return whole_text, time_text
+                text = r.recognize_google(audio_listened, language = 'zh-tw', show_all=True)
+                if text['alternative'][0]['confidence'] < 0.7:
+                    text['alternative'][0]['transcript'] = "*inaudible*"
+                text = text['alternative'][0]['transcript']
+            except sr.UnknownValueError as e:
+                text = "*inaudible*"
+        except:
+            text = ''
+        return text, ''
+    # normalized_sound = match_target_amplitude(sound, -20.0)
+    # nonsilent_data = detect_nonsilent(sound, min_silence_len=500, silence_thresh=-50, seek_step=50)
+    # folder_name = "audio-chunks"
+    # if not os.path.isdir(folder_name):
+    #     os.mkdir(folder_name)
+    # whole_text = []
+    # time_text  = []
+
+    # for i, chunk in enumerate(nonsilent_data, start=1):
+    #     this_time = [chunk_ for chunk_ in chunk]
+    #     time_text.append(this_time)
+    #     audio_chunk  = sound[this_time[0]:this_time[1]]
+
+    #     chunk_filename = os.path.join(folder_name, f"chunk{i}.wav")
+    #     audio_chunk.export(chunk_filename, format="wav")
+
+    #     with sr.AudioFile(chunk_filename) as source:
+    #         try:
+    #             audio_listened = r.record(source)
+    #             try:
+    #                 text = r.recognize_google(audio_listened, language = 'zh-tw', show_all=True)
+    #                 if text['alternative'][0]['confidence'] < 0.7:
+    #                     text['alternative'][0]['transcript'] = "*inaudible*"
+    #                 text = text['alternative'][0]['transcript']
+    #             except sr.UnknownValueError as e:
+    #                 text = "*inaudible*"
+    #             else:                
+    #                 whole_text.append(text)
+    #         except:
+    #             whole_text.append('')
+    #             continue
+    # return whole_text, time_text
 
 
 class SoundAssist:
@@ -233,7 +251,7 @@ class SoundAssist:
             self.waitProcess = False
 
 
-    async def check(self):ㄔㄛˉ
+    async def check(self):
         member_count = len(self.ctx.author.voice.channel.voice_states)
         print(f"[*] {self.channelid}, left member : {member_count}")
         if (member_count == 1):
