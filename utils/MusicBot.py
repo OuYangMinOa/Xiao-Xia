@@ -223,10 +223,6 @@ class MusicBot:
             this_source, 
             after = lambda e: asyncio.run_coroutine_threadsafe(self._endsong(e), self.client.loop)
             )
-
-        self.dont_stop +=1
-        if (self.dont_stop > 3):
-            self.client.loop.create_task(self.check())
             
     async def check(self):
         # define the voice channel

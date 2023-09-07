@@ -169,7 +169,7 @@ class SoundAssist:
         
         while self.alive :
             while self.soundClass.state == 1 or self.waitProcess:
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.1)
             self.voice.start_recording(
             discord.sinks.WaveSink(),  # The sink type to use.
             # discord.Sink(encoding='wav', filters={'time': 0}),
