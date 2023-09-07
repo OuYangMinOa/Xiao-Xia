@@ -55,7 +55,7 @@ class Record(discord.ext.commands.Cog):
             elif (ctx.guild.id in record_user_guild):
                 if ctx.guild.voice_client not in self.bot.voice_clients:
                     record_channel_id = recording[list(recording)[record_user_guild.index(ctx.guild.id)]].ctx.channel.id
-                    recording[record_channel_id].kill()
+                    await recording[record_channel_id].kill()
                     voice = await channel.connect()
                     sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
             else:
@@ -84,8 +84,9 @@ class Record(discord.ext.commands.Cog):
     @slash_command(name="stop_autosound",description="結束 - 自動偵測語音播放音效版")
     async def stopAutoSounding(self,ctx):
         await ctx.respond(f"stop_autosound -{ctx.author.mention}",delete_after=10)
-        recording[ctx.guild.id].kill()
+        await recording[ctx.guild.id].kill()
 
+    
 
 def setup(bot):
     bot.add_cog(Record(bot))
@@ -161,9 +162,14 @@ class SoundAssist:
     async def StartKeepListening(self):
         self.bot.loop.create_task(self.threadRecord())
 
-    def kill(self):
+    async def kill(self):
         self.alive = False
-        del recording[self.ctx.guild.id]
+        try:
+            await self.voice.disconnect()
+        except:
+            pass
+        finally:
+            del recording[self.ctx.guild.id]
 
     async def threadRecord(self):
         print("Start Keep recording")
@@ -208,20 +214,27 @@ class SoundAssist:
             print("[*]",user_id,":",result)
             if not all( [len(i)==0 for i in result] ):
                 for eachText in result:
-                    if (len(eachText)<2):
-                            continue
-                    for eachSound,eachFile in zip(self.label, self.file):
-                        intersected = list(set(eachText)&set(eachSound.lower()))
-                        thisLen = len(intersected)
-                        if ( thisLen>=2 ):
-                            print(f"\t{thisLen} -> {eachSound}")
-                            if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
-                                choseFile = eachFile
-                                choseLen  = thisLen
+                    if (len(eachText)>=2):
+                        for eachSound,eachFile in zip(self.label, self.file):
+                            intersected = list(set(eachText)&set(eachSound.lower()))
+                            thisLen = len(intersected)
+                            if ( thisLen>=2 ):
+                                print(f"\t{thisLen} -> {eachSound}")
+                                if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
+                                    choseFile = eachFile
+                                    choseLen  = thisLen
 
         if (choseFile and self.soundClass.state == 0):
             await self.soundClass.playSound(choseFile)
 
 
         self.waitProcess = False
-        
+
+
+    async def check(self):
+        member_count = len(self.channel.voice_states)
+        print(f"[*] {self.channelid}, left member : {member_count}")
+        if (member_count == 1):
+            logger.info(f"[*] {self.channelid}, left member : {member_count}")
+            logger.info(f"[*] {self.channelid}, Music stop cause no one listening")
+            await self.kill()
