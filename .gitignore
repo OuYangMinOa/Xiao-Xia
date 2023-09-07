@@ -7,14 +7,19 @@ __pycache__
 
 
 # data
-.DS_Store
-/data/music/
-/data/attachments/
-message_collect.txt
-silence_channel.txt
 /logs/
+/data/music/
+/data/record/
 /data/message/
+/audio-chucks/
 /data/playlist/
+/data/attachments/
+
+.DS_Store
+
 output1.png
 output2.png
 output3.png
+
+message_collect.txt
+silence_channel.txt
