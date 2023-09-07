@@ -71,7 +71,7 @@ class Sounds(discord.ext.commands.Cog):
         
         
 
-        ThisRespond = await ctx.respond(f"/list_sound - {ctx.author.mention}")
+        ThisRespond = await ctx.respond(f"/list_sound - {ctx.author.mention}",delete_after=30)
         logger.info(f"list_sound {ctx.author.name}")
 
 
@@ -98,9 +98,6 @@ class Sounds(discord.ext.commands.Cog):
                     sound_user[ctx.channel.id].channel    = channel
                     sound_user[ctx.channel.id].channelid  = channel.id
                     sound_user[ctx.channel.id].ctx        = ctx
-
-                
-
 
             elif (ctx.guild.id in music_user_guild):  # in music_user (a simple transfer)
                 music_channel_id = music_user[list(music_user)[music_user_guild.index(ctx.guild.id)]].ctx.channel.id

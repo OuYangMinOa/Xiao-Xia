@@ -39,7 +39,8 @@ async def on_ready():
 
 @bot.before_invoke
 async def before_invoke(ctx):
-    await ctx.defer( ephemeral=True)
+    pass
+    # await ctx.defer( ephemeral=True)
 
 
 @bot.event
