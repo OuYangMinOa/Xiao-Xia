@@ -207,7 +207,7 @@ class SoundAssist:
                             else:
                                 showtext = showtext + tmpt
                         if ( thisLen>=2 ):
-                            print(f"\t{thisLen} -> {eachSound}")
+                            print(f"\t{thisLen} -> {showtext}")
                             if (thisLen > choseLen):
                                 choseFile = eachFile
                                 choseLen  = thisLen
