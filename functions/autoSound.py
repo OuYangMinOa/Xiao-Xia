@@ -35,20 +35,28 @@ class Record(discord.ext.commands.Cog):
             
             if (ctx.guild.id in sound_user_guild):  # in sound_user
                 sound_channel_id = sound_user[list(sound_user)[sound_user_guild.index(ctx.guild.id)]].ctx.channel.id
-                voice = sound_user[sound_channel_id].voice
-                await sound_user[sound_channel_id].clear()
-
+                if ctx.guild.voice_client not in self.bot.voice_clients:
+                    await sound_user[music_channel_id].kill()
+                    voice = await channel.connect()
+                else:
+                    voice = sound_user[sound_channel_id].voice
+                    await sound_user[sound_channel_id].clear()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-
             elif (ctx.guild.id in music_user_guild):  # in sound_user
                 music_channel_id = music_user[list(music_user)[music_user_guild.index(ctx.guild.id)]].ctx.channel.id
-                voice = music_user[music_channel_id].voice
-                await music_user[music_channel_id].pause()
+                if ctx.guild.voice_client not in self.bot.voice_clients:
+                    await music_user[music_channel_id].kill()
+                    voice = await channel.connect()
+                else:
+                    voice = music_user[music_channel_id].voice
+                    await music_user[music_channel_id].pause()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
             elif (ctx.guild.id in record_user_guild):
-                # recording
-                record_channel_id = recording[list(recording)[record_user_guild.index(ctx.guild.id)]].ctx.channel.id
-                pass
+                if ctx.guild.voice_client not in self.bot.voice_clients:
+                    record_channel_id = recording[list(recording)[record_user_guild.index(ctx.guild.id)]].ctx.channel.id
+                    recording[record_channel_id].kill()
+                    voice = await channel.connect()
+                    sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
             else:
                 voice = await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
