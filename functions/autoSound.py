@@ -166,28 +166,31 @@ class SoundAssist:
         self.alive = False
         try:
             await self.voice.disconnect()
-        except:
-            pass
+        except Exception as e:
+            logger.error(e)
         finally:
+            del sound_user[self.ctx.channel.id]
             del recording[self.ctx.guild.id]
 
     async def threadRecord(self):
         print("Start Keep recording")
         
         while self.alive :
-            while self.soundClass.state == 1 or self.waitProcess:
+            # while self.soundClass.state == 1 or self.waitProcess:
+            #     await asyncio.sleep(0.1)
+            try:
+                self.voice.start_recording(
+                discord.sinks.WaveSink(),  # The sink type to use.
+                # discord.Sink(encoding='wav', filters={'time': 0}),
+                self.once_done,  # What to do once done.
+                self.ctx.channel)
+                await asyncio.sleep(3)
+                self.voice.stop_recording()
                 await asyncio.sleep(0.1)
-            self.voice.start_recording(
-            discord.sinks.WaveSink(),  # The sink type to use.
-            # discord.Sink(encoding='wav', filters={'time': 0}),
-            self.once_done,  # What to do once done.
-            self.ctx.channel)
-            await asyncio.sleep(3)
-            self.voice.stop_recording()
-            await asyncio.sleep(0.1)
-            
-            if self.ctx.guild.voice_client not in self.bot.voice_clients:
-                self.kill()
+            except:
+                if self.ctx.guild.voice_client not in self.bot.voice_clients:
+                    await self.kill()
+                    break
         print("Record Stop")
         
 
@@ -205,30 +208,31 @@ class SoundAssist:
         os.makedirs(day_folder,exist_ok=True)
         
         choseLen, choseFile = 0, None
+        try:
+            for user_id, audio in sink.audio_data.items():
+                this_file = os.path.join(day_folder,f'{user_id}.wav')
+                audio = AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2)
+                audio.export(this_file, format='wav')
+                result, timeline = speech_to_text(this_file)
+                print("[*]",user_id,":",result)
+                if not all( [len(i)==0 for i in result] ):
+                    for eachText in result:
+                        if (len(eachText)>=2):
+                            for eachSound,eachFile in zip(self.label, self.file):
+                                intersected = list(set(eachText)&set(eachSound.lower()))
+                                thisLen = len(intersected)
+                                if ( thisLen>=2 ):
+                                    print(f"\t{thisLen} -> {eachSound}")
+                                    if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
+                                        choseFile = eachFile
+                                        choseLen  = thisLen
 
-        for user_id, audio in sink.audio_data.items():
-            this_file = os.path.join(day_folder,f'{user_id}.wav')
-            audio = AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2)
-            audio.export(this_file, format='wav')
-            result, timeline = speech_to_text(this_file)
-            print("[*]",user_id,":",result)
-            if not all( [len(i)==0 for i in result] ):
-                for eachText in result:
-                    if (len(eachText)>=2):
-                        for eachSound,eachFile in zip(self.label, self.file):
-                            intersected = list(set(eachText)&set(eachSound.lower()))
-                            thisLen = len(intersected)
-                            if ( thisLen>=2 ):
-                                print(f"\t{thisLen} -> {eachSound}")
-                                if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
-                                    choseFile = eachFile
-                                    choseLen  = thisLen
-
-        if (choseFile and self.soundClass.state == 0):
-            await self.soundClass.playSound(choseFile)
-
-
-        self.waitProcess = False
+            if (choseFile and self.soundClass.state == 0):
+                await self.soundClass.playSound(choseFile)
+        except Exception as e:
+            logger.error(e)
+        finally:
+            self.waitProcess = False
 
 
     async def check(self):
