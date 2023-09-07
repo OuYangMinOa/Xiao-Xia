@@ -12,6 +12,7 @@ __pycache__
 /data/record/
 /data/message/
 /audio-chucks/
+/audio-chunks/*.*
 /data/playlist/
 /data/attachments/
 
