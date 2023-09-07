@@ -99,7 +99,7 @@ def speech_to_text(path):
     )
     folder_name = "audio-chunks"
     normalized_sound = match_target_amplitude(sound, -20.0)
-    chunk_filename = os.path.join(folder_name, f"chunk{i}.wav")
+    chunk_filename = os.path.join(folder_name, f"chunk.wav")
     audio_chunk = normalized_sound
     audio_chunk.export(chunk_filename, format="wav")
     with sr.AudioFile(chunk_filename) as source:
