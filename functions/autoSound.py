@@ -31,7 +31,6 @@ class Record(discord.ext.commands.Cog):
                 channel = ctx.author.voice.channel
 
             music_user_guild  = [music_user[x].ctx.guild.id for x in music_user]
-            record_user_guild = [recording[x ].ctx.guild.id for x in recording]
             sound_user_guild  = [sound_user[x].ctx.guild.id for x in sound_user]  #  use for check if bot is in the sound dict
             
             if (ctx.guild.id in sound_user_guild):  # in sound_user
@@ -52,10 +51,9 @@ class Record(discord.ext.commands.Cog):
                     voice = music_user[music_channel_id].voice
                     await music_user[music_channel_id].pause()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-            elif (ctx.guild.id in record_user_guild):
+            elif (ctx.guild.id in recording):
                 if ctx.guild.voice_client not in self.bot.voice_clients:
-                    record_channel_id = recording[list(recording)[record_user_guild.index(ctx.guild.id)]].ctx.channel.id
-                    await recording[record_channel_id].kill()
+                    await recording[ctx.guild.id].kill()
                     voice = await channel.connect()
                     sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
             else:
@@ -170,7 +168,7 @@ class SoundAssist:
             logger.error(e)
         finally:
             del sound_user[self.ctx.channel.id]
-            del recording[self.ctx.guild.id]
+            del recording[ self.ctx.guild.id]
 
     async def threadRecord(self):
         print("Start Keep recording")
@@ -235,8 +233,8 @@ class SoundAssist:
             self.waitProcess = False
 
 
-    async def check(self):
-        member_count = len(self.channel.voice_states)
+    async def check(self):ㄔㄛˉ
+        member_count = len(self.ctx.author.voice.channel.voice_states)
         print(f"[*] {self.channelid}, left member : {member_count}")
         if (member_count == 1):
             logger.info(f"[*] {self.channelid}, left member : {member_count}")
