@@ -92,6 +92,12 @@ class MusicBot:
             else:
                 self.state = 0
                 return
+        if (self.music_msg):
+            try:
+                self.music_msg.delete()
+            except:
+                pass
+            
 
         self.state = 1
         self.this_song  = self.queqed.pop(0) # get the song
