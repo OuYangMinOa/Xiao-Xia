@@ -198,7 +198,7 @@ class SoundAssist:
         for eachSound,eachFile in zip(self.label, self.file):
             for eachTextArr in all_result:
                 for eachText in eachTextArr:
-                    # print(eachText, eachSound, list(set(eachText)&set(eachSound)))
+                    print(eachText, eachSound, list(set(eachText)&set(eachSound)))
                     thisLen = len(list(set(eachText)&set(eachSound)))
                     if ( thisLen>=2 ):
                         if (thisLen > choseLen):
