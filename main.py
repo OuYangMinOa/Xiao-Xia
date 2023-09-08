@@ -55,6 +55,21 @@ async def on_message(message):
 async def RestartBot():
     os.system(f"python reboot.py")
 
+def BuildStopScript():
+    text = f"""
+os.kill({os.getpid()},signal.SIGTERM)
+p = subprocess.Popen(['python', 'LCCD.py'])
+try:
+    while True:
+        time.sleep(1)
+except KeyboardInterrupt:
+    p.terminate()
+"""
+    with open("reboot.py","a") as f:
+        f.write(text)
+
+
+
 if __name__ == '__main__': 
     # import cogs from cogs folder
     for filename in os.listdir("functions"):
@@ -64,11 +79,7 @@ if __name__ == '__main__':
     # from utils.wesAi import prompt_wes_com
     # print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
     print(f"[*] Process id : {os.getpid()}")
-
-    with open("reboot.py","a") as f:
-        f.write(f"os.kill({os.getpid()},signal.SIGTERM)\n")
-        f.write("p = subprocess.Popen(['python', 'LCCD.py'])")
-
+    BuildStopScript()
     StartChecking(bot)
     print("[*] Wait for `bot.run` to complete")
     bot.run(token)

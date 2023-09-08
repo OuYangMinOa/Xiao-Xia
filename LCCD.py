@@ -44,7 +44,7 @@ def git_pull_change():
 def BuildStopScript():
 
     text = f"""
-import os, signal
+import os, signal, time
 import subprocess
 os.kill({os.getpid()},signal.SIGTERM)
 """
