@@ -210,7 +210,7 @@ class SoundAssist:
                 self.voice.stop_recording()
                 await asyncio.sleep(0.1)
             except Exception as e:
-                self.check()
+                await self.check()
                 logger.error(e)
                 break
         print("Record Stop")
