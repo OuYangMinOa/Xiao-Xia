@@ -3,6 +3,8 @@ from discord.commands import slash_command, Option
 from discord.ext      import commands
 from glob             import glob
 from main             import RestartBot
+from utils.info       import recording, music_user, sound_user
+
 import discord
 import os
 
@@ -15,6 +17,23 @@ class admin(discord.ext.commands.Cog):
     async def reboot(self, ctx, password: Option(str, "password", required = True)):
         if ( str(os.getenv('RESTART_PASS'))==password):
             await ctx.respond("Restarting...",ephemeral=True)
+
+            for eachKey in music_user.copy():
+                try:
+                    await  music_user[eachKey].kill()
+                except:
+                    pass 
+            for eachKey in sound_user.copy():
+                try:
+                    await  sound_user[eachKey].kill()
+                except:
+                    pass 
+            for eachKey in recording.copy():
+                try:
+                    await  recording[eachKey].kill()
+                except:
+                    pass 
+
         else:
             await ctx.respond("Permission denied",ephemeral=True)
 
