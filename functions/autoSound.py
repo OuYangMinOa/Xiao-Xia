@@ -265,9 +265,17 @@ class SoundAssist:
 
 
     async def check(self):
+
+        if (self.ctx.guild.voice_client not in self.client.voice_clients):
+            logger.info("[*] (SoundAssist)  bot not in voice client")
+            await self.kill()
+            return 
+
         member_count = len(self.ctx.author.voice.channel.voice_states)
         print(f"[*] {self.channelid}, left member : {member_count}")
         if (member_count == 1):
-            logger.info(f"[*] {self.channelid}, left member : {member_count}")
-            logger.info(f"[*] {self.channelid}, Music stop cause no one listening")
+            logger.info(f"[*] (SoundAssist) {self.channelid}, left member : {member_count}")
+            logger.info(f"[*] (SoundAssist) {self.channelid}, Music stop cause no one listening")
             await self.kill()
+            return
+        
