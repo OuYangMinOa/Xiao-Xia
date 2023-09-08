@@ -209,6 +209,7 @@ class SoundAssist:
             except Exception as e:
                 self.check()
                 logger.error(e)
+                break
         print("Record Stop")
         
 
