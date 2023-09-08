@@ -14,9 +14,7 @@ class admin(discord.ext.commands.Cog):
     @slash_command(name="reboot",description="重新啟動")
     async def reboot(self, ctx, password: Option(str, "password", required = True)):
         if ( str(os.getenv('RESTART_PASS'))==password):
-            await RestartBot()
             await ctx.respond("Restarting...",ephemeral=True)
-
         else:
             await ctx.respond("Permission denied",ephemeral=True)
 

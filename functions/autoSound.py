@@ -206,10 +206,9 @@ class SoundAssist:
                 await asyncio.sleep(3)
                 self.voice.stop_recording()
                 await asyncio.sleep(0.1)
-            except:
-                if self.ctx.guild.voice_client not in self.bot.voice_clients:
-                    await self.kill()
-                    await asyncio.sleep(0.1)
+            except Exception as e:
+                self.check()
+                logger.error(e)
         print("Record Stop")
         
 

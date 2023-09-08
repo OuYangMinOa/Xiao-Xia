@@ -41,19 +41,7 @@ def git_pull_change():
         logger.info("[*] Repo changed! Activated.")
         return True
 
-def BuildStopScript():
-
-    text = f"""
-import os, signal, time
-import subprocess
-os.kill({os.getpid()},signal.SIGTERM)
-"""
-    with open("reboot.py","w") as f:
-        f.write(text)
-
-
 if __name__ == '__main__':
-    BuildStopScript()
     git_pull_change()
     main()
 
