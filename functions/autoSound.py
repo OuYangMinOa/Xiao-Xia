@@ -53,13 +53,9 @@ class Record(discord.ext.commands.Cog):
                     await music_user[music_channel_id].pause()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
             elif (ctx.guild.id in recording):
-                if ctx.guild.voice_client not in self.bot.voice_clients:
-                    await recording[ctx.guild.id].kill()
-                    voice = await channel.connect()
-                    sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-                else:
-                    voice = recording[ctx.guild.id]
-                    sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
+                await recording[ctx.guild.id].kill()
+                voice = await channel.connect()
+                sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
             else:
                 voice = await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
@@ -213,7 +209,7 @@ class SoundAssist:
             except:
                 if self.ctx.guild.voice_client not in self.bot.voice_clients:
                     await self.kill()
-                    break
+                    await asyncio.sleep(0.1)
         print("Record Stop")
         
 
