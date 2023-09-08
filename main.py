@@ -1,6 +1,6 @@
 # main.py
 from utils.OnMessage import prompt_openai, handle_message, ThreadHandleMessage
-from utils.info      import logger
+from utils.info      import logger, CheckBool
 from traceback       import format_exception
 
 from functions.PlayMusic       import StartChecking, DeleteAllResponse
@@ -22,9 +22,8 @@ token = str(os.getenv("DISCORD_TOKEN"))
 intents = discord.Intents.all()
 
 class MyBot(discord.Bot):
-    async def async_cleanup(self):  # example cleanup function
-        print("Cleaning up!")
     async def close(self):
+        CheckBool = False
         await DeleteAllResponse()
         await super().close()
 
@@ -53,7 +52,8 @@ async def on_message(message):
     await ThreadHandleMessage(bot,message)
     # return
 
-
+async def RestartBot():
+    os.system(f"python reboot.py")
 
 if __name__ == '__main__': 
     # import cogs from cogs folder

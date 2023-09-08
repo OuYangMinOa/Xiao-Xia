@@ -8,6 +8,8 @@ PASS_MSG    = []  ## handle pass message (abandoned)
 chat_dict   = {}  ## handle chat   {channel id:class}
 recording   = {}  ## handle recording {channel id:
 
+CheckBool   = True
+
 MASSAGE_DATA    = "data/message_collect.txt"   # abandoned
 Silence_DATA    = "data/silence_channel.txt"
 MASSAGE_FOLDER  = "data/message"
