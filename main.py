@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
     print(f"[*] Process id : {os.getpid()}")
 
-    with open("reboot.py","r") as f:
+    with open("reboot.py","a") as f:
         f.write(f"os.kill({os.getpid()},signal.SIGTERM)")
         f.write("p = subprocess.Popen(['python', 'LCCD.py'])")
 
