@@ -8,6 +8,7 @@ class Ping(discord.ext.commands.Cog):
 
     @slash_command(name='ping', description='return bot latency')
     async def ping(self,ctx: discord.ApplicationContext):
+        print(f"pong! ({self.bot.latency*1000:.2f} ms)")
         await ctx.respond(f"pong! ({self.bot.latency*1000:.2f} ms)")
 
 def setup(bot):

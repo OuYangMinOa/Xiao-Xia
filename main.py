@@ -42,14 +42,14 @@ async def before_invoke(ctx):
     # await ctx.defer( ephemeral=True)
 
 
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return  
-    if message.author.bot:
-        return
-    # await handle_message(message)
-    await ThreadHandleMessage(bot,message)
+# @bot.event
+# async def on_message(message):
+#     if message.author == bot.user:
+#         return  
+#     if message.author.bot:
+#         return
+#     # await handle_message(message)
+#     await ThreadHandleMessage(bot,message)
     # return
 
 async def RestartBot():
@@ -61,6 +61,7 @@ if __name__ == '__main__':
         if filename.endswith(".py"):
             extension = f"functions.{filename[:-3]}"
             bot.load_extension(extension)
+
     # from utils.wesAi import prompt_wes_com
     # print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
     print(f"[*] Process id : {os.getpid()}")

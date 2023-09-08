@@ -459,6 +459,7 @@ def setup(bot):
 
 def StartChecking(bot):
     async def WhileChecking():
+        await asyncio.sleep(30)
         while CheckBool:
             for eachKey in music_user.copy():
                 await music_user[eachKey].check()
@@ -470,9 +471,9 @@ def StartChecking(bot):
 
     def LoopChecking():
         bot.loop.create_task(WhileChecking())
-    
-    thisThread = threading.Thread(target=LoopChecking,daemon=True)
-    thisThread.start()
+
+    threading.Thread(target=LoopChecking,daemon=True).start()
+
 
 
 async def DeleteAllResponse():
