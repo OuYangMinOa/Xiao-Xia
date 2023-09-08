@@ -1,9 +1,8 @@
 # main.py
 from utils.OnMessage import prompt_openai, handle_message, ThreadHandleMessage
+from utils.check     import StartChecking, DeleteAllResponse
 from utils.info      import logger, CheckBool
 from traceback       import format_exception
-
-from functions.PlayMusic       import StartChecking, DeleteAllResponse
 
 import asyncio
 import discord
@@ -32,7 +31,6 @@ bot = MyBot(intents=intents,)
 
 @bot.event
 async def on_ready():
-    # print(f'We have logged in as {bot.user}')
     logger.info(f'We have logged in as {bot.user}')
 
 
@@ -40,7 +38,6 @@ async def on_ready():
 async def before_invoke(ctx):
     pass
     # await ctx.defer( ephemeral=True)
-
 
 @bot.event
 async def on_message(message):
@@ -51,9 +48,6 @@ async def on_message(message):
     # await handle_message(message)
     await ThreadHandleMessage(bot,message)
     return
-
-async def RestartBot():
-    os.system(f"python reboot.py")
 
 if __name__ == '__main__': 
     # import cogs from cogs folder

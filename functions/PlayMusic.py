@@ -457,29 +457,5 @@ def setup(bot):
     bot.add_cog(Music(bot))
 
 
-def StartChecking(bot):
-    async def WhileChecking():
-        await asyncio.sleep(30)
-        while CheckBool:
-            for eachKey in music_user.copy():
-                await music_user[eachKey].check()
-            for eachKey in sound_user.copy():
-                await sound_user[eachKey].check()
-            for eachKey in recording.copy():
-                await recording[eachKey].check()
-            await asyncio.sleep(1800)
 
-    def LoopChecking():
-        bot.loop.create_task(WhileChecking())
-
-    threading.Thread(target=LoopChecking,daemon=True).start()
-
-
-
-async def DeleteAllResponse():
-    print("\n[*] Clear all responses")
-    for eachKey in music_user.copy():
-        await music_user[eachKey].check()
-    for eachKey in sound_user.copy():
-        await sound_user[eachKey].check()
     

@@ -6,9 +6,9 @@ sound_user  = {}  ## handle sound  {channel id: class}
 User_dict   = {}  ##   {userid : userclass }k
 PASS_MSG    = []  ## handle pass message (abandoned)
 chat_dict   = {}  ## handle chat   {channel id:class}
-recording   = {}  ## handle recording {channel id:
+recording   = {}  ## handle recording {guild id:class}
 
-CheckBool   = True
+CheckBool   = False ## handle the checking loop.
 
 MASSAGE_DATA    = "data/message_collect.txt"   # abandoned
 Silence_DATA    = "data/silence_channel.txt"
