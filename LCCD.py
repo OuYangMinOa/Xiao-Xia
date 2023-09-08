@@ -47,7 +47,6 @@ def BuildStopScript():
 import os, signal
 import subprocess
 os.kill({os.getpid()},signal.SIGTERM)
-p = subprocess.Popen(['python', 'LCCD.py'])
 """
     with open("reboot.py","w") as f:
         f.write(text)

@@ -64,6 +64,11 @@ if __name__ == '__main__':
     # from utils.wesAi import prompt_wes_com
     # print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
     print(f"[*] Process id : {os.getpid()}")
+
+    with open("reboot.py","r") as f:
+        f.write(f"os.kill({os.getpid()},signal.SIGTERM)")
+        f.write("p = subprocess.Popen(['python', 'LCCD.py'])")
+
     StartChecking(bot)
     print("[*] Wait for `bot.run` to complete")
     bot.run(token)
