@@ -42,15 +42,15 @@ async def before_invoke(ctx):
     # await ctx.defer( ephemeral=True)
 
 
-# @bot.event
-# async def on_message(message):
-#     if message.author == bot.user:
-#         return  
-#     if message.author.bot:
-#         return
-#     # await handle_message(message)
-#     await ThreadHandleMessage(bot,message)
-    # return
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return  
+    if message.author.bot:
+        return
+    # await handle_message(message)
+    await ThreadHandleMessage(bot,message)
+    return
 
 async def RestartBot():
     os.system(f"python reboot.py")
