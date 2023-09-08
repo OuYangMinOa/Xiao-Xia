@@ -66,7 +66,7 @@ if __name__ == '__main__':
     print(f"[*] Process id : {os.getpid()}")
 
     with open("reboot.py","a") as f:
-        f.write(f"os.kill({os.getpid()},signal.SIGTERM)")
+        f.write(f"os.kill({os.getpid()},signal.SIGTERM)\n")
         f.write("p = subprocess.Popen(['python', 'LCCD.py'])")
 
     StartChecking(bot)
