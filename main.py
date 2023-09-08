@@ -56,14 +56,14 @@ async def RestartBot():
     os.system(f"python reboot.py")
 
 def BuildStopScript():
-    text = f"""
-os.kill({os.getpid()},signal.SIGTERM)
+    text = f"""os.kill({os.getpid()},signal.SIGTERM)
 p = subprocess.Popen(['python', 'LCCD.py'])
 try:
     while True:
         time.sleep(1)
-except KeyboardInterrupt:
-    p.terminate()
+except Exception as e:
+    print(e)
+p.terminate()
 """
     with open("reboot.py","a") as f:
         f.write(text)
