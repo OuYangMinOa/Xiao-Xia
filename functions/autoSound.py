@@ -23,6 +23,7 @@ class Record(discord.ext.commands.Cog):
     @slash_command(name="autosound",description="自動偵測語音播放音效版")
     async def autosound(self, ctx):
         await ctx.respond(f"autosound -{ctx.author.mention}")
+        logger.info(f"autosound -{ctx.author.name}")
         try:
             if not ctx.author.voice:
                 await ctx.respond('you are not connected to a voice channel')
@@ -56,6 +57,9 @@ class Record(discord.ext.commands.Cog):
                     await recording[ctx.guild.id].kill()
                     voice = await channel.connect()
                     sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
+                else:
+                    voice = recording[ctx.guild.id]
+                    sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
             else:
                 voice = await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
@@ -82,6 +86,8 @@ class Record(discord.ext.commands.Cog):
     @slash_command(name="stop_autosound",description="結束 - 自動偵測語音播放音效版")
     async def stopAutoSounding(self,ctx):
         await ctx.respond(f"stop_autosound -{ctx.author.mention}",delete_after=10)
+        logger.info(f"stop_autosound -{ctx.author.name}")
+
         await recording[ctx.guild.id].kill()
 
     
@@ -157,6 +163,7 @@ class SoundAssist:
         self.alive       = True
         self.soundClass  = soundClass
         self.saveFolder  = saveFolder
+        self.channelid   = soundClass.channelid
         self.waitProcess = False
         self.start_time  = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
         self.getsounds(ctx.guild.id)

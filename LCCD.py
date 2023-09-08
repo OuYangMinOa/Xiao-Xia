@@ -32,7 +32,8 @@ def git_pull_change():
         repo.remotes.origin.pull(force=True)
     except Exception as e:
         logger.error(e)
-        # input("wait for fix ...")
+        time.sleep(1800)
+        return False
 
     if current == repo.head.commit:
         return False
