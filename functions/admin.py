@@ -29,10 +29,11 @@ class admin(discord.ext.commands.Cog):
     @slash_command(name="keep_alive",description="Keep my bot alive")
     async def keep_alive(self, ctx, password: Option(str, "password", required = True)):
         if ( str(os.getenv('RESTART_PASS'))==password):
+            await ctx.respond(f"I'm alive  ({NowTime})",delete_after=5)
             while True:
-                NowTime = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
-                await ctx.respond(f"I'm alive  ({NowTime})",delete_after=5)
-                await asyncio.sleep(5.5)
+                NowTime = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
+                await ctx.channel.send(f"I'm alive  ({NowTime})",delete_after=5)
+                await asyncio.sleep(5.1)
         else:
             await ctx.respond("Permission denied",ephemeral=True)
 
