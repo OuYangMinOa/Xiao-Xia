@@ -9,6 +9,7 @@ from glob             import glob
 
 
 import speech_recognition as sr
+import threading
 import discord
 import asyncio
 import random
@@ -179,7 +180,9 @@ class SoundAssist:
 
 
     async def StartKeepListening(self):
-        self.bot.loop.create_task(self.threadRecord())
+        def createThread():
+            self.bot.loop.create_task(self.threadRecord())
+        threading.Thread(target=createThread,daemon=True).start()
 
     async def kill(self):
         self.alive = False
