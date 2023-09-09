@@ -254,10 +254,10 @@ class SoundAssist:
                                             choseLen  = thisLen
                                 else:
                                     if ( thisLen>=4 ):
-                                    print(f"\t{thisLen} -> {eachSound}")
-                                    if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
-                                        choseFile = eachFile
-                                        choseLen  = thisLen
+                                        print(f"\t{thisLen} -> {eachSound}")
+                                        if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
+                                            choseFile = eachFile
+                                            choseLen  = thisLen
 
                         if (len(eachText)==1):
                             for eachSound,eachFile in zip(self.label, self.file):
