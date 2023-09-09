@@ -249,13 +249,22 @@ class SoundAssist:
                     for eachText in result:
                         if (len(eachText)>=2):
                             for eachSound,eachFile in zip(self.label, self.file):
-                                if ( self.IfContinues(eachText,eachSound,2) ):
-                                    intersected = list(set(eachText)&set(eachSound.lower()))
-                                    thisLen = len(intersected)
-                                    print(f"\t{thisLen} -> {eachSound}")
-                                    if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
-                                        choseFile = eachFile
-                                        choseLen  = thisLen
+                                if (len(eachSound)<7):
+                                    if ( self.IfContinues(eachText,eachSound,2) ):
+                                        intersected = list(set(eachText)&set(eachSound.lower()))
+                                        thisLen = len(intersected)
+                                        print(f"\t{thisLen} -> {eachSound}")
+                                        if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
+                                            choseFile = eachFile
+                                            choseLen  = thisLen
+                                else:
+                                    if ( self.IfContinues(eachText,eachSound,4) ):
+                                        intersected = list(set(eachText)&set(eachSound.lower()))
+                                        thisLen = len(intersected)
+                                        print(f"\t{thisLen} -> {eachSound}")
+                                        if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
+                                            choseFile = eachFile
+                                            choseLen  = thisLen
 
                         if (len(eachText)==1):
                             for eachSound,eachFile in zip(self.label, self.file):
