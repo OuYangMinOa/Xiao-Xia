@@ -193,7 +193,7 @@ class SoundAssist:
         finally:
             if(self.ctx.channel.id in sound_user) :
                 del sound_user[self.ctx.channel.id]
-                
+
             if(self.ctx.guild.id in recording) :
                 del recording[ self.ctx.guild.id]
 
@@ -246,7 +246,14 @@ class SoundAssist:
                             for eachSound,eachFile in zip(self.label, self.file):
                                 intersected = list(set(eachText)&set(eachSound.lower()))
                                 thisLen = len(intersected)
-                                if ( thisLen>=2 ):
+                                if (eachSound<=4):
+                                    if ( thisLen>=2 ):
+                                        print(f"\t{thisLen} -> {eachSound}")
+                                        if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
+                                            choseFile = eachFile
+                                            choseLen  = thisLen
+                                else:
+                                    if ( thisLen>=4 ):
                                     print(f"\t{thisLen} -> {eachSound}")
                                     if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
                                         choseFile = eachFile
