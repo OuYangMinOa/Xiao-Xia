@@ -266,7 +266,7 @@ class SoundAssist:
 
     async def check(self):
 
-        if (self.ctx.guild.voice_client not in self.client.voice_clients):
+        if (self.ctx.guild.voice_client not in self.bot.voice_clients):
             logger.info("[*] (SoundAssist)  bot not in voice client")
             await self.kill()
             return 

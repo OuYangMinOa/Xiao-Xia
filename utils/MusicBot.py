@@ -34,7 +34,7 @@ class MusicBot:
         self.ctxResArr = []
         self.ctx       = ctx        # ctx
         self.voice     = voice      # voice client
-        self.client    = client
+        self.client    = client     # bot
         self.queqed    = []         # music queqed for play
         self.passed    = []         # Played music
         self.state     = 0          # 0:not playing , 1:playing , 2:pause, 3:need to use next_() to continue
