@@ -246,7 +246,7 @@ class SoundAssist:
                             for eachSound,eachFile in zip(self.label, self.file):
                                 intersected = list(set(eachText)&set(eachSound.lower()))
                                 thisLen = len(intersected)
-                                if (eachSound<=4):
+                                if (len(eachSound)<=6):
                                     if ( thisLen>=2 ):
                                         print(f"\t{thisLen} -> {eachSound}")
                                         if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
