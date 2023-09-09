@@ -15,8 +15,11 @@ def main():
         p = subprocess.Popen(['python', 'main.py'])
         try:
             while True:
-                if (git_pull_change()):
+                result = git_pull_change()
+                if (result==0):
                     break
+                if (result==2):
+                    logger.info("[*] Ignore error")
                 time.sleep(10)
         except Exception as e:
             logger.error(e)
@@ -32,14 +35,13 @@ def git_pull_change():
         repo.remotes.origin.pull(force=True)
     except Exception as e:
         logger.error(e)
-        time.sleep(1800)
-        return False
+        return 2
 
     if current == repo.head.commit:
-        return False
+        return 1
     else:
         logger.info("[*] Repo changed! Activated.")
-        return True
+        return 0
 
 if __name__ == '__main__':
     git_pull_change()

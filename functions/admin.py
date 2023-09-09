@@ -31,10 +31,11 @@ class admin(discord.ext.commands.Cog):
         if ( str(os.getenv('RESTART_PASS'))==password):
             NowTime = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             await ctx.respond(f"I'm alive  ({NowTime})",delete_after=5)
+            await asyncio.sleep(5.2)
             while True:
                 NowTime = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
                 await ctx.channel.send(f"I'm alive  ({NowTime})",delete_after=5)
-                await asyncio.sleep(5.1)
+                await asyncio.sleep(5.2)
         else:
             await ctx.respond("Permission denied",ephemeral=True)
 

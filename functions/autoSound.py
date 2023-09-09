@@ -191,8 +191,11 @@ class SoundAssist:
         except Exception as e:
             logger.error(e)
         finally:
-            del sound_user[self.ctx.channel.id]
-            del recording[ self.ctx.guild.id]
+            if(self.ctx.channel.id in sound_user) :
+                del sound_user[self.ctx.channel.id]
+                
+            if(self.ctx.guild.id in recording) :
+                del recording[ self.ctx.guild.id]
 
     async def threadRecord(self):
         print("Start Keep recording")
