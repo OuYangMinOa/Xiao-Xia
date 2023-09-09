@@ -29,7 +29,7 @@ class Morse(discord.ext.commands.Cog):
         
 
         logger.info(f"[*] {ctx.author.name} encrypting message : {message}")
-        await ctx.respond(f"`/encrypt` {ctx.author.mention}")
+        await ctx.respond(f"`/encrypt` {ctx.author.mention}", ephemeral=True)
 
         if (all(x.isalpha() or x.isspace() or x.isnumeric() for x in message)):
             cipher = ''
