@@ -54,9 +54,12 @@ class Record(discord.ext.commands.Cog):
                     await music_user[music_channel_id].pause()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
             elif (ctx.guild.id in recording):
-                await recording[ctx.guild.id].kill()
-                voice = await channel.connect()
-                sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
+                # await recording[ctx.guild.id].kill()
+                # voice = await channel.connect()
+                # sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
+                if (recording[ctx.guild.id].alive):
+                    sound_user[ctx.channel.id] = SoundBot(channel, recording[ctx.guild.id].voice , ctx, self.bot)
+                    return
             else:
                 voice = await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
@@ -201,6 +204,8 @@ class SoundAssist:
         print("Start Keep recording")
         
         while self.alive :
+            if (self.soundClass.state == 1 or self.waitProcess):
+                print("wait for process finish or sound finish")
             while self.soundClass.state == 1 or self.waitProcess:
                 await asyncio.sleep(0.1)
             try:
@@ -211,7 +216,7 @@ class SoundAssist:
                 self.ctx.channel)
                 await asyncio.sleep(3)
                 self.voice.stop_recording()
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(1)
             except Exception as e:
                 await self.check()
                 logger.error(e)

@@ -20,6 +20,7 @@ def main():
                     break
                 if (result==2):
                     logger.info("[*] Ignore error")
+                    time.sleep(1800)
                 time.sleep(10)
         except Exception as e:
             logger.error(e)
