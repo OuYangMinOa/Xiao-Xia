@@ -15,7 +15,7 @@ def StartChecking(bot):
                 await sound_user[eachKey].check()
             for eachKey in recording.copy():
                 await recording[eachKey].check()
-            await asyncio.sleep(10)
+            await asyncio.sleep(1800)
 
     def LoopChecking():
         bot.loop.create_task(WhileChecking())

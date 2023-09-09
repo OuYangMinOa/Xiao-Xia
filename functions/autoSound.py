@@ -217,7 +217,12 @@ class SoundAssist:
                 logger.error(e)
                 break
         print("Record Stop")
-        
+    
+    def IfContinues(self, word1,word2,numbers):
+        for i in range(0,len(word1)-numbers):
+            for j in range(0,len(word1)-numbers):
+                if ( word1[i:i+numbers] == word2[j:j+numbers] ):
+                    return True
 
     async def once_done(self, sink: discord.sinks, channel: discord.TextChannel, *args):
         self.waitProcess = True
@@ -244,20 +249,13 @@ class SoundAssist:
                     for eachText in result:
                         if (len(eachText)>=2):
                             for eachSound,eachFile in zip(self.label, self.file):
-                                intersected = list(set(eachText)&set(eachSound.lower()))
-                                thisLen = len(intersected)
-                                if (len(eachSound)<=6):
-                                    if ( thisLen>=2 ):
-                                        print(f"\t{thisLen} -> {eachSound}")
-                                        if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
-                                            choseFile = eachFile
-                                            choseLen  = thisLen
-                                else:
-                                    if ( thisLen>=4 ):
-                                        print(f"\t{thisLen} -> {eachSound}")
-                                        if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
-                                            choseFile = eachFile
-                                            choseLen  = thisLen
+                                if ( self.IfContinues(eachText,eachSound,2) ):
+                                    intersected = list(set(eachText)&set(eachSound.lower()))
+                                    thisLen = len(intersected)
+                                    print(f"\t{thisLen} -> {eachSound}")
+                                    if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
+                                        choseFile = eachFile
+                                        choseLen  = thisLen
 
                         if (len(eachText)==1):
                             for eachSound,eachFile in zip(self.label, self.file):
