@@ -24,7 +24,7 @@ async def prompt_wes_com(text):   # use my own LLM AI
 
     
     # HOST = "192.168.0.7"
-    HOST = "127.0.0.1"
+    HOST = "0.0.0.0"
     PORT = 8088
 
 
@@ -42,6 +42,7 @@ async def prompt_wes_com(text):   # use my own LLM AI
                 reJson = await resp.json()
     except Exception as e:
         logger.error(e)
+        return None
     # reJson = resp.json()
 
     if (reJson["status"] =="ok"):
