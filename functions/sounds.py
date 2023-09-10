@@ -244,7 +244,7 @@ class SoundBot(my_mb.MusicBot):
         music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
 
         if (self.ctx.guild.id  in music_user_guild):
-            music_channel_id = music_user[list(music_user)[music_user_guild.index(self.sound_class.ctx.guild.id)]].ctx.channel.id
+            music_channel_id = music_user[list(music_user)[music_user_guild.index(self.ctx.guild.id)]].ctx.channel.id
             if (music_user[music_channel_id].state == 1):
                 await music_user[music_channel_id].pause("(Stop cause sound playing)")
                 music_user[music_channel_id].state = 3
