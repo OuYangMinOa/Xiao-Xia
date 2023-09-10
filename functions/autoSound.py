@@ -205,6 +205,7 @@ class SoundAssist:
             while self.soundClass.state == 1 or self.waitProcess:
                 await asyncio.sleep(1)
             try:
+                print("[*] start recording")
                 self.voice.start_recording(
                     discord.sinks.WaveSink(),  # The sink type to use.
                     # discord.Sink(encoding='wav', filters={'time': 0}),
@@ -245,8 +246,9 @@ class SoundAssist:
                 this_file = os.path.join(day_folder,f'{user_id}.wav')
                 AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2).export(this_file, format='wav')
                 result, timeline = await speech_to_text(this_file)
-                print("[*]",user_id,":",result)
                 if not all( [len(i)==0 for i in result] ):
+                    print("[*]",user_id,":",result)
+
                     for eachText in result:
                         if (len(eachText)>=2):
                             for eachSound,eachFile in zip(self.label, self.file):
