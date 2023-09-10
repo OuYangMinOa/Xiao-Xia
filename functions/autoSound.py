@@ -259,7 +259,7 @@ class SoundAssist:
                                             choseFile = eachFile
                                             choseLen  = thisLen
                                 else:
-                                    if ( self.IfContinues(eachText,eachSound,4) ):
+                                    if ( self.IfContinues(eachText,eachSound,3) ):
                                         intersected = list(set(eachText)&set(eachSound.lower()))
                                         thisLen = len(intersected)
                                         print(f"\t{thisLen} -> {eachSound}")
