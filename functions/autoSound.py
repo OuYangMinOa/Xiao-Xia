@@ -178,6 +178,9 @@ class SoundAssist:
         self.label, self.file =  label, file
 
     async def ReConnect(self):
+        if not self.alive:
+            return
+        
         if self.ctx.guild.voice_client:
             self.voice = self.ctx.guild.voice_client
         else:
@@ -195,11 +198,14 @@ class SoundAssist:
         except Exception as e:
             logger.error(e)
         finally:
+            if(self.ctx.guild.id in recording) :
+                del recording[ self.ctx.guild.id]
+
+
             if(self.ctx.channel.id in sound_user) :
                 del sound_user[self.ctx.channel.id]
 
-            if(self.ctx.guild.id in recording) :
-                del recording[ self.ctx.guild.id]
+            
 
     async def threadRecord(self):
         print("Start Keep recording")
@@ -210,7 +216,7 @@ class SoundAssist:
             while self.soundClass.state == 1 or self.waitProcess:
                 await asyncio.sleep(1)
             try:
-                print("[*] start recording")
+                print("[*] start recording",end="")
                 await self.ReConnect()
                 self.voice.start_recording(
                     discord.sinks.WaveSink(),  # The sink type to use.
@@ -221,6 +227,8 @@ class SoundAssist:
                 await asyncio.sleep(3)
                 self.voice.stop_recording()
                 await asyncio.sleep(0.5)
+                print("  stop it!")
+
             except Exception as e:
                 await self.check()
                 logger.error(f"threadRecord {e}")
@@ -284,7 +292,10 @@ class SoundAssist:
 
 
     async def check(self):
-
+        
+        if not self.alive:
+            return
+        
         await self.ReConnect()
 
         if (self.ctx.guild.voice_client not in self.bot.voice_clients):
