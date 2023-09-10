@@ -14,6 +14,7 @@ import discord
 import asyncio
 import random
 import time
+import shutil
 import os
 
 
@@ -123,7 +124,7 @@ async def speech_to_text(path):
             except sr.UnknownValueError as e:
                 text = "*inaudible*"
         except Exception as e:
-            logger.error(f"speech_to_text(1) {e}")
+            # logger.error(f"speech_to_text(2) {e}")
             text = ''
         return [text,], ''
     # normalized_sound = match_target_amplitude(sound, -20.0)
@@ -169,6 +170,9 @@ class SoundAssist:
         self.soundClass  = soundClass
         self.saveFolder  = saveFolder
         self.channelid   = soundClass.channelid
+        self.countdown   = 0
+        
+        # empty.wav
         self.waitProcess = False
         self.start_time  = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
         self.getsounds(ctx.guild.id)
@@ -176,9 +180,14 @@ class SoundAssist:
 
     def getsounds(self,channel_id):
         save_folder = os.path.join("data/attachments", str(channel_id))
+        threading.Thread(target=shutil.copyfile,args=("data/empty.wav", save_folder+"/empty.wav")).start()
+
         label, file = [], []
         for path in glob(f'{save_folder}/*.*'):
-            if (path.endswith('mp3') or path.endswith('wav') ):
+            if ('empty.wav' == os.path.basename(path)):
+                continue
+
+            if (path.endswith('mp3') or path.endswith('wav')  ):
                 label.append(os.path.basename(path[:-4]))
                 file.append( os.path.basename(path) )
         # label = sorted(label, key=lambda x: len(x))
@@ -235,7 +244,7 @@ class SoundAssist:
                 self.voice.stop_recording()
                 await asyncio.sleep(0.5)
                 print("stop it!")
-
+                self.countdown += 3.5
             except Exception as e:
                 await self.check()
                 logger.error(f"threadRecord {e}")
@@ -272,7 +281,7 @@ class SoundAssist:
                 this_file = os.path.join(day_folder,f'{user_id}.wav')
                 AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2).export(this_file, format='wav')
                 result, timeline = await speech_to_text(this_file)
-                print("\t",user_id,this_file,":",result[0])
+                print("\t",user_id,":",result[0])
                 if not all( [len(i)==0 for i in result] ):
 
                     for eachText in result:
@@ -281,7 +290,7 @@ class SoundAssist:
                                 if ( self.IfContinues(eachText,eachSound,2) ):
                                     intersected = list(set(eachText)&set(eachSound.lower()))
                                     thisLen = len(intersected)
-                                    print(f"\t{thisLen} -> {eachSound}")
+                                    print(f"\t\t{thisLen} -> {eachSound}")
                                     if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
                                         choseFile = eachFile
                                         choseLen  = thisLen
@@ -289,7 +298,7 @@ class SoundAssist:
                         if (len(eachText)==1):
                             for eachSound,eachFile in zip(self.label, self.file):
                                 if ( eachText in eachSound ):
-                                    print(f"\tSingle -> {eachSound}")
+                                    print(f"\t\tSingle -> {eachSound}")
                                     if (choseFile):
                                         if (random.random()>0.3):
                                             choseFile = eachFile
@@ -301,6 +310,10 @@ class SoundAssist:
 
             if (choseFile and self.soundClass.state == 0):
                 await self.soundClass.playSound(choseFile)
+
+            if (self.countdown >300):
+                logger.info("[*] Play a empty sound")
+                await self.soundClass.playSound("empty.wav")
         except Exception as e:
             logger.error(f"once done {e}")
         finally:

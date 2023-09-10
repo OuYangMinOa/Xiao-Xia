@@ -215,8 +215,8 @@ class MusicBot:
         if self.ctx.guild.voice_client not in self.client.voice_clients:
             print("[*] get kicked from",self.channelid)
             return
-
-        self.music_msg = await self.ctx.channel.send(f':musical_note:  Now playing ({len(self.passed)}/{len(self.queqed)+len(self.passed)}) : {this_song_name} :musical_note:')
+        if (this_song_name not in ['empty.wav']):
+            self.music_msg = await self.ctx.channel.send(f':musical_note:  Now playing ({len(self.passed)}/{len(self.queqed)+len(self.passed)}) : {this_song_name} :musical_note:')
 
         FFMPEG_OPTS = {
         # 'before_options': '-reconnect_streamed 1 -reconnect_delay_max 5', 
