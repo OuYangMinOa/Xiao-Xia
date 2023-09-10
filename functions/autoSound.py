@@ -74,7 +74,8 @@ class Record(discord.ext.commands.Cog):
 
         recording.update({ctx.guild.id: SRS})
         
-        await SRS.StartKeepListening()
+        # await SRS.StartKeepListening()
+        await SRS.threadRecord()
         # vc.start_recording(
         #     discord.sinks.WaveSink(),  # The sink type to use.
         #     # discord.Sink(encoding='wav', filters={'time': 0}),
@@ -215,7 +216,7 @@ class SoundAssist:
                 await asyncio.sleep(0.5)
             except Exception as e:
                 await self.check()
-                logger.error(e)
+                logger.error("threadRecord"+e)
                 break
         print("Record Stop")
     
@@ -242,8 +243,7 @@ class SoundAssist:
         try:
             for user_id, audio in sink.audio_data.items():
                 this_file = os.path.join(day_folder,f'{user_id}.wav')
-                audio = AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2)
-                audio.export(this_file, format='wav')
+                AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2).export(this_file, format='wav')
                 result, timeline = await speech_to_text(this_file)
                 print("[*]",user_id,":",result)
                 if not all( [len(i)==0 for i in result] ):
@@ -277,7 +277,7 @@ class SoundAssist:
             if (choseFile and self.soundClass.state == 0):
                 await self.soundClass.playSound(choseFile)
         except Exception as e:
-            logger.error(e)
+            logger.error("once done"+e)
         finally:
             self.waitProcess = False
 
