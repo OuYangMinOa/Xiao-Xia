@@ -203,7 +203,7 @@ def GrabSongListFromSpotify(url,start=0,end=100):
     if ("track" in url):
         results = sp.track(spId)
         # print(results['name'],results['artists'][0]['name'])
-        return youtubeSearch(results['name']+'-'+results['artists'][0]['name'])
+        return [youtubeSearch(results['name']+'-'+results['artists'][0]['name']),]
 
     if ("artist" in url):
         results = sp.artist_top_tracks(spId)
