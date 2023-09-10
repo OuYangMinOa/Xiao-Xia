@@ -237,6 +237,11 @@ class SoundAssist:
             except Exception as e:
                 await self.check()
                 logger.error(f"threadRecord {e}")
+                await asyncio.sleep(0.5)
+
+                if ("Not" in e):
+                    break
+                
         print("Record Stop")
     
     def IfContinues(self, word1,word2,numbers):

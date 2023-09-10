@@ -2,9 +2,8 @@
 from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger
 
 import requests
+import socket
 from aiohttp import ClientSession
-
-
 
 def is_port_in_use(port: int) -> bool:
     import socket
@@ -23,7 +22,8 @@ async def prompt_wes_com(text):   # use my own LLM AI
     """
 
     
-    HOST = "192.168.133.209"
+    HOST = socket.gethostbyname(socket.gethostname()) #"192.168.133.209"
+    print(HOST)
     # HOST = "127.0.0.1"
     PORT = 8088
 
