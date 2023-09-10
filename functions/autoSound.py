@@ -196,7 +196,7 @@ class SoundAssist:
             self.bot.loop.create_task(self.threadRecord())
         Process(target=createThread,daemon=True).start()
 
-        
+
     async def kill(self):
         self.alive = False
         try:
@@ -294,12 +294,17 @@ class SoundAssist:
                                     else:
                                         choseFile = eachFile
 
+                                        
+                threading.Thread(target=os.remove,args=(this_file,)).start()
+
             if (choseFile and self.soundClass.state == 0):
                 await self.soundClass.playSound(choseFile)
         except Exception as e:
             logger.error(f"once done {e}")
         finally:
             self.waitProcess = False
+
+        
 
 
     async def check(self):
