@@ -261,7 +261,7 @@ class MusicBot:
         ## if left the channel
         if (self.ctx.guild.voice_client not in self.client.voice_clients):
             logger.info("[*] bot not in voice client")
-            self.kill()
+            await self.kill()
             if (self.ctx.channel.id in music_user): del music_user[self.ctx.channel.id]
             if (self.ctx.channel.id in sound_user):
                 for eachRes in self.ctxResArr:

@@ -19,6 +19,7 @@ class Help(discord.ext.commands.Cog):
  - `/platlist` show all playlist
  - `/save_platlist {name}` save current playlist
  - `/skip` to skip the song.
+ - `/stop` same as skip。
  - `/pause` to pause the song.
  - `/list` to show the playlist.
  - `/loop` to loop current song.
@@ -62,6 +63,7 @@ class Help(discord.ext.commands.Cog):
  - `/platlist` 展示儲存的播放清單
  - `/save_platlist {name}` 儲存現在正在撥放的歌單
  - `/skip` 跳過。
+ - `/stop` 跟skip一樣。
  - `/pause` 暫停。
  - `/list` 看撥放清單。
  - `/loop` 循環播放清單。

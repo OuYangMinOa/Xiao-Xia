@@ -43,30 +43,30 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 
 # :notes: Music
 
-* `/play {url}` to play music (youtube or spotify).
+* `/play {url}`  play music (youtube or spotify).
 * `/platlist` show all playlist
 * `/save_platlist {name}` save current playlist
-* `/skip` to skip the song.
-* `/pause` to pause the song.
-* `/list` to show the playlist
-* `/loop` to loop current song.
-* `/clear`  to clear the playlist
-* `/leave` to leave the voice channel.
+* `/skip`  skip the song.
+* `/pause`  pause the song.
+* `/list`  show the playlist
+* `/loop`  loop current song.
+* `/clear`   clear the playlist
+* `/leave`  leave the voice channel.
 
 # :notes: Sound board
-* `/upload_sound {name} {file}` to upload your own sound.
-* `/list_sound` to list all available sound and play it.
-* `/search_sound` to search sounds by keywords.
-* `/say` to say the word.
+* `/upload_sound {name} {file}`  upload your own sound.
+* `/list_sound`  list all available sound and play it.
+* `/search_sound`  search sounds by keywords.
+* `/say`  say the word.
 * `/autosound` Automatically detect voice and play sound effects board
 * `/stop_autosound` Stop autosound
 
 # :laughing: chat
 * I will reply all message, if you want to shut it down, use `/silence` to shut me up
-* Use `/clear_talk` to clear the chat history.
+* Use `/clear_talk`  clear the chat history.
 * Use `/talk` so I can keep talking.
-* Use `/joke` to let me say a joke.
-* Use `/chickensoul` to let me say a chickensoul.
+* Use `/joke`  let me say a joke.
+* Use `/chickensoul`  let me say a chickensoul.
 * `/encrypt ` Convert the message into Morse code.
 * `/decrypt ` Convert Morse code into messages.
 

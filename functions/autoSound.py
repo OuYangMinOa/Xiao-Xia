@@ -95,14 +95,9 @@ class Record(discord.ext.commands.Cog):
 def setup(bot):
     bot.add_cog(Record(bot))
 
-def speech_to_text(path):
+async def speech_to_text(path):
     r = sr.Recognizer() 
     sound = AudioSegment.from_wav(path)
-    chunks = split_on_silence(sound,
-        min_silence_len = 300,
-        silence_thresh = sound.dBFS-20,
-        keep_silence=100,
-    )
     folder_name = "audio-chunks"
     normalized_sound = match_target_amplitude(sound, -20.0)
     chunk_filename = os.path.join(folder_name, f"chunk.wav")
@@ -207,7 +202,7 @@ class SoundAssist:
             if (self.soundClass.state == 1 or self.waitProcess):
                 print("wait for process finish or sound finish")
             while self.soundClass.state == 1 or self.waitProcess:
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(1)
             try:
                 self.voice.start_recording(
                 discord.sinks.WaveSink(),  # The sink type to use.
@@ -216,7 +211,6 @@ class SoundAssist:
                 self.ctx.channel)
                 await asyncio.sleep(3)
                 self.voice.stop_recording()
-                await asyncio.sleep(1)
             except Exception as e:
                 await self.check()
                 logger.error(e)
@@ -238,7 +232,7 @@ class SoundAssist:
         #     for user_id, audio in sink.audio  _data.items()
         # ]
 
-        end_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
+        # end_time = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
         day_folder =  self.saveFolder
         os.makedirs(day_folder,exist_ok=True)
         
@@ -248,7 +242,7 @@ class SoundAssist:
                 this_file = os.path.join(day_folder,f'{user_id}.wav')
                 audio = AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2)
                 audio.export(this_file, format='wav')
-                result, timeline = speech_to_text(this_file)
+                result, timeline = await speech_to_text(this_file)
                 print("[*]",user_id,":",result)
                 if not all( [len(i)==0 for i in result] ):
                     for eachText in result:
@@ -288,10 +282,12 @@ class SoundAssist:
 
     async def check(self):
 
+
         if (self.ctx.guild.voice_client not in self.bot.voice_clients):
             logger.info("[*] (SoundAssist)  bot not in voice client")
             await self.kill()
             return 
+        
 
         member_count = len(self.ctx.author.voice.channel.voice_states)
         print(f"[*] {self.channelid}, left member : {member_count}")
