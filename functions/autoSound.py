@@ -118,8 +118,10 @@ async def speech_to_text(path):
                     text['alternative'][0]['transcript'] = "*inaudible*"
                 text = text['alternative'][0]['transcript']
             except sr.UnknownValueError as e:
+                logger.error(f"speech_to_text {e}")
                 text = "*inaudible*"
-        except:
+        except Exception as e:
+            logger.error(f"speech_to_text {e}")
             text = ''
         return [text,], ''
     # normalized_sound = match_target_amplitude(sound, -20.0)
