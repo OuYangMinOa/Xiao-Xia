@@ -220,8 +220,9 @@ class SoundAssist:
                 logger.error(f"threadRecord {e}")
                 try:
                     self.voice.stop_recording()
+                    await asyncio.sleep(3)
                 except Exception as e:
-                    pass
+                    await self.check()
         print("Record Stop")
     
     def IfContinues(self, word1,word2,numbers):
