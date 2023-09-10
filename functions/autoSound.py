@@ -267,7 +267,10 @@ class SoundAssist:
                             for eachSound,eachFile in zip(self.label, self.file):
                                 if ( eachText in eachSound ):
                                     print(f"\tSingle -> {eachSound}")
-                                    if (random.random()>0.3):
+                                    if (choseFile):
+                                        if (random.random()>0.3):
+                                            choseFile = eachFile
+                                    else:
                                         choseFile = eachFile
 
             if (choseFile and self.soundClass.state == 0):
