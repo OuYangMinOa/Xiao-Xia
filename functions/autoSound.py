@@ -270,8 +270,8 @@ class SoundAssist:
                 this_file = os.path.join(day_folder,f'{user_id}.wav')
                 AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2).export(this_file, format='wav')
                 result, timeline = await speech_to_text(this_file)
+                print("\t",user_id,this_file,":",result[0])
                 if not all( [len(i)==0 for i in result] ):
-                    print("\t",user_id,":",result[0])
 
                     for eachText in result:
                         if (len(eachText)>=2):
