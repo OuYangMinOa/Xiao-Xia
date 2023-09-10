@@ -215,18 +215,22 @@ class Music(discord.ext.commands.Cog):
         if ctx.guild.voice_client not in self.bot.voice_clients:
             return
 
-        if (ctx.channel.id in music_user):
-            await music_user[ctx.channel.id].skip()
+        
 
         if (ctx.channel.id in sound_user):
             await sound_user[ctx.channel.id].skip()
+            return 
+        
+        if (ctx.channel.id in music_user):
+            await music_user[ctx.channel.id].skip()
+            return
 
-    @slash_command(name="stop",description="skip the current music")
-    async def stop(self,ctx):
+    @slash_command(name="stop_music",description="skip the current music")
+    async def stop_music(self,ctx):
         # await ctx.response.defer( ephemeral=True)
-        logger.info(f"[*] stop {ctx.author.name}")
+        logger.info(f"[*] stop_music {ctx.author.name}")
 
-        await ctx.respond('stop' + f' - {ctx.author.mention}')
+        await ctx.respond('stop_music' + f' - {ctx.author.mention}')
 
         if not ctx.author.voice:
             await ctx.send('you are not connected to a voice channel')
@@ -240,6 +244,23 @@ class Music(discord.ext.commands.Cog):
 
         if (ctx.channel.id in music_user):
             await music_user[ctx.channel.id].skip()
+            return
+        
+    @slash_command(name="stop_sound",description="skip the current sound")
+    async def stop_sound(self,ctx):
+        # await ctx.response.defer( ephemeral=True)
+        logger.info(f"[*] stop_sound {ctx.author.name}")
+
+        await ctx.respond('stop_sound' + f' - {ctx.author.mention}')
+
+        if not ctx.author.voice:
+            await ctx.send('you are not connected to a voice channel')
+            return
+        else:
+            channel = ctx.author.voice.channel
+
+        if ctx.guild.voice_client not in self.bot.voice_clients:
+            await ctx.send("I'm not singing")
             return
         if (ctx.channel.id in sound_user):
             await sound_user[ctx.channel.id].skip()
@@ -454,6 +475,8 @@ class Music(discord.ext.commands.Cog):
 
         logger.info(f"[*] Build sound successful !!")
 
+
+        lastMusicTime = music_user[ctx.channel.id].startTime
         await music_user[ctx.channel.id].pause("(Stop cause I'm saying something)")
 
         tempqueqe = music_user[ctx.channel.id].queqed
@@ -461,16 +484,20 @@ class Music(discord.ext.commands.Cog):
 
         music_user[ctx.channel.id].passed = []
         music_user[ctx.channel.id].queqed = [ (f"{ctx.guild.id}.mp3",""),]
-        print(music_user[ctx.channel.id].queqed )
         logger.info(f"[*] Try to play sound .... ")
 
 
         await music_user[ctx.channel.id]._next()
 
-        music_user[ctx.channel.id].state = 3
+        while music_user[ctx.channel.id].StartCount:   
+            await asyncio.sleep(1)
 
+        music_user[ctx.channel.id].startTime = lastMusicTime
+
+        music_user[ctx.channel.id].state = 3
         music_user[ctx.channel.id].queqed = tempqueqe
         music_user[ctx.channel.id].passed = temppasse
+        await music_user[ctx.channel.id].pause()
 
         
 

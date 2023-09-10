@@ -84,11 +84,22 @@ class MusicBot:
     def thread_next(self):
         self.client.loop.create_task(self._next())
 
+    def countLoop(self):
+        while self.StartCount:
+            time.sleep(1)
+            self.startTime += 1
+        print(f"[*] Music time : {self.startTime}")
+        self.startTime = 0
+
     def countSec(self):
-        pass
+        ## count the music time
+        self.StartCount = True
+        threading.Thread(target=self.countLoop,daemon=True).start()
 
 
     async def _next(self):
+        
+        self.StartCount = False  ## 
 
         if (len(self.queqed) == 0):
             logger.info("[*] Queqed song is finish")
@@ -232,6 +243,8 @@ class MusicBot:
         this_source = discord.FFmpegPCMAudio(song_path, **FFMPEG_OPTS)
         this_source.volume = self.volume
 
+        self.countSec()
+
         self.voice.play(
             this_source, 
             after = lambda e: asyncio.run_coroutine_threadsafe(self._endsong(e), self.client.loop)
@@ -337,10 +350,11 @@ class MusicBot:
 
     async def pause(self,msg=""):
         self.dont_stop = 0
+        self.StartCount = False
         if (self.state == 0):
             # await self.ctx.channel.send(f':poop: No music playing, type /`play url`') 
             pass
-        elif (self.state == 1):
+        elif (self.state == 1): # is playing 
             if self.ctx.guild.voice_client not in self.client.voice_clients:
                 logger.info(f"[*] get kicked from {self.channelid}")
                 await self.clear()
@@ -362,14 +376,20 @@ class MusicBot:
         elif (self.state==3) :
             logger.info(f"[*] ===  continue ===   {self.channelid}")
             logger.info(f"[*] plaing {self.this_song[0]} in  {self.channelid}")
-
+            self.this_song  = self.passed.pop()
+            self.queqed.insert(0,self.this_song)
+        
             if (self.wait_msg):
                 await self.wait_msg.delete()
                 self.wait_msg = None
-            self.state = 1            
+
+            self.state = 1
             await self._next()
 
     async def skipnums(self,num):
+        self.StartCount = False
+
+
         num = int(num)
         logger.info(f"[*] {self.channelid} skipping {num} of songs")
         try:
@@ -394,6 +414,8 @@ class MusicBot:
 
     async def skip(self):
         self.dont_stop = 0
+        self.StartCount = False
+
         try:
             if (self.music_msg):
                 await self.music_msg.delete()

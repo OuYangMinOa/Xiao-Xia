@@ -243,15 +243,32 @@ class SoundBot(my_mb.MusicBot):
 
         music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
 
+
+        ## check if any music playing on that guild
         if (self.ctx.guild.id  in music_user_guild):
             music_channel_id = music_user[list(music_user)[music_user_guild.index(self.ctx.guild.id)]].ctx.channel.id
             if (music_user[music_channel_id].state == 1):
+                lastMusicTime = music_user[music_channel_id].startTime
                 await music_user[music_channel_id].pause("(Stop cause sound playing)")
                 music_user[music_channel_id].state = 3
                 # await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
 
         logger.info(self.queqed)
-        await self._next()
+
+        ## Start the sound
+        await self._next()  
+        
+        ## if the sound finished playing
+        while self.StartCount:   
+            await asyncio.sleep(1)
+
+        ## resume the music
+        if (self.ctx.guild.id  in music_user_guild):
+            if (music_user[music_channel_id].state == 3):
+                music_user[music_channel_id].startTime = lastMusicTime
+                await music_user[music_channel_id].pause("(Stop cause sound playing)")
+
+
 
     async def leave(self):
         record_user_guild = [recording[x ].ctx.guild.id for x in recording]
