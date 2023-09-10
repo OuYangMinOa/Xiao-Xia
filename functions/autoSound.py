@@ -226,7 +226,7 @@ class SoundAssist:
     
     def IfContinues(self, word1,word2,numbers):
         for i in range(0,len(word1)-numbers):
-            for j in range(0,len(word1)-numbers):
+            for j in range(0,len(word2)-numbers):
                 if ( word1[i:i+numbers] == word2[j:j+numbers] ):
                     return True
 
@@ -250,27 +250,18 @@ class SoundAssist:
                 AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2).export(this_file, format='wav')
                 result, timeline = await speech_to_text(this_file)
                 if not all( [len(i)==0 for i in result] ):
-                    print("[*]",user_id,":",result)
+                    print("[*]",user_id,":",result[0])
 
                     for eachText in result:
                         if (len(eachText)>=2):
                             for eachSound,eachFile in zip(self.label, self.file):
-                                if (len(eachSound)<7):
-                                    if ( self.IfContinues(eachText,eachSound,2) ):
-                                        intersected = list(set(eachText)&set(eachSound.lower()))
-                                        thisLen = len(intersected)
-                                        print(f"\t{thisLen} -> {eachSound}")
-                                        if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
-                                            choseFile = eachFile
-                                            choseLen  = thisLen
-                                else:
-                                    if ( self.IfContinues(eachText,eachSound,3) ):
-                                        intersected = list(set(eachText)&set(eachSound.lower()))
-                                        thisLen = len(intersected)
-                                        print(f"\t{thisLen} -> {eachSound}")
-                                        if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
-                                            choseFile = eachFile
-                                            choseLen  = thisLen
+                                if ( self.IfContinues(eachText,eachSound,2) ):
+                                    intersected = list(set(eachText)&set(eachSound.lower()))
+                                    thisLen = len(intersected)
+                                    print(f"\t{thisLen} -> {eachSound}")
+                                    if (thisLen > choseLen  or (thisLen == choseLen and random.random()>0.3)):
+                                        choseFile = eachFile
+                                        choseLen  = thisLen
 
                         if (len(eachText)==1):
                             for eachSound,eachFile in zip(self.label, self.file):
