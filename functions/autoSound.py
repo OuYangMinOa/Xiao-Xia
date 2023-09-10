@@ -114,14 +114,16 @@ async def speech_to_text(path):
             audio_listened = r.record(source)
             try:
                 text = r.recognize_google(audio_listened, language = 'zh-tw', show_all=True)
+            except Exception as e:
+                logger.error(f"speech_to_text(1) {e}")
+            try:
                 if text['alternative'][0]['confidence'] < 0.7:
                     text['alternative'][0]['transcript'] = "*inaudible*"
                 text = text['alternative'][0]['transcript']
             except sr.UnknownValueError as e:
-                logger.error(f"speech_to_text {e}")
                 text = "*inaudible*"
         except Exception as e:
-            logger.error(f"speech_to_text {e}")
+            logger.error(f"speech_to_text(1) {e}")
             text = ''
         return [text,], ''
     # normalized_sound = match_target_amplitude(sound, -20.0)
@@ -188,9 +190,7 @@ class SoundAssist:
         if not self.alive:
             return
         
-        if self.ctx.guild.voice_client:
-            self.voice = self.ctx.guild.voice_client
-        else:
+        if self.ctx.guild.voice_client not in self.bot.voice_clients:
             self.voice = await self.ctx.author.voice.channel.connect()
 
     async def StartKeepListening(self):
@@ -225,7 +225,6 @@ class SoundAssist:
                 await asyncio.sleep(1)
             try:
                 print("[*] start recording")
-                await self.ReConnect()
                 self.voice.start_recording(
                     discord.sinks.WaveSink(),  # The sink type to use.
                     # discord.Sink(encoding='wav', filters={'time': 0}),
@@ -252,6 +251,7 @@ class SoundAssist:
             for j in range(0,len(word2)-numbers):
                 if ( word1[i:i+numbers] == word2[j:j+numbers] ):
                     return True
+        return False
 
     async def once_done(self, sink: discord.sinks, channel: discord.TextChannel, *args):
         self.waitProcess = True
