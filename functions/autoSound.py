@@ -205,12 +205,14 @@ class SoundAssist:
                 await asyncio.sleep(1)
             try:
                 self.voice.start_recording(
-                discord.sinks.WaveSink(),  # The sink type to use.
-                # discord.Sink(encoding='wav', filters={'time': 0}),
-                self.once_done,  # What to do once done.
-                self.ctx.channel)
+                    discord.sinks.WaveSink(),  # The sink type to use.
+                    # discord.Sink(encoding='wav', filters={'time': 0}),
+                    self.once_done,  # What to do once done.
+                    self.ctx.channel
+                )
                 await asyncio.sleep(3)
                 self.voice.stop_recording()
+                await asyncio.sleep(0.5)
             except Exception as e:
                 await self.check()
                 logger.error(e)
