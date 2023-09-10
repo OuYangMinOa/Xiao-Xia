@@ -213,25 +213,20 @@ class Music(discord.ext.commands.Cog):
             channel = ctx.author.voice.channel
 
         if ctx.guild.voice_client not in self.bot.voice_clients:
-            await ctx.send("I'm not singing")
             return
 
         if (ctx.channel.id in music_user):
             await music_user[ctx.channel.id].skip()
-        else:
-            await ctx.send("I'm not singing")
 
         if (ctx.channel.id in sound_user):
             await sound_user[ctx.channel.id].skip()
-        else:
-            await ctx.send("I'm not singing")
 
     @slash_command(name="stop",description="skip the current music")
     async def stop(self,ctx):
         # await ctx.response.defer( ephemeral=True)
-        logger.info(f"[*] skip {ctx.author.name}")
+        logger.info(f"[*] stop {ctx.author.name}")
 
-        await ctx.respond('skip' + f' - {ctx.author.mention}')
+        await ctx.respond('stop' + f' - {ctx.author.mention}')
 
         if not ctx.author.voice:
             await ctx.send('you are not connected to a voice channel')
@@ -245,13 +240,10 @@ class Music(discord.ext.commands.Cog):
 
         if (ctx.channel.id in music_user):
             await music_user[ctx.channel.id].skip()
-        else:
-            await ctx.send("I'm not singing")
-
+            return
         if (ctx.channel.id in sound_user):
             await sound_user[ctx.channel.id].skip()
-        else:
-            await ctx.send("I'm not singing")
+            return
 
     @slash_command(name="loop",description="loop the music list")
     async def loop(self,ctx):

@@ -40,6 +40,8 @@ class MusicBot:
         self.state     = 0          # 0:not playing , 1:playing , 2:pause, 3:need to use next_() to continue
         self.rejoin_c  = 0          # rejoin every 20 songs
         self.dont_stop = 0          # will play untill dont_stop = 3 to check again
+        self.StartCount = True
+        self.startTime = 0
 
         # create the music floder if not exist
         os.makedirs(str(self.floder),exist_ok=True)
@@ -81,6 +83,10 @@ class MusicBot:
 
     def thread_next(self):
         self.client.loop.create_task(self._next())
+
+    def countSec(self):
+        pass
+
 
     async def _next(self):
 
@@ -203,6 +209,7 @@ class MusicBot:
 
         FFMPEG_OPTS = {
         # 'before_options': '-reconnect_streamed 1 -reconnect_delay_max 5', 
+        'before_options':f"-ss {self.startTime}",
         'options': '-vn'
         }
 

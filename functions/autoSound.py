@@ -35,16 +35,8 @@ class Record(discord.ext.commands.Cog):
             music_user_guild  = [music_user[x].ctx.guild.id for x in music_user]
             sound_user_guild  = [sound_user[x].ctx.guild.id for x in sound_user]  #  use for check if bot is in the sound dict
             
-            if (ctx.guild.id in sound_user_guild):  # in sound_user
-                sound_channel_id = sound_user[list(sound_user)[sound_user_guild.index(ctx.guild.id)]].ctx.channel.id
-                if ctx.guild.voice_client not in self.bot.voice_clients:
-                    await sound_user[music_channel_id].kill()
-                    voice = await channel.connect()
-                else:
-                    voice = sound_user[sound_channel_id].voice
-                    await sound_user[sound_channel_id].clear()
-                sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-            elif (ctx.guild.id in music_user_guild):  # in sound_user
+
+            if (ctx.guild.id in music_user_guild):  # in sound_user
                 music_channel_id = music_user[list(music_user)[music_user_guild.index(ctx.guild.id)]].ctx.channel.id
                 if ctx.guild.voice_client not in self.bot.voice_clients:
                     await music_user[music_channel_id].kill()
@@ -60,6 +52,19 @@ class Record(discord.ext.commands.Cog):
                 if (recording[ctx.guild.id].alive):
                     sound_user[ctx.channel.id] = SoundBot(channel, recording[ctx.guild.id].voice , ctx, self.bot)
                     return
+                else:
+                    voice = await channel.connect()
+                    sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
+            elif (ctx.guild.id in sound_user_guild):  # in sound_user
+                sound_channel_id = sound_user[list(sound_user)[sound_user_guild.index(ctx.guild.id)]].ctx.channel.id
+                if ctx.guild.voice_client not in self.bot.voice_clients:
+                    await sound_user[music_channel_id].kill()
+                    voice = await channel.connect()
+                else:
+                    voice = sound_user[sound_channel_id].voice
+                    await sound_user[sound_channel_id].clear()
+
+                sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
             else:
                 voice = await channel.connect()
                 sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
@@ -216,7 +221,7 @@ class SoundAssist:
             while self.soundClass.state == 1 or self.waitProcess:
                 await asyncio.sleep(1)
             try:
-                print("[*] start recording",end="")
+                print("[*] start recording")
                 await self.ReConnect()
                 self.voice.start_recording(
                     discord.sinks.WaveSink(),  # The sink type to use.
@@ -227,7 +232,7 @@ class SoundAssist:
                 await asyncio.sleep(3)
                 self.voice.stop_recording()
                 await asyncio.sleep(0.5)
-                print("  stop it!")
+                print("stop it!")
 
             except Exception as e:
                 await self.check()
@@ -260,7 +265,7 @@ class SoundAssist:
                 AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2).export(this_file, format='wav')
                 result, timeline = await speech_to_text(this_file)
                 if not all( [len(i)==0 for i in result] ):
-                    print("[*]",user_id,":",result[0])
+                    print("\t",user_id,":",result[0])
 
                     for eachText in result:
                         if (len(eachText)>=2):
