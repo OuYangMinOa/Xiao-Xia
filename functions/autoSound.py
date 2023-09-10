@@ -218,11 +218,10 @@ class SoundAssist:
             except Exception as e:
                 await self.check()
                 logger.error(f"threadRecord {e}")
-            try:
-                self.voice.stop_recording()
-            except Exception as e:
-                await self.check()
-                logger.error(f"threadRecord {e}")
+                try:
+                    self.voice.stop_recording()
+                except Exception as e:
+                    pass
         print("Record Stop")
     
     def IfContinues(self, word1,word2,numbers):
