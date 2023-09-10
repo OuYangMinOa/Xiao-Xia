@@ -217,8 +217,12 @@ class SoundAssist:
                 await asyncio.sleep(0.5)
             except Exception as e:
                 await self.check()
-                logger.error("threadRecord"+e)
-                break
+                logger.error(f"threadRecord {e}")
+            try:
+                self.voice.stop_recording()
+            except Exception as e:
+                await self.check()
+                logger.error(f"threadRecord {e}")
         print("Record Stop")
     
     def IfContinues(self, word1,word2,numbers):
@@ -279,7 +283,7 @@ class SoundAssist:
             if (choseFile and self.soundClass.state == 0):
                 await self.soundClass.playSound(choseFile)
         except Exception as e:
-            logger.error("once done"+e)
+            logger.error(f"once done {e}")
         finally:
             self.waitProcess = False
 
