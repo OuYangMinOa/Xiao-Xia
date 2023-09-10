@@ -6,7 +6,7 @@ from pydub            import AudioSegment
 from .sounds          import SoundBot, match_target_amplitude
 from datetime         import datetime
 from glob             import glob
-
+from multiprocessing  import Process
 
 import speech_recognition as sr
 import threading
@@ -194,8 +194,9 @@ class SoundAssist:
     async def StartKeepListening(self):
         def createThread():
             self.bot.loop.create_task(self.threadRecord())
-        threading.Thread(target=createThread,daemon=True).start()
+        Process(target=createThread,daemon=True).start()
 
+        
     async def kill(self):
         self.alive = False
         try:
