@@ -181,7 +181,7 @@ class SoundAssist:
         if self.ctx.guild.voice_client:
             self.voice = self.ctx.guild.voice_client
         else:
-            self.voice = await self.channel.connect()
+            self.voice = await self.author.voice.channel.connect()
 
     async def StartKeepListening(self):
         def createThread():
