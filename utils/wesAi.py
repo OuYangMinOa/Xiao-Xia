@@ -24,7 +24,7 @@ async def prompt_wes_com(text):   # use my own LLM AI
     
     HOST = socket.gethostbyname(socket.gethostname()) #"192.168.133.209"
     print(HOST)
-    # HOST = "127.0.0.1"
+    HOST = "192.168.0.7"
     PORT = 8088
 
 
