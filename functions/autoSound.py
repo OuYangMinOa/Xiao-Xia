@@ -309,7 +309,7 @@ class SoundAssist:
             if (self.countdown >300):
                 logger.info("[*] Play a empty sound")
                 await self.soundClass.playSound("empty.wav")
-
+                self.countdown = 0
         except Exception as e:
             logger.error(f"once done {e}")
         finally:
