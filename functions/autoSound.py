@@ -93,8 +93,6 @@ class Record(discord.ext.commands.Cog):
     @slash_command(name="stop_autosound",description="結束 - 自動偵測語音播放音效版")
     async def stopAutoSounding(self,ctx):
         await ctx.respond(f"stop_autosound -{ctx.author.mention}",delete_after=10)
-        logger.info(f"stop_autosound -{ctx.author.name}")
-
         await recording[ctx.guild.id].kill()
 
     
@@ -226,7 +224,7 @@ class SoundAssist:
 
     async def threadRecord(self):
         print("Start Keep recording")
-        
+        logger.info(f"[*] Start Keep recording in guild : {self.ctx.guild.id}")
         while self.alive :
             if (self.soundClass.state == 1 or self.waitProcess):
                 print("wait for process finish or sound finish")
@@ -311,6 +309,7 @@ class SoundAssist:
             if (self.countdown >300):
                 logger.info("[*] Play a empty sound")
                 await self.soundClass.playSound("empty.wav")
+
         except Exception as e:
             logger.error(f"once done {e}")
         finally:

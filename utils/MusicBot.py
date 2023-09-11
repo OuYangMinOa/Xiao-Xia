@@ -215,6 +215,7 @@ class MusicBot:
         if self.ctx.guild.voice_client not in self.client.voice_clients:
             print("[*] get kicked from",self.channelid)
             return
+        
         if (this_song_name not in ['empty.wav']):
             self.music_msg = await self.ctx.channel.send(f':musical_note:  Now playing ({len(self.passed)}/{len(self.queqed)+len(self.passed)}) : {this_song_name} :musical_note:')
 
@@ -322,8 +323,11 @@ class MusicBot:
     async def _endsong(self,e):
         if (self.live == False):
             return
-        if (self.music_msg):
-            await self.music_msg.delete()
+        try:
+            if (self.music_msg):
+                await self.music_msg.delete()
+        except:
+            pass
         self.state = 0
 
         await self._next()

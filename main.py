@@ -36,7 +36,8 @@ async def on_ready():
 
 @bot.before_invoke
 async def before_invoke(ctx):
-    pass
+    # pass
+    logger.info(f"{ctx.command} - {ctx.author.name}")
     # await ctx.defer( ephemeral=True)
 
 @bot.event
