@@ -24,7 +24,7 @@ class Record(discord.ext.commands.Cog):
 
     @slash_command(name="autosound",description="自動偵測語音播放音效版")
     async def autosound(self, ctx):
-        await ctx.respond(f"autosound -{ctx.author.mention}")
+        thisres = await ctx.respond(f"autosound -{ctx.author.mention}")
         try:
             if not ctx.author.voice:
                 await ctx.respond('you are not connected to a voice channel')
@@ -219,7 +219,27 @@ class SoundAssist:
             if(self.ctx.channel.id in sound_user) :
                 del sound_user[self.ctx.channel.id]
 
-            
+    async def LeaveANDConnect(self):
+
+        if self.ctx.guild.voice_client in self.bot.voice_clients:
+            await self.voice.disconnect()
+            del self.voice
+
+        channel = self.ctx.author.voice.channel
+        self.voice = await channel.connect()
+
+        music_user_guild  = [music_user[x].ctx.guild.id for x in music_user]
+        sound_user_guild  = [sound_user[x].ctx.guild.id for x in sound_user]
+
+        if (self.ctx.guild.id in music_user_guild):
+            music_channel_id = music_user[list(music_user)[music_user_guild.index(self.ctx.guild.id)]].ctx.channel.id
+            music_user[music_channel_id].voice = self.voice 
+
+        if (self.ctx.guild.id in sound_user_guild):
+            sound_channel_id = sound_user[list(sound_user)[sound_user_guild.index(self.ctx.guild.id)]].ctx.channel.id
+            sound_user[sound_channel_id].voice = self.voice 
+
+
 
     async def threadRecord(self):
         print("Start Keep recording")
@@ -245,12 +265,15 @@ class SoundAssist:
             except Exception as e:
                 await self.check()
                 logger.error(f"threadRecord {e}")
+                if (str(e) == "Not connected to voice channel" ):
+                    logger.error(f"Reconnect the voice channel")
+                    await self.LeaveANDConnect()
                 print(self.ctx.guild.voice_client in self.bot.voice_clients, self.waitProcess, self.alive)
                 await asyncio.sleep(1)
                 logger.info("[*] Play a empty sound")
                 await self.soundClass.playSound("empty.wav")
                 self.countdown = 0
-                
+
         print("Record Stop")
     
     def IfContinues(self, word1,word2,numbers):
@@ -325,14 +348,11 @@ class SoundAssist:
         
         if not self.alive:
             return
-        
-        await self.ReConnect()
 
         if (self.ctx.guild.voice_client not in self.bot.voice_clients):
             logger.info("[*] (SoundAssist)  bot not in voice client")
             await self.kill()
             return 
-        
 
         member_count = len(self.ctx.author.voice.channel.voice_states)
         print(f"[*] {self.channelid}, left member : {member_count}")
