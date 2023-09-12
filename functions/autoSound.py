@@ -245,7 +245,11 @@ class SoundAssist:
             except Exception as e:
                 await self.check()
                 logger.error(f"threadRecord {e}")
+                print(self.ctx.guild.voice_client in self.bot.voice_clients, self.waitProcess, self.alive)
                 await asyncio.sleep(1)
+                logger.info("[*] Play a empty sound")
+                await self.soundClass.playSound("empty.wav")
+                self.countdown = 0
                 
         print("Record Stop")
     

@@ -99,7 +99,7 @@ class Music(discord.ext.commands.Cog):
                 logger.info(f"[*] creating Class id : {id(MB)} for serving channel {channel.id}")
                 music_user[ctx.channel.id] = MB
                 if (not url):
-                    await ctx.send("Use `\play url` to play youtube music")
+                    await ctx.send("Use `\play url` to play youtube or spotify music")
                 else:
                     await MB.add(url)
             except Exception as e:
