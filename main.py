@@ -37,8 +37,8 @@ async def on_ready():
 @bot.before_invoke
 async def before_invoke(ctx):
     logger.info(f"{ctx.command} - {ctx.author.name}")
-    
-    if (ctx.command not in ['autosound',]):
+
+    if (str(ctx.command) not in ['autosound',]):
         await ctx.defer()
 
 @bot.event
