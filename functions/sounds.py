@@ -305,6 +305,9 @@ class BuildSoundSelect():
     def getsounds(self,channel_id):
         save_folder = os.path.join("data/attachments", str(channel_id))
         label, file = [], []
+        
+        files = glob(f'{save_folder}/*.*')
+        files.sort(key=os.path.getmtime)
 
         for path in glob(f'{save_folder}/*.*'):
             if (path.endswith('mp3') or path.endswith('wav') ):
