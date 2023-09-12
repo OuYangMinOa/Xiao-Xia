@@ -25,7 +25,6 @@ class Record(discord.ext.commands.Cog):
     @slash_command(name="autosound",description="自動偵測語音播放音效版")
     async def autosound(self, ctx):
         await ctx.respond(f"autosound -{ctx.author.mention}")
-        logger.info(f"autosound -{ctx.author.name}")
         try:
             if not ctx.author.voice:
                 await ctx.respond('you are not connected to a voice channel')

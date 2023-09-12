@@ -36,9 +36,10 @@ async def on_ready():
 
 @bot.before_invoke
 async def before_invoke(ctx):
-    # pass
     logger.info(f"{ctx.command} - {ctx.author.name}")
-    # await ctx.defer( ephemeral=True)
+    
+    if (ctx.command not in ['autosound',]):
+        await ctx.defer()
 
 @bot.event
 async def on_message(message):

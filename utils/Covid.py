@@ -1,20 +1,26 @@
+from aiohttp import ClientSession
+
+import asyncio
 import datetime
 import requests
 import bs4
 
-def get_covid():
+async def get_covid():
     """ get the Covid data from the covid-19.nchc.org.tw
     """
     url = "https://covid-19.nchc.org.tw/?language=en"
     headers = {"User-Agent": "Mozilla/5.0", "Referer": url}
-    re      = requests.get(url, headers = headers,verify=False,timeout=20)
-    soup    = bs4.BeautifulSoup(re.content, 'html.parser')
+    async with ClientSession() as session:
+            async with session.get(url, headers = headers,timeout=20) as re:
+                thisContent = await re.content.read()
+
+    soup = bs4.BeautifulSoup(thisContent, 'html.parser')
 
     # print(soup)
     total_people = soup.find_all(class_="mb-1 text-dark display-4")
     numbers = []
     for i in total_people:
-        print(i.text.strip())
+        # print(i.text.strip())
         numbers.append(i.text.strip().split("+")[0])
         numbers.append(i.text.strip().split("+")[1])
     global_people = soup.find_all("a",href="2023_world_confirmed.php")
@@ -86,4 +92,4 @@ def get_covid2():
 
 
 if __name__ == "__main__":
-    print(get_covid())
+    asyncio.run(get_covid())

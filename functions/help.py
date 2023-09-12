@@ -66,7 +66,6 @@ class Help(discord.ext.commands.Cog):
  - `/skip` 跳過。
  - `/stop_music` 跟skip一樣 但只處理音樂。
  - `/stop_sound` 跟skip一樣 但只處理音效版。
- - `/stop` 跟skip一樣。
  - `/pause` 暫停。
  - `/list` 看撥放清單。
  - `/loop` 循環播放清單。

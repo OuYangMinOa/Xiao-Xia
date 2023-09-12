@@ -17,7 +17,7 @@ class Others(discord.ext.commands.Cog):
     async def joke(self, ctx):
         await ctx.respond("joke"+ f' - {ctx.author.mention}')
 
-        logger.info("joke"+ f' - {ctx.author.name}')
+        
         this_joke = await prompt_wes_com('Q:請你說個笑話\nA:')
 
 
@@ -36,7 +36,6 @@ class Others(discord.ext.commands.Cog):
     @slash_command(name="chickensoul",description="Chicken Soup for the Soul")
     async def ChickenSoul(self, ctx):
         await ctx.respond("chickensoul"+ f' - {ctx.author.mention}')
-        logger.info("chickensoul"+ f' - {ctx.author.name}')
 
         this_chicken = await prompt_wes_com('Q:請你說個一句心靈雞湯\nA:')
 

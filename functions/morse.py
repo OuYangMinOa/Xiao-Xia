@@ -48,6 +48,7 @@ class Morse(discord.ext.commands.Cog):
         logger.info(f"[*]  {ctx.author.name} decrypting message : {message}")
         await ctx.respond(f"`/decrypt` {ctx.author.mention}")
 
+
         message += ' '  
         decipher = ''
         citext = ''

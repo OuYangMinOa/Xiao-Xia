@@ -20,7 +20,6 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="pause",description="Pause the music")
     async def pause(self,ctx):
-        logger.info(f"[*] pause {ctx.author.name}")
         #  await ctx.response.defer( ephemeral=True)
 
         await ctx.respond("pause" + f' - {ctx.author.mention}')
@@ -109,7 +108,6 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="list",description="List all the music")
     async def list(self,ctx):
-        logger.info(f"[*] list {ctx.author.name}")
 
         await ctx.respond( f'list - {ctx.author.mention}')
 
@@ -131,7 +129,6 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="leave",description="leave the voice channel")
     async def leave(self,ctx):
-        logger.info(f"[*] leave {ctx.author.name}")
         # await ctx.response.defer( ephemeral=True)
 
         await ctx.respond('leave' + f' - {ctx.author.mention}')
@@ -176,7 +173,6 @@ class Music(discord.ext.commands.Cog):
 
     @slash_command(name="clear",description="clear the music")
     async def clear(self,ctx):
-        logger.info(f"[*] clear {ctx.author.name}")
 
         # await ctx.response.defer(ephemeral=True)
         await ctx.respond('clear' + f' - {ctx.author.mention}' )
@@ -202,7 +198,6 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name="skip",description="skip the current music")
     async def skip(self,ctx):
         # await ctx.response.defer( ephemeral=True)
-        logger.info(f"[*] skip {ctx.author.name}")
 
         await ctx.respond('skip' + f' - {ctx.author.mention}')
 
@@ -228,7 +223,6 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name="stop_music",description="skip the current music")
     async def stop_music(self,ctx):
         # await ctx.response.defer( ephemeral=True)
-        logger.info(f"[*] stop_music {ctx.author.name}")
 
         await ctx.respond('stop_music' + f' - {ctx.author.mention}')
 
@@ -249,7 +243,6 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name="stop_sound",description="skip the current sound")
     async def stop_sound(self,ctx):
         # await ctx.response.defer( ephemeral=True)
-        logger.info(f"[*] stop_sound {ctx.author.name}")
 
         await ctx.respond('stop_sound' + f' - {ctx.author.mention}')
 
@@ -269,7 +262,6 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name="loop",description="loop the music list")
     async def loop(self,ctx):
         await ctx.respond('loop'  + f' - {ctx.author.mention}')
-        logger.info(f"[*] loop {ctx.author.name}")
 
         
         if not ctx.author.voice:
@@ -297,7 +289,7 @@ class Music(discord.ext.commands.Cog):
     async def skipnums(self,ctx,  nums: Option(int, "The number of music you want to skip", required = True)):
 
         # await ctx.response.defer( ephemeral=True)
-        logger.info('[*] skipnums' + f' {ctx.author.name}')
+        logger.info(f'[*] {nums} - {ctx.author.name}')
 
         await ctx.response.send_message('skipnums' + f' {ctx.author.mention}')
 
@@ -321,7 +313,7 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name='save_playlist',description="Save current playlist")
     async def savePlaylist(self,ctx, name : Option(str, "The name of the playlist", required = True)):
         # await ctx.response.defer( ephemeral=True)
-        logger.info(f'[*] save_playlist - {ctx.author.name}')
+        logger.info(f'[*] playlist : {name} - {ctx.author.name} in guild id - {ctx.guild.id}')
 
         await ctx.respond(f'/save_playlist  - {ctx.author.mention}')
         music_guild_id = [music_user[x].ctx.guild.id for x in music_user]
@@ -364,7 +356,7 @@ class Music(discord.ext.commands.Cog):
         #         print("[*] retrying...")
 
         # await ctx.response.defer( ephemeral=True)
-        logger.info(f'[*] load_playlist - {ctx.author.name}')
+        logger.info(f'[*] load_playlist - {ctx.guild.id}')
         await ctx.respond(f'playlist - {ctx.author.mention}')
         
 
@@ -417,7 +409,7 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name="say",description="Let me say something")
     async def say(self,ctx, word:Option(str,"THe word you want me to say",required=True)):
         # await ctx.response.defer( ephemeral=True)
-        logger.info(f'[*] say - {ctx.author.name}')
+        logger.info(f'[*] {ctx.author.name} - {word}')
 
         await ctx.respond(f'[*] say - {ctx.author.name}\n{word}',ephemeral=True)
 

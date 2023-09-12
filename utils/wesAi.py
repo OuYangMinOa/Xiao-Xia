@@ -1,7 +1,5 @@
 # on raspi
 from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger
-
-import requests
 import socket
 from aiohttp import ClientSession
 
