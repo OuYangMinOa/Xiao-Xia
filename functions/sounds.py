@@ -310,6 +310,8 @@ class BuildSoundSelect():
         files.sort(key=os.path.getmtime)
 
         for path in files:
+            if ('empty.wav' == os.path.basename(path)):
+                continue
             if (path.endswith('mp3') or path.endswith('wav') ):
                 self.count += 1
 
