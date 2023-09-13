@@ -220,11 +220,14 @@ class SoundAssist:
         finally:
             if(self.ctx.guild.id in recording) :
                 del recording[ self.ctx.guild.id]
+                logger.info("[*] Kill the recording class")
 
 
             if(self.ctx.channel.id in sound_user) :
                 sound_user[self.ctx.channel.id].kill()
                 del sound_user[self.ctx.channel.id]
+                logger.info("[*] Kill the sound class")
+
 
     async def LeaveANDConnect(self):
 
