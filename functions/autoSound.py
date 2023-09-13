@@ -217,6 +217,7 @@ class SoundAssist:
 
 
             if(self.ctx.channel.id in sound_user) :
+                sound_user[self.ctx.channel.id].kill()
                 del sound_user[self.ctx.channel.id]
 
     async def LeaveANDConnect(self):
@@ -265,7 +266,7 @@ class SoundAssist:
             except Exception as e:
                 await self.check()
                 logger.error(f"threadRecord {e}")
-                if (str(e) == "Not connected to voice channel" ):
+                if ("Not connected" in str(e) ):
                     logger.error(f"Reconnect the voice channel")
                     await self.LeaveANDConnect()
                 print(self.ctx.guild.voice_client in self.bot.voice_clients, self.waitProcess, self.alive)
