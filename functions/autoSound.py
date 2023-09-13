@@ -206,7 +206,13 @@ class SoundAssist:
 
 
     async def kill(self):
+        logger.info("[*] Kill the SoundAssist")
         self.alive = False
+        if (not self.waitProcess):  ## is recording
+            try:
+                self.voice.stop_recording()
+            except Exception as e:
+                pass
         try:
             await self.voice.disconnect()
         except Exception as e:
