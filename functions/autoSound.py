@@ -300,7 +300,7 @@ class SoundAssist:
         try:
             for user_id, audio in sink.audio_data.items():
                 this_file = os.path.join(day_folder,f'{user_id}.wav')
-                AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2).export(this_file, format='wav')
+                AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2).export(this_file,bitrate=str(128000), format='wav')
                 result, timeline = await speech_to_text(this_file)
                 print("\t",user_id,":",result[0])
                 if not all( [len(i)==0 for i in result] ):

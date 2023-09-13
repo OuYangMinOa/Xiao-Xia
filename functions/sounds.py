@@ -67,13 +67,7 @@ class Sounds(discord.ext.commands.Cog):
 
     @slash_command(name="list_sound",description="list all the sounds in this channel")
     async def list_sound(self,ctx):
-        print(ctx.response.is_done())
-        
-        
-
         ThisRespond = await ctx.respond(f"/list_sound - {ctx.author.mention}",delete_after=10)
-        logger.info(f"list_sound {ctx.author.name}")
-
 
         ##  connect to a voice channel
         try:
@@ -140,7 +134,7 @@ class Sounds(discord.ext.commands.Cog):
             for eachView in CRM.views:
                 ctxRes =  await ctx.send(f"({thisCount}/{len(CRM.views)})",view=eachView)
                 sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
-                print(type(ctxRes))
+                # print(type(ctxRes))
                 thisCount += 1
 
             
