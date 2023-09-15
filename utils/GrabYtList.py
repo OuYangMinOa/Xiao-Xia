@@ -106,6 +106,7 @@ def grab_playlist(url,maxima_song = 25):
                 )
             time.sleep(0.01)
             count += 1
+        print(playlist_set)
         return playlist_set
     except Exception as e:
         logger.error(f"[*] Pytube faild to grab {url} yt playlist")
