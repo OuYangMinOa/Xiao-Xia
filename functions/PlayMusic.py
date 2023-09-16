@@ -405,7 +405,6 @@ class Music(discord.ext.commands.Cog):
         else:
             await ctx.respond(f"Available playlist", view=PLS.view)
 
-
     @slash_command(name="say",description="Let me say something")
     async def say(self,ctx, word:Option(str,"THe word you want me to say",required=True)):
         # await ctx.response.defer( ephemeral=True)

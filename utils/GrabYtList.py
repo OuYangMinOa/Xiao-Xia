@@ -59,7 +59,23 @@ def grab_playlist(url,maxima_song = 25):
         list[(str,str)]: A list of title and url
     """
     # logger.info(url)
-    
+    try:
+        logger.info("[*] Grabbing playlist with pytube")
+        p = Playlist(url)
+        count = 0
+        playlist_set = []
+        for item in p.videos:
+            if (count>=maxima_song):
+                break
+            playlist_set.append(
+                (item.title,item.watch_url)
+                )
+            time.sleep(0.01)
+            count += 1
+        print(playlist_set)
+        return playlist_set
+    except Exception as e:
+        logger.error(f"[*] Pytube faild to grab {url} yt playlist")
 
     for keynum in [1,2,3,4,5]:
         try:
@@ -93,23 +109,7 @@ def grab_playlist(url,maxima_song = 25):
 
     logger.info(f"[*] ALL keynum failed")
 
-    try:
-        logger.info("[*] Grabbing playlist with pytube")
-        p = Playlist(url)
-        count = 0
-        playlist_set = []
-        for item in p.videos:
-            if (count>=maxima_song):
-                break
-            playlist_set.append(
-                (item.title,item.watch_url)
-                )
-            time.sleep(0.01)
-            count += 1
-        print(playlist_set)
-        return playlist_set
-    except Exception as e:
-        logger.error(f"[*] Pytube faild to grab {url} yt playlist")
+    
 
 
 async def grab_Lyrics_spotify(song_name):
