@@ -13,9 +13,10 @@ class Download(discord.ext.commands.Cog):
         self.bot = bot
 
     @slash_command(name="download_yt",description="從yt上下載音樂或影片 (低於20分鐘的音樂/2分鐘的音樂 )")
-    async def download_yt(self,ctx, url: Option(str, "url", required = True),video=Option(bool, "video",choices=['True','False'], required = False,default=False)):
+    async def download_yt(self,ctx, url: Option(str, "url", required = True),video=Option(str, "video",choices=['True','False'], required = False,default='False')):
         await ctx.respond(f"download_yt - {ctx.author.mention}\n{url}")
         ThisYt = YouTube(url)
+        video = eval(eval)
         if (video):filename = f"{ThisYt.title}.mp4"
         else:      filename = f"{ThisYt.title}.mp3"
 
