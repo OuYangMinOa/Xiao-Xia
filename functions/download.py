@@ -16,7 +16,7 @@ class Download(discord.ext.commands.Cog):
     async def download_yt(self,ctx, url: Option(str, "url", required = True),video=Option(str, "video",choices=['True','False'], required = False,default='False')):
         await ctx.respond(f"download_yt - {ctx.author.mention}\n{url}")
         ThisYt = YouTube(url)
-        video = eval(eval)
+        video = eval(video)
         if (video):filename = f"{ThisYt.title}.mp4"
         else:      filename = f"{ThisYt.title}.mp3"
 
