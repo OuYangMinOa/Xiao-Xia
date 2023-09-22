@@ -4,7 +4,7 @@ from utils.info       import logger
 from utils.info       import sound_user, music_user, recording
 from glob             import glob
 from pydub            import AudioSegment
-
+from utils.upload     import upload_wp
 
 import utils.MusicBot     as my_mb # my class
 import discord
@@ -49,7 +49,7 @@ class Sounds(discord.ext.commands.Cog):
             await attachment.save(f"{save_folder}/{filename}.{file_extend}") 
 
             await ctx.respond(f"{filename}.{file_extend} received.")
-            logger.info(f"[*] {filename}.{file_extend} received."+ f' - {ctx.author.name}')
+            logger.info(f"[*] {filename}.{file_extend} received."+ f' - {ctx.guild.id}:{ctx.author.name}')
 
 
             ####  re normalize the attachment file dfbs
@@ -59,6 +59,9 @@ class Sounds(discord.ext.commands.Cog):
                 normalized_sound.export(f"{save_folder}/{filename}.{file_extend}")
             except:
                 logger.error("[*] Normalize goes wrong")
+            if (str(ctx.guild.id) == os.getenv('MYDISCORDGID')):
+                upload_wp(f"{save_folder}/{filename}.{file_extend}")
+
 
 
 

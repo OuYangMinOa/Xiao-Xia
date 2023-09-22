@@ -235,8 +235,12 @@ class SoundAssist:
             await self.voice.disconnect()
             del self.voice
 
-        channel = self.ctx.author.voice.channel
-        self.voice = await channel.connect()
+        try:
+            channel = self.ctx.author.voice.channel
+            self.voice = await channel.connect()
+        except:
+            self.kill()
+            return
 
         music_user_guild  = [music_user[x].ctx.guild.id for x in music_user]
         sound_user_guild  = [sound_user[x].ctx.guild.id for x in sound_user]
