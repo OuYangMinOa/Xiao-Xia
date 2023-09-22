@@ -60,7 +60,7 @@ class Sounds(discord.ext.commands.Cog):
             except:
                 logger.error("[*] Normalize goes wrong")
             if (str(ctx.guild.id) == os.getenv('MYDISCORDGID')):
-                upload_wp(f"{save_folder}/{filename}.{file_extend}")
+                await upload_wp(f"{save_folder}/{filename}.{file_extend}")
 
 
 
