@@ -50,7 +50,8 @@ class Others(discord.ext.commands.Cog):
 
     @slash_command(name="get_covid",description="Number of confirmed cases in Taiwan")
     async def get_covid(self, ctx):
-        await ctx.respond(my_Cd.get_covid())
+        thisText = await my_Cd.get_covid()
+        await ctx.respond(thisText)
     
 
 

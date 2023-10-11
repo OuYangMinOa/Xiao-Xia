@@ -1,9 +1,12 @@
-import requests, os, base64
-
-
 from utils.info import logger
-from glob import glob
-from aiohttp import ClientSession, FormData
+from aiohttp    import ClientSession, FormData
+from glob       import glob
+
+import base64
+import os
+
+
+
 
 async def upload_wp(file_path):
 # 設定 WordPress 網站的 URL 和 API 端點
@@ -11,6 +14,7 @@ async def upload_wp(file_path):
     api_endpoint = '/wp-json/wp/v2/media'
 
     data_string = os.getenv("MY_APP_ID")+":"+os.getenv("WP_APP_PASS")
+
     token = base64.b64encode(data_string.encode())
     headers = {'Authorization': 'Basic ' + token.decode('utf-8')}
 
@@ -43,8 +47,10 @@ async def upload_wp(file_path):
 
 if __name__ == '__main__':
     import asyncio
-    os.system("pwd")
     print("Starting")
-    for eachfile in glob("../data/empty*"):
+    files = glob("../data/*.mp3")
+    files.sort(key=os.path.getmtime)
+
+    for eachfile in files:
         print(eachfile)
         asyncio.run(upload_wp(eachfile))

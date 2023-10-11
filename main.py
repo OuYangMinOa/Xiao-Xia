@@ -41,15 +41,19 @@ async def before_invoke(ctx):
     if (str(ctx.command) not in ['autosound',]):
         await ctx.defer()
 
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return  
-    if message.author.bot:
-        return
-    # await handle_message(message)
-    await ThreadHandleMessage(bot,message)
-    return
+# @bot.event
+# async def on_message(message):
+#     if message.author == bot.user:
+#         return  
+#     if message.author.bot:
+#         return
+#     # await handle_message(message)
+#     await ThreadHandleMessage(bot,message)
+#     return
+
+
+
+
 
 if __name__ == '__main__': 
     # import cogs from cogs folder
@@ -61,7 +65,7 @@ if __name__ == '__main__':
     # from utils.wesAi import prompt_wes_com
     # print(prompt_wes_com("用戶:請自我介紹\n小俠:"))
 
-    
+
     print(f"[*] Process id : {os.getpid()}")
     StartChecking(bot)
     print("[*] Wait for `bot.run` to complete")
