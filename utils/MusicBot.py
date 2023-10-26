@@ -380,15 +380,16 @@ class MusicBot:
         elif (self.state==3) :
             logger.info(f"[*] ===  continue ===   {self.channelid}")
             logger.info(f"[*] plaing {self.this_song[0]} in  {self.channelid}")
-            self.this_song  = self.passed.pop()
-            self.queqed.insert(0,self.this_song)
-        
-            if (self.wait_msg):
-                await self.wait_msg.delete()
-                self.wait_msg = None
+            if( len(self.passed) >0):
+                self.this_song  = self.passed.pop()
+                self.queqed.insert(0,self.this_song)
+            
+                if (self.wait_msg):
+                    await self.wait_msg.delete()
+                    self.wait_msg = None
 
-            self.state = 1
-            await self._next()
+                self.state = 1
+                await self._next()
 
     async def skipnums(self,num):
         self.StartCount = False
