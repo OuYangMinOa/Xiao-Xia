@@ -36,13 +36,12 @@ async def prompt_wes_com(text):   # use my own LLM AI
         # response  = requests.post(f"http://{HOST}:{PORT}/prompt",json=prompt,timeout=10)
 
         async with ClientSession() as session:
-            async with session.post(f"http://{HOST}:{PORT}/prompt",json=prompt,timeout=120) as resp:
+            async with session.post(f"http://{HOST}:{PORT}/prompt",json=prompt,timeout=300) as resp:
                 reJson = await resp.json()
     except Exception as e:
         logger.error(e)
         return None
     # reJson = resp.json()
-
     if (reJson["status"] =="ok"):
         return reJson["data"]["ouput"]
     else:
@@ -50,6 +49,11 @@ async def prompt_wes_com(text):   # use my own LLM AI
         return None
     return None
 
+
+
+def prompt_wes_com_main(text):
+    import asyncio
+    return asyncio.run(prompt_wes_com(text))
 
 if __name__ == "__main__":
     print(

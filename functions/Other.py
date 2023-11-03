@@ -19,7 +19,7 @@ class Others(discord.ext.commands.Cog):
 
         
         this_joke = await prompt_wes_com('Q:請你說個笑話\nA:')
-
+        this_joke = str(this_joke)
 
         PASS_MSG.append(f"{ctx.author.name}:請你說個笑話")
         PASS_MSG.append("小俠:"+this_joke)
