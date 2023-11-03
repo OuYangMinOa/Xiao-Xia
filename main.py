@@ -62,14 +62,14 @@ if __name__ == '__main__':
             extension = f"functions.{filename[:-3]}"
             bot.load_extension(extension)
 
-    from utils.wesAi import prompt_wes_com_main
-    print(prompt_wes_com_main("用戶:請自我介紹\n小俠:"))
+    # from utils.wesAi import prompt_wes_com_main
+    # print(prompt_wes_com_main("用戶:請自我介紹\n小俠:"))
 
 
-    # print(f"[*] Process id : {os.getpid()}")
-    # StartChecking(bot)
-    # print("[*] Wait for `bot.run` to complete")
-    # bot.run(token)
+    print(f"[*] Process id : {os.getpid()}")
+    StartChecking(bot)
+    print("[*] Wait for `bot.run` to complete")
+    bot.run(token)
 
 
 
