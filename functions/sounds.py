@@ -34,6 +34,7 @@ class Sounds(discord.ext.commands.Cog):
         logger.info(f"upload_sound {ctx.author.name}")
 
 
+
         if file:
         # Check if there are any attachments
             attachment = file

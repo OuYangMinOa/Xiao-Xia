@@ -13,15 +13,15 @@ async def prompt_wes_com(text):   # use my own LLM AI
     """_summary_
 
     Args:
-        text (_type_): _description_
+        text (str): prompt text
 
     Returns:
-        _type_: _description_
+        str|None: LLM AI result
     """
 
     
     HOST = socket.gethostbyname(socket.gethostname()) #"192.168.133.209"
-    print(HOST)
+    # print(HOST)
     HOST = "192.168.0.7"
     PORT = 8088
 

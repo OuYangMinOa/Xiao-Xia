@@ -24,6 +24,8 @@ spotipy = "*"
 pytube = "*"
 edge-tts = "*"
 speechrecognition = "*"
+pypdf2 = "*"
+aiohttp = "*"
 
 [dev-packages]
 

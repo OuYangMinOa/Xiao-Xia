@@ -6,7 +6,8 @@ from datetime import datetime
 def create_logger(log_folder):
 
 	dir_path = 'logs'# 設定 logs 目錄
-	filename = "{:%Y-%m-%d_%X}".format(datetime.now()) + '.log' # 設定檔名
+	filename = "{:%Y_%m_%d}".format(datetime.now()) + '.log' # 設定檔名
+	
 
 	logging.captureWarnings(True)
 	formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
@@ -16,7 +17,7 @@ def create_logger(log_folder):
 	os.makedirs(log_folder,exist_ok=True)
 
 
-	fileHandler = logging.FileHandler(log_folder+'/'+filename, 'w', 'utf-8')
+	fileHandler = logging.FileHandler(os.path.join(log_folder,filename), 'w', 'utf-8')
 	fileHandler.setFormatter(formatter)
 	my_logger.addHandler(fileHandler)
 
