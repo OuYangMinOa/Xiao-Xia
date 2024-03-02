@@ -12,10 +12,10 @@ class SummaryThesis(discord.ext.commands.Cog):
     def __init__(self,bot):
         self.bot = bot
 
-    @slash_command( name="summaryPdf",description="upload pdf")
+    @slash_command( name="summarypdf",description="upload pdf")
     async def summary_thesis(self,ctx, file: discord.Attachment):
         # logger.info(f"summary_thesis {ctx.author.name} upload a pdf for thesis summarization")
-        await ctx.respond(f"/summaryPdf - {ctx.author.mention}",ephemeral=True)
+        await ctx.respond(f"/summarypdf - {ctx.author.mention}",ephemeral=True)
         thisMess = await ctx.respond(f"Analyzing the PDF ... (It's might take a while)",ephemeral=True)
 
         if file:
