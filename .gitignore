@@ -25,5 +25,6 @@ output3.png
 
 message_collect.txt
 silence_channel.txt
+talk_channel.txt
 
 reboot.py

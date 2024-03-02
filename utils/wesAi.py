@@ -30,7 +30,7 @@ async def prompt_wes_com(text):   # use my own LLM AI
     prompt = {
         "promptWord":text,
         "top_p":0.2,
-        "temperature":1,
+        "temperature":.7,
         }
     try:
         # response  = requests.post(f"http://{HOST}:{PORT}/prompt",json=prompt,timeout=10)
