@@ -1,6 +1,3 @@
-
-
-
 from utils.info import music_user, sound_user, recording
 from utils.info import CheckBool
 
@@ -8,7 +5,6 @@ import threading
 import asyncio
 
 def StartChecking(bot):
-
     async def WhileChecking():
         CheckBool = True
         await asyncio.sleep(5)

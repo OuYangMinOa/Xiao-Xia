@@ -33,7 +33,7 @@ class Chat:
             with open(self.DataName,'w',encoding='utf-8') as f:
                 pass
 
-    def BuildPrompt(self,name,message):
+    def BuildPrompt(self,name:str,message:str):
         """
 
         Args:

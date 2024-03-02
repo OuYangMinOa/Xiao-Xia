@@ -12,10 +12,10 @@ class SummaryThesis(discord.ext.commands.Cog):
     def __init__(self,bot):
         self.bot = bot
 
-    @slash_command( name="summary_thesis",description="upload pdf")
+    @slash_command( name="summaryPdf",description="upload pdf")
     async def summary_thesis(self,ctx, file: discord.Attachment):
-        logger.info(f"summary_thesis {ctx.author.name} upload a pdf for thesis summarization")
-        await ctx.respond(f"/summary_thesis - {ctx.author.mention}",ephemeral=True)
+        # logger.info(f"summary_thesis {ctx.author.name} upload a pdf for thesis summarization")
+        await ctx.respond(f"/summaryPdf - {ctx.author.mention}",ephemeral=True)
         thisMess = await ctx.respond(f"Analyzing the PDF ... (It's might take a while)",ephemeral=True)
 
         if file:
@@ -38,7 +38,7 @@ class SummaryThesis(discord.ext.commands.Cog):
             print("[*] Summarizing the PDF...")
             for num,each in tqdm(enumerate(reader.pages)):
                 # totalText = totalText + each.extract_text()
-                thisSum =  await wesAi.prompt_wes_com(f"幫我以條列式總結以下文字,以中文回復:\n{each.extract_text()}")
+                thisSum =  await wesAi.prompt_wes_com(f"幫我以條列式總結以下文字,並以中文回復:\n{each.extract_text()}")
                 thisOutput = f"## Page{num +1}\n{thisSum}"
 
                 while thisOutput!="":

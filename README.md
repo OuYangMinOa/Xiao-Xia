@@ -76,6 +76,7 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 * `/weather_day` Get today's Weather Overview (Taiwan)
 * `/weather_week` Get weather overview for the week ahead (Taiwan)
 * `/weather_pos` One-day weather forecast for each city area (Taiwan)
+* `/summaryPdf` Read the PDF and summrize each page
 
 # :bookmark_tabs: Informations
 * `/vote` vote

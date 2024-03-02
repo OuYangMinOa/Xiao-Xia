@@ -49,6 +49,7 @@ class Help(discord.ext.commands.Cog):
  - `/weather_day` Get today's Weather Overview
  - `/weather_week` Get weather overview for the week ahead
  - `/weather_pos` One-day weather forecast for each county and city area
+ - `/summaryPdf` Read the PDF and summrize each page
 
 * 📑 **FUNCTIONS**                            
  - `/vote` vote
@@ -94,7 +95,8 @@ class Help(discord.ext.commands.Cog):
  - `/weather_day` 今日的天氣資訊。
  - `/weather_week` 未來一周的天氣資訊。
  - `/weather_pos` 各縣市地區的一日天氣預報。
-                           
+ - `/summaryPdf` 讀取PDF然後幫你做每頁的總結
+
 * 📑 **功能**                     
  - `/vote` 投票
  - `/ping` 顯示跟機器人的延遲
