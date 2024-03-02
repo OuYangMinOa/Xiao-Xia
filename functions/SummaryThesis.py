@@ -38,7 +38,7 @@ class SummaryThesis(discord.ext.commands.Cog):
             print("[*] Summarizing the PDF...")
             for num,each in tqdm(enumerate(reader.pages)):
                 # totalText = totalText + each.extract_text()
-                thisSum =  await wesAi.prompt_wes_com(f"幫我以條列式總結以下文字,並以中文回復:\n{each.extract_text()}")
+                thisSum =  await wesAi.prompt_wes_com(f"請閱讀以下文字後，幫我做總結(請以繁體中文回復並且總結中包含條列式總結，重點提醒，優缺點分析，回復不需要包含英文):\n{each.extract_text()}")
                 thisOutput = f"## Page{num +1}\n{thisSum}"
 
                 while thisOutput!="":
