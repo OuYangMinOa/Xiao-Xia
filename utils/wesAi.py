@@ -1,5 +1,5 @@
 # on raspi
-from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger
+from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger,HOST,PORT
 import socket
 from aiohttp import ClientSession
 
@@ -20,10 +20,10 @@ async def prompt_wes_com(text):   # use my own LLM AI
     """
 
     
-    HOST = socket.gethostbyname(socket.gethostname()) #"192.168.133.209"
-    # print(HOST)
-    HOST = "192.168.0.7"
-    PORT = 8088
+    # HOST = socket.gethostbyname(socket.gethostname()) #"192.168.133.209"
+    # # print(HOST)
+    # HOST = "192.168.0.7"
+    # PORT = 8088
 
 
     ## change to use restful api

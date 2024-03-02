@@ -1,5 +1,5 @@
 # OnMessage.py
-from utils.info           import silinece_channel, logger, MASSAGE_FOLDER, chat_dict
+from utils.info           import silinece_channel, logger, MASSAGE_FOLDER, chat_dict, talk_channel
 from utils.Chat           import Chat
 
 import threading
@@ -35,7 +35,7 @@ async def handle_message(message):
     # print( message.content)
     this_message = message.content.strip()
     logger.info(f"[*] {message.author.name} : {this_message}")
-    if (message.channel.id in silinece_channel):
+    if (message.channel.id not in talk_channel):
         return
     if (this_message == ""):
         return 

@@ -41,15 +41,15 @@ async def before_invoke(ctx):
     if (str(ctx.command) not in ['autosound',]):
         await ctx.defer()
 
-# @bot.event
-# async def on_message(message):
-#     if message.author == bot.user:
-#         return  
-#     if message.author.bot:
-#         return
-#     # await handle_message(message)
-#     await ThreadHandleMessage(bot,message)
-#     return
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return  
+    if message.author.bot:
+        return
+    # await handle_message(message)
+    await ThreadHandleMessage(bot,message)
+    return
 
 
 
