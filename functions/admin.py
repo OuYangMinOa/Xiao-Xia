@@ -18,6 +18,8 @@ class admin(discord.ext.commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+
+    # reboot the discord bot
     @slash_command(name="reboot",description="重新啟動")
     async def reboot(self, ctx, password: Option(str, "password", required = True)):
         if ( str(os.getenv('RESTART_PASS'))==password):
@@ -28,6 +30,7 @@ class admin(discord.ext.commands.Cog):
 
     @slash_command(name="keep_alive",description="Keep my bot alive")
     async def keep_alive(self, ctx, password: Option(str, "password", required = True)):
+
         if ( str(os.getenv('RESTART_PASS'))==password):
             NowTime = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
             await ctx.respond(f"I'm alive  ({NowTime})",delete_after=5)
