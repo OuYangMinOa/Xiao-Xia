@@ -39,7 +39,7 @@ class Silence(discord.ext.commands.Cog):
             if (ctx.channel.id not in talk_channel):
                 talk_channel.append(ctx.channel.id)
                 addtxt(Talk_DATA,ctx.channel.id)
-                await ctx.respond("Use `silence` to shut me up.")
+                await ctx.respond("Use `silence` to shut me up, `clear_talk` to clear chat history.")
                 return
         except Exception as e:
             logger.error(e)
@@ -62,9 +62,6 @@ class Silence(discord.ext.commands.Cog):
             chat_dict[ctx.channel.id].clear_message()
             await ctx.respond("Past chat history has been cleared")
     
-
-
-
 
 def setup(bot):
     bot.add_cog(Silence(bot))
