@@ -19,13 +19,13 @@ class Recomm:
         
         if self.counter[(channel_id, guild_id)] > 5:
             
-            await message.channel.send("我注意到你在使用其他的音樂機器人或者想要分享音樂..."
+            await message.channel.send("我注意到你在使用其他的音樂機器人或者想要分享音樂 ..."
                         "  ,   其實我也有撥放音樂的功能喔!!!。\n"
                         "* :notes: **音樂**\n"
                         " - `/play {url}` 播放音樂 (youtube 或 spotify)。\n"
                         " - `/save_platlist {name}` <- 甚至可以儲存歌單喔。\n"
                         " - `/help_zhtw` 來查看更多。\n"
-                        " - 有時候會出現無法回應的情況，案`上`再輸入一次指令即可。\n"
+                        " - 有時候會出現 :x: 無法回應的情況，案 :arrow_up: 再輸入一次指令即可。\n"
                         " - 使用 `/stop_recommend` 來關閉這個提醒。")
             logger.info(f"[*] Showing recommend in {channel_id}")
             self.counter[(channel_id, guild_id)] = -5
