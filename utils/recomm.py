@@ -16,12 +16,11 @@ class Recomm:
 
         if "youtube" in msg or "spotify" in msg:
             self.counter[(channel_id,guild_id)] += 1
-            print(self.counter)
         
         if self.counter[(channel_id, guild_id)] > 5:
             
             await message.channel.send("我注意到你在使用其他的音樂機器人或者想要分享音樂..."
-                        ", 其實我也有撥放音樂的功能喔!。\n"
+                        "  ,   其實我也有撥放音樂的功能喔!!!。\n"
                         "* :notes: **音樂**\n"
                         " - `/play {url}` 播放音樂 (youtube 或 spotify)。\n"
                         " - `/save_platlist {name}` <- 甚至可以儲存歌單喔。\n"
