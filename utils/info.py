@@ -4,15 +4,16 @@ from utils.file_os import *
 music_user  = {}  ## handle music  {channel id: class}
 sound_user  = {}  ## handle sound  {channel id: class}
 User_dict   = {}  ##   {userid : userclass }k
-PASS_MSG    = []  ## handle pass message (abandoned)
 chat_dict   = {}  ## handle chat   {channel id:class}
 recording   = {}  ## handle recording {guild id:class}
+PASS_MSG    = []  ## handle pass message (abandoned)
 
 CheckBool   = False ## handle the checking loop.
 
 MASSAGE_DATA    = "data/message_collect.txt"   # abandoned
 Silence_DATA    = "data/silence_channel.txt"
 Talk_DATA       = "data/talk_channel.txt"
+NO_RECOMMEND    = "data/no_recommend.txt"
 MASSAGE_FOLDER  = "data/message"
 MUSIC_folder    = "data/music"
 Playlist_folder = "data/playlist"
@@ -67,10 +68,10 @@ f"{HELPZHTW}\n"\
 MASSAGE_MEMORY_SIZE = 4
 silinece_channel = readfile(Silence_DATA,int)
 talk_channel = readfile(Talk_DATA   ,int)
+no_recommend_guild_id = readfile(NO_RECOMMEND,int)
 HOST = "172.17.25.114"
 PORT = 8088
 
 
 dir_path = 'logs'
 logger = create_logger(dir_path)	
-    

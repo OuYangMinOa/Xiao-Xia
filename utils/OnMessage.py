@@ -1,6 +1,7 @@
 # OnMessage.py
 from utils.info           import silinece_channel, logger, MASSAGE_FOLDER, chat_dict, talk_channel
 from utils.Chat           import Chat
+from utils.recomm         import recomm
 
 import threading
 import os
@@ -35,6 +36,7 @@ async def handle_message(message):
     # print( message.content)
     this_message = message.content.strip()
     logger.info(f"[*] {message.author.name} : {this_message}")
+    await recomm.Add_if(message,message.channel.id,message.guild.id,this_message)
     if (message.channel.id not in talk_channel):
         return
     if (this_message == ""):
@@ -54,5 +56,8 @@ async def handle_message(message):
         if chatgpt_result:
             await message.channel.send(chatgpt_result)
             logger.info(f"[*] 回復 : {chatgpt_result}")
+    
+    
+
 
 
