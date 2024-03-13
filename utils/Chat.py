@@ -13,6 +13,7 @@ class Chat:
     def __init__(self,channelId):
         self.channelId = channelId
         self.DataName  = os.path.join(MASSAGE_FOLDER, f"{channelId}.txt")
+        os.makedirs(MASSAGE_FOLDER, exist_ok=True)
         self.memory    = deque(maxlen=MASSAGE_MEMORY_SIZE)
         self.result    = None
         self.LoadMessage()
