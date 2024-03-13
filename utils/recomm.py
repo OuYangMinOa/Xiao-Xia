@@ -9,7 +9,7 @@ class Recomm:
     counter = defaultdict(int)
     no_recommend_guild_id = no_recommend_guild_id
     
-    async def Add_if(self,message,channel_id,guild_id,msg):
+    async def Add_if(self,message,channel_id,guild_id,msg:str):
         if (guild_id in self.no_recommend_guild_id):
             return
         self.no_recommend_guild_id = readfile(NO_RECOMMEND,int)
