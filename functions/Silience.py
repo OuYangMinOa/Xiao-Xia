@@ -1,7 +1,9 @@
 from utils.info       import silinece_channel, Silence_DATA, logger, chat_dict, talk_channel, Talk_DATA
 from discord.commands import slash_command, Option
 from discord.ext      import commands
-from utils.file_os import *
+from utils.file_os    import *
+from utils.Chat       import Chat
+
 import discord
 
 
@@ -33,6 +35,8 @@ class Silence(discord.ext.commands.Cog):
     @slash_command(name="talk",description="If no message is provided, enable reply to all messages.")
     async def talk(self,ctx, msg:Option(str, "message",required=False,default=None)):
         if (msg):
+            if (ctx.channel.id not in chat_dict):
+                chat_dict[ctx.channel.id] = Chat(ctx.channel.id)
             chatgpt_result = await chat_dict[ctx.channel.id].Talk(ctx.author.name,msg)
             if chatgpt_result:
                 await ctx.channel.send(chatgpt_result)
