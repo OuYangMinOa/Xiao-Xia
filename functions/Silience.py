@@ -40,7 +40,7 @@ class Silence(discord.ext.commands.Cog):
 
             chatgpt_result = await chat_dict[ctx.channel.id].Talk(ctx.author.name,msg)
             if chatgpt_result:
-                await ctx.channel.send(chatgpt_result)
+                await ctx.respond(chatgpt_result)
                 return
 
 
