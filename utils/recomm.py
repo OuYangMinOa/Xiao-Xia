@@ -14,7 +14,7 @@ class Recomm:
             return
         self.no_recommend_guild_id = readfile(NO_RECOMMEND,int)
 
-        if "youtube" in msg or "spotify" in msg:
+        if "youtube" in msg.lower() or "spotify" in msg.lower():
             self.counter[(channel_id,guild_id)] += 1
         
         if self.counter[(channel_id, guild_id)] > 5:
