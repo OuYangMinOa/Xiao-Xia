@@ -26,7 +26,9 @@ class Recomm:
                         " - `/save_platlist {name}` <- 甚至可以儲存歌單喔。\n"
                         " - `/help_zhtw` 來查看更多。\n"
                         " - 有時候會出現 :x: 無法回應的情況，案 :arrow_up: 再輸入一次指令即可。\n"
-                        " - 使用 `/stop_recommend` 來關閉這個提醒。")
+                        " - 使用 `/stop_recommend` 來關閉這個提醒。\n"
+                        " - 有更多問題可以使用 `/talk {問題}` 來與我溝通。"
+                        )
             logger.info(f"[*] Showing recommend in {channel_id}")
             self.counter[(channel_id, guild_id)] = -5
 
