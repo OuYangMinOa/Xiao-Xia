@@ -12,7 +12,7 @@ class Vote(discord.ext.commands.Cog):
     async def vote(self, ctx, timeout_min : Option(int, "幾分鐘後失效 (默認5分鐘)", required = False, default = 5)):
         # Choose vote
         my_vote = vt.DecideVote(ctx.channel, timeout_min, title='Votes')
-        await ctx.send_modal(modal=my_vote)
+        await ctx.send_modal(my_vote)
 
 def setup(bot):
     bot.add_cog(Vote(bot))
