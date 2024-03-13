@@ -17,7 +17,7 @@ class Silence(discord.ext.commands.Cog):
             if (ctx.channel.id in talk_channel):
                 talk_channel.remove(ctx.channel.id)
                 newtxt(Talk_DATA, talk_channel)
-                await ctx.respond("Use `talk` to let me talk again.")
+                await ctx.respond("Use `/talk` to let me talk again.")
                 return
             await ctx.respond("I could have talked.")
         except Exception as e:
@@ -37,16 +37,18 @@ class Silence(discord.ext.commands.Cog):
         if (msg):
             if (ctx.channel.id not in chat_dict):
                 chat_dict[ctx.channel.id] = Chat(ctx.channel.id)
+
             chatgpt_result = await chat_dict[ctx.channel.id].Talk(ctx.author.name,msg)
             if chatgpt_result:
                 await ctx.channel.send(chatgpt_result)
+                return
 
 
         try:
             if (ctx.channel.id not in talk_channel):
                 talk_channel.append(ctx.channel.id)
                 addtxt(Talk_DATA,ctx.channel.id)
-                await ctx.respond("Use `silence` to shut me up, `clear_talk` to clear chat history.")
+                await ctx.respond("Use `/silence` to shut me up, `/clear_talk` to clear chat history.")
                 return
         except Exception as e:
             logger.error(e)
