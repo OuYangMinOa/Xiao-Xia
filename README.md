@@ -32,9 +32,10 @@ If you want to build your own bot, the bot is develop base on [python](https://w
     pipenv shell
     python3 main.py
     ```
-5. Continuous Deployment
+5. Run in docker
     ```
-    python LCCD.py
+    docker build -t discordbot .
+    docker run -d discrodbot
     ```
 
 # :rocket: Getting Started
