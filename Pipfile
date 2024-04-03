@@ -26,6 +26,9 @@ edge-tts = "*"
 speechrecognition = "*"
 pypdf2 = "*"
 aiohttp = "*"
+pyppeteer = "==1.0.2"
+lxml-html-clean = "*"
+lxml = {extras = ["html_clean"], version = "*"}
 
 [dev-packages]
 

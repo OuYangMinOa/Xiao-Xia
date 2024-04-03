@@ -16,15 +16,15 @@ class Weather(discord.ext.commands.Cog):
     async def weather_day(self,ctx):
         await ctx.respond(f"/weather_day - {ctx.author.mention}")
         try:
-            url = "https://www.cwb.gov.tw/V8/C/W/index.html"
+            url = "https://www.cwa.gov.tw/V8/C/W/index.html"
             session = AsyncHTMLSession()
-            r = await  session.get(url)
+            r = await session.get(url)
+            image_links = "https://www.cwa.gov.tw/Data/fcst_img/cloud_weather.png"
+            
+            print("arendering ...")
             await r.html.arender()
+            print("arender success")
 
-            image_links = ""
-            for i in r.html.xpath("/html/body/div[3]/main/div/div[3]/a"):
-                image_links = 'https://www.cwb.gov.tw'+list(i.links)[0]
-            print(image_links)
             text = r.html.xpath("/html/body/div[3]/main/div/div[1]/div/div/div[1]/div")[0].text
             ####################  handle text ####################
             text = "\n".join(text.split("\n")[1:])
@@ -40,12 +40,12 @@ class Weather(discord.ext.commands.Cog):
             #################### warning message #################
 
             next_text = "\n# :warning:  天氣特報  :warning: \n"
-            url = "https://www.cwb.gov.tw/V8/C/"
+            url = "https://www.cwa.gov.tw/V8/C/"
             r = await session.get(url)
 
             await r.html.arender()
             for each_link in r.html.xpath("/html/body/header/div[2]/div/div/div[1]/div/div/ol")[0].links:
-                next_text = next_text + f" * https://www.cwb.gov.tw{each_link}\n"
+                next_text = next_text + f" * https://www.cwa.gov.tw{each_link}\n"
             next_text = next_text + "\n資料來源:中央氣象局"
             await session.close()
             await ctx.send(next_text)
@@ -62,7 +62,7 @@ class Weather(discord.ext.commands.Cog):
         await ctx.respond(f"/weather_week - {ctx.author.mention}")
 
         try:
-            url = "https://www.cwb.gov.tw/V8/C/W/index.html"
+            url = "https://www.cwa.gov.tw/V8/C/W/index.html"
             session = AsyncHTMLSession()
             r = await  session.get(url)
 
@@ -151,9 +151,9 @@ class MyWeatherSelection:
     async def callback(self, interaction):
         which_chosen = self.towns.index(self.select.values[0])
         if (which_chosen==0):
-            url = "https://www.cwb.gov.tw/V8/C/W/County/index.html"
+            url = "https://www.cwa.gov.tw/V8/C/W/County/index.html"
         else:
-            url = f"https://www.cwb.gov.tw/V8/C/W/County/County.html?CID={self.values[which_chosen]}"
+            url = f"https://www.cwa.gov.tw/V8/C/W/County/County.html?CID={self.values[which_chosen]}"
 
         await interaction.response.send_message(self.select.values[0])
 
@@ -169,7 +169,7 @@ class MyWeatherSelection:
             await self.ctx.send("# " + r.html.xpath("/html/body/div[2]/main/div/div[1]/div[1]/div/h2")[0].text)
             await self.ctx.send("* " + r.html.xpath("/html/body/div[2]/main/div/div[2]/a")[0].text)
 
-            filename, filepath1 = SvgToPng(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/img')[0].attrs['src']}")
+            filename, filepath1 = SvgToPng(f"https://www.cwa.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/img')[0].attrs['src']}")
             file1 = discord.File(filepath1,filename="output1.png")
             embed1=discord.Embed(title="今晚明晨")
             embed1.set_thumbnail(url = f"attachment://output1.png")
@@ -180,7 +180,7 @@ class MyWeatherSelection:
 
 
 
-            filename,filepath2 = SvgToPng(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/img')[0].attrs['src']}")
+            filename,filepath2 = SvgToPng(f"https://www.cwa.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/img')[0].attrs['src']}")
             file2 = discord.File(filepath2,filename="output2.png")
             embed2=discord.Embed(title="明日白天")
             embed2.set_thumbnail(url = f"attachment://output2.png")
@@ -190,7 +190,7 @@ class MyWeatherSelection:
             await self.ctx.send(file=file2,embed=embed2)
 
 
-            filename,filepath3 = SvgToPng(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/img')[0].attrs['src']}")
+            filename,filepath3 = SvgToPng(f"https://www.cwa.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/img')[0].attrs['src']}")
             file3 = discord.File(filepath3,filename="output3.png")
             embed3=discord.Embed(title="明日晚上")
             embed3.set_thumbnail(url = f"attachment://output3.png")
@@ -201,7 +201,7 @@ class MyWeatherSelection:
 
             await session.close()
 
-            await self.ctx.send(f"https://www.cwb.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[5]/div[1]/div/img')[0].attrs['src']}")
+            await self.ctx.send(f"https://www.cwa.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[5]/div[1]/div/img')[0].attrs['src']}")
         except Exception as e:
             logger.error(e)
         
