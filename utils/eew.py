@@ -7,39 +7,50 @@ import json
 
 @dataclass
 class EEW_data:
-    id : str
-    updated: str
-    text: str
-    strong : str
+    id: int
+    ReportTime: str
+    OriginTime: str
+    HypoCenter: str
+    Latitude: float 
+    Longitude: float
+    Magnitude: float
+    Depth: int
+    MaxIntensity: str
 
 
 
 class EEW:
-    URL = "https://alerts.ncdr.nat.gov.tw/JSONAtomFeed.ashx?AlertType=6"  ## The taiwan earthquake url endpoint.
+    URL = "https://api.wolfx.jp/cwa_eew.json"  ## The taiwan earthquake url endpoint.
     def __init__(self) -> None:
         self.session = AsyncHTMLSession()
         self.state    = True
         self.last_eew = None
-
+    
+    def json_to_eewdata(self,json_data) -> EEW_data:
+        return EEW_data(
+            json_data['ID'],
+            json_data['ReportTime'].replace(" ","\n"),
+            json_data['OriginTime'].replace(" ","\n"),
+            json_data['HypoCenter'],
+            json_data['Latitude'],
+            json_data['Longitude'],
+            json_data['Magunitude'],
+            json_data['Depth'],
+            json_data['MaxIntensity'],
+        )
 
     async def grab_result(self) -> EEW_data:
         r = await self.session.get(self.URL)
         await r.html.arender()
         r.json()
-        alert_json = r.json()['entry'][-1]
+        alert_json = r.json()
 
-        return EEW_data(
-            alert_json['id'],
-            alert_json['updated'],
-            alert_json['summary']['#text'],
-            alert_json['summary']['#text'][-3:-1],
-        )
+        return self.json_to_eewdata(alert_json)
     
 
     async def alert(self):
         if self.last_eew is None:
             self.last_eew = await self.grab_result()
-
         while (self.state):
             time.sleep(5)
             this_eew = await self.grab_result()

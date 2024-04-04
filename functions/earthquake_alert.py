@@ -14,16 +14,13 @@ class EarthQuakeAlert(discord.ext.commands.Cog):
         self.bot = bot
         
     @slash_command(name="eew_alert",description="地震預報系統(Earthquake Early Warning)")
-    async def eew_alert(self,ctx, msg:Option(int, "地震強度大於多少時(包含)發出預警",required=False,default=3)):
+    async def eew_alert(self,ctx):
         channel_id = ctx.channel.id
         if (channel_id not in alert_channel_id):
             alert_channel_id.append(channel_id)
             addtxt(ALERT_CHANNEL,channel_id)
         print(alert_channel_id)
         await ctx.respond(f"Alert start ...")
-
-
-
 
 
 def setup(bot):
