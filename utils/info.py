@@ -19,6 +19,7 @@ MUSIC_folder    = "data/music"
 Playlist_folder = "data/playlist"
 Record_folder   = "data/record"
 Download_folder = "data/download"
+ALERT_CHANNEL   = "data/alert_channel.txt"
 
 HELPZHTW = """**音樂**
 `/play {url}` 播放音樂 (youtube 或 spotify)。
@@ -69,6 +70,8 @@ MASSAGE_MEMORY_SIZE = 4
 silinece_channel = readfile(Silence_DATA,int)
 talk_channel = readfile(Talk_DATA   ,int)
 no_recommend_guild_id = readfile(NO_RECOMMEND,int)
+alert_channel_id = readfile(ALERT_CHANNEL,int)
+
 HOST = "172.17.25.114"
 PORT = 8088
 

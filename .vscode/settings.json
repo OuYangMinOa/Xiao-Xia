@@ -52,5 +52,18 @@
         "unordered_map": "cpp",
         "list": "cpp",
         "xhash": "cpp"
-    }
+    },
+    "cSpell.words": [
+        "addtxt",
+        "autosound",
+        "chickensoul",
+        "HELPZHTW",
+        "newtxt",
+        "platlist",
+        "readfile",
+        "silinece",
+        "userclass",
+        "userid",
+        "Xioa"
+    ]
 }

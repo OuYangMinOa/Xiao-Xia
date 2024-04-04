@@ -1,6 +1,6 @@
-from utils.info import music_user, sound_user, recording
+from utils.info import music_user, sound_user, recording, alert_channel_id, ALERT_CHANNEL
 from utils.info import CheckBool
-
+from utils.eew import EEW, EEW_data
 import threading
 import asyncio
 
@@ -49,3 +49,24 @@ async def RestartBot(bot):
     CheckBool = False
     await asyncio.sleep(5)
     StartChecking(bot)
+
+
+
+def EarthQuakeWarning(bot):
+    
+    async def send(_EEW):
+        for each_channel in alert_channel_id:
+            this_ctx = bot.get_channel(each_channel)
+            print(this_ctx,each_channel)
+            await this_ctx.send(_EEW.text)
+
+    async def loop():
+        await bot.wait_until_ready() 
+        eew = EEW()
+        async for each in eew.alert():
+            await send(each)
+
+    def LoopChecking():
+        bot.loop.create_task(loop())
+
+    threading.Thread(target=LoopChecking,daemon=True).start()
