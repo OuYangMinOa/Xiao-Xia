@@ -81,7 +81,8 @@ def EarthQuakeWarning(bot):
         embed.add_field(name="震央位置",value=_EEW.HypoCenter)
         embed.add_field(name="經度",value=_EEW.Latitude,inline=True)
         embed.add_field(name="緯度",value=_EEW.Longitude,inline=True)
-
+ 
+        embed.set_footer(text = f"💭 發布於：{datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')}")
         
         for each_channel in alert_channel_id:   
             this_ctx = bot.get_channel(each_channel)
@@ -91,9 +92,9 @@ def EarthQuakeWarning(bot):
     async def loop():
         await bot.wait_until_ready() 
 
-        # await send(
-        #     EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日\n%H:%M:%S"),"test",5.0,1.0,5,100,'5')
-        # )
+        await send(
+            EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日\n%H:%M:%S"),"test",5.0,1.0,5,100,'5')
+        )
 
         eew = EEW()
         async for each in eew.alert():
