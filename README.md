@@ -78,6 +78,8 @@ If you want to build your own bot, the bot is develop base on [python](https://w
 * `/weather_week` Get weather overview for the week ahead (Taiwan)
 * `/weather_pos` One-day weather forecast for each city area (Taiwan)
 * `/summaryPdf` Read the PDF and summrize each page
+* `/eew_alert` Earthquake early warning (Taiwan)
+
 
 # :bookmark_tabs: Informations
 * `/vote` vote

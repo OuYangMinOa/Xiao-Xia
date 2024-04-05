@@ -40,6 +40,16 @@ class EEW:
         )
 
     async def grab_result(self) -> EEW_data:
+        try:
+            r = await self.session.get(self.URL)
+            await r.html.arender()
+        except Exception as e:
+            print(e)
+            self.session = AsyncHTMLSession()
+            r = await self.session.get(self.URL)
+            await r.html.arender()
+
+
         r = await self.session.get(self.URL)
         await r.html.arender()
         r.json()
