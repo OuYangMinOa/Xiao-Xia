@@ -20,17 +20,56 @@ class EEW_data:
 
 
 class EEW:
+    WHITE_CIRCLE = "`⚪`"
+    GREEN_CIRCLE = "`🟢`"
+    BLUE_CIRCLE = "`🔵`"
+    RED_CIRCLE = "`🔴`"
+    YELLOW_CIRCLE = "`🟡`"
+
     URL = "https://api.wolfx.jp/cwa_eew.json"  ## The taiwan earthquake url endpoint.
     def __init__(self) -> None:
         self.session = AsyncHTMLSession()
         self.state    = True
         self.last_eew = None
-    
+
+    @classmethod
+    def circle_depth(self,Depth):
+        if Depth > 300:
+            return self.WHITE_CIRCLE
+        elif Depth > 70:
+            return self.GREEN_CIRCLE
+        elif Depth > 30:
+            return self.BLUE_CIRCLE
+        else:
+            return self.RED_CIRCLE
+    @classmethod
+    def circle_mag(self,mag):
+        if mag < 4 :
+            return self.WHITE_CIRCLE
+        elif mag < 5:
+            return self.GREEN_CIRCLE
+        elif mag <= 6:
+            return self.BLUE_CIRCLE
+        else:
+            return self.RED_CIRCLE
+    @classmethod
+    def circle_intensity(self,intensity):
+        intensity = int(intensity)
+        if intensity == 1:
+            return self.WHITE_CIRCLE
+        if intensity == 2:
+            return self.GREEN_CIRCLE
+        if intensity == 3:
+            return self.BLUE_CIRCLE
+        if intensity == 4:
+            return self.YELLOW_CIRCLE
+        return self.RED_CIRCLE
+
     def json_to_eewdata(self,json_data) -> EEW_data:
         return EEW_data(
             json_data['ID'],
-            json_data['ReportTime'],
-            json_data['OriginTime'],
+            json_data['ReportTime'].replace(" ","\n"),
+            json_data['OriginTime'].replace(" ","\n"),
             json_data['HypoCenter'],
             json_data['Latitude'],
             json_data['Longitude'],

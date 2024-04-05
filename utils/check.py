@@ -60,6 +60,9 @@ async def RestartBot(bot):
 def EarthQuakeWarning(bot):
     _map = mapper()
 
+    
+        
+
     async def send(_EEW:EEW_data):
         embed = discord.Embed(
                 title="地震 !",
@@ -71,9 +74,9 @@ def EarthQuakeWarning(bot):
         embed.add_field(name="發生時間",value=f"`{_EEW.OriginTime}`",inline=True)
         embed.add_field(name="",value="",inline=True)
 
-        embed.add_field(name="深度",value=f"`🔴` {_EEW.Depth}公里")
-        embed.add_field(name="規模",value=f"`🟢` 芮氏 {_EEW.Magnitude}",inline=True)
-        embed.add_field(name="最大震度",value=f"`🔵` {_EEW.MaxIntensity}級",inline=True)
+        embed.add_field(name="規模",value=f"{EEW.circle_mag(_EEW.Magnitude)} 芮氏 {_EEW.Magnitude}",inline=True)
+        embed.add_field(name="深度",value=f"{EEW.circle_depth(_EEW.Depth)} {_EEW.Depth}公里")
+        embed.add_field(name="最大震度",value=f"{EEW.circle_intensity(_EEW.MaxIntensity)} {_EEW.MaxIntensity}級",inline=True)
 
         embed.add_field(name="震央位置",value=_EEW.HypoCenter)
         embed.add_field(name="經度",value=_EEW.Latitude,inline=True)
@@ -89,7 +92,7 @@ def EarthQuakeWarning(bot):
         await bot.wait_until_ready() 
 
         # await send(
-        #     EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日 %H:%M:%S"),"test",1.0,1.0,1.0,1,'3')
+        #     EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日\n%H:%M:%S"),"test",5.0,1.0,5,100,'5')
         # )
 
         eew = EEW()
