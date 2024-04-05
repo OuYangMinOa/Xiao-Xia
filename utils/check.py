@@ -1,6 +1,8 @@
 from utils.info import music_user, sound_user, recording, alert_channel_id, ALERT_CHANNEL
 from utils.info import CheckBool
 from utils.eew import EEW, EEW_data
+from utils.taiwan_map import mapper
+
 from datetime import datetime
 
 import discord
@@ -56,19 +58,22 @@ async def RestartBot(bot):
 
 
 def EarthQuakeWarning(bot):
+    _map = mapper()
+
     async def send(_EEW:EEW_data):
         embed = discord.Embed(
                 title="地震 !",
                 description=f"{_EEW.HypoCenter} 發生規模{_EEW.Magnitude}有感地震, 最大震度{_EEW.MaxIntensity}級",
                 color=discord.Colour.green(), # Pycord provides a class with default colors you can choose from
             )
+        
         embed.add_field(name="ID",value=_EEW.id)
         embed.add_field(name="發生時間",value=f"`{_EEW.OriginTime}`",inline=True)
         embed.add_field(name="",value="",inline=True)
 
-        embed.add_field(name="深度",value=f"`🔴` {_EEW.Depth}")
+        embed.add_field(name="深度",value=f"`🔴` {_EEW.Depth}公里")
         embed.add_field(name="規模",value=f"`🟢` 芮氏 {_EEW.Magnitude}",inline=True)
-        embed.add_field(name="最大震度",value=f"`🔵` {_EEW.MaxIntensity}",inline=True)
+        embed.add_field(name="最大震度",value=f"`🔵` {_EEW.MaxIntensity}級",inline=True)
 
         embed.add_field(name="震央位置",value=_EEW.HypoCenter)
         embed.add_field(name="經度",value=_EEW.Latitude,inline=True)
@@ -77,14 +82,14 @@ def EarthQuakeWarning(bot):
         
         for each_channel in alert_channel_id:   
             this_ctx = bot.get_channel(each_channel)
-            print(each_channel)
+            # print(each_channel)
             await this_ctx.send(embed=embed)
 
     async def loop():
         await bot.wait_until_ready() 
-        
+
         # await send(
-        #     EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日\n%H:%M:%S"),"test",1.0,1.0,1.0,1,'3')
+        #     EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日 %H:%M:%S"),"test",1.0,1.0,1.0,1,'3')
         # )
 
         eew = EEW()

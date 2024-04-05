@@ -29,8 +29,8 @@ class EEW:
     def json_to_eewdata(self,json_data) -> EEW_data:
         return EEW_data(
             json_data['ID'],
-            json_data['ReportTime'].replace(" ","\n"),
-            json_data['OriginTime'].replace(" ","\n"),
+            json_data['ReportTime'],
+            json_data['OriginTime'],
             json_data['HypoCenter'],
             json_data['Latitude'],
             json_data['Longitude'],

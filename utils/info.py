@@ -20,6 +20,7 @@ Playlist_folder = "data/playlist"
 Record_folder   = "data/record"
 Download_folder = "data/download"
 ALERT_CHANNEL   = "data/alert_channel.txt"
+EARTHQUAKE_FIG  = "data/eew_fig.png"
 
 HELPZHTW = """**音樂**
 `/play {url}` 播放音樂 (youtube 或 spotify)。

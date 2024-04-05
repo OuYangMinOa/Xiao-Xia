@@ -51,6 +51,7 @@ class Help(discord.ext.commands.Cog):
  - `/weather_pos` One-day weather forecast for each county and city area
  - `/summaryPdf` Read the PDF and summrize each page
  - `/eew_alert` Earthquake early warning (Taiwan)
+ - `/eew_alert_stop` stop Earthquake early warning (Taiwan)
 
 * 📑 **FUNCTIONS**                            
  - `/vote` vote
@@ -97,8 +98,10 @@ class Help(discord.ext.commands.Cog):
  - `/weather_week` 未來一周的天氣資訊。
  - `/weather_pos` 各縣市地區的一日天氣預報。
  - `/summaryPdf` 讀取PDF然後幫你做每頁的總結
- - `/eew_alert` 地震預警 (Taiwan)
+ - `/eew_alert` 地震預警
+ - `/eew_alert_stop` 停止地震預警
 
+                           
 * 📑 **功能**                     
  - `/vote` 投票
  - `/ping` 顯示跟機器人的延遲

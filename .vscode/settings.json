@@ -55,15 +55,29 @@
     },
     "cSpell.words": [
         "addtxt",
+        "arange",
         "autosound",
+        "Carree",
+        "cartopy",
+        "ccrs",
+        "cfeature",
         "chickensoul",
+        "edgecolor",
+        "figsize",
+        "gridlines",
         "HELPZHTW",
+        "linestyle",
+        "markersize",
         "newtxt",
         "platlist",
         "readfile",
         "silinece",
         "userclass",
         "userid",
-        "Xioa"
+        "xaxis",
+        "Xioa",
+        "xticks",
+        "yaxis",
+        "yticks"
     ]
 }
