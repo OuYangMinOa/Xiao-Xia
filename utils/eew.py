@@ -93,8 +93,12 @@ class EEW:
         )
 
     async def grab_result(self) -> EEW_data:
-
-        if (self.use_proxy and random.random() > 0.3):
+        try:
+            r = await self.session.get(self.URL)
+            await r.html.arender()
+        except Exception as e:
+            print(e)
+            print("[*] use proxy")
             this_proxy = random.choice(self.proxies)
             try:
                 r = await self.session.get(self.URL,proxies={'http':this_proxy,'https':this_proxy})
@@ -107,9 +111,6 @@ class EEW:
                     print(f"[*] New proxies num : {len(self.proxies)}")
                     r = await self.session.get(self.URL,proxies={'http':this_proxy,'https':this_proxy})
                     await r.html.arender()
-        else:
-            r = await self.session.get(self.URL)
-            await r.html.arender()
 
         r.json()
         alert_json = r.json()
@@ -120,7 +121,7 @@ class EEW:
         if self.last_eew is None:
             self.last_eew = await self.grab_result()
         while (self.state):
-            time.sleep(3)
+            time.sleep(5)
             this_eew = await self.grab_result()
             if (this_eew.id != self.last_eew.id):
                 yield this_eew
