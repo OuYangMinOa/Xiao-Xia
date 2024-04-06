@@ -93,9 +93,9 @@ def EarthQuakeWarning(bot):
         eew = EEW()
         await bot.wait_until_ready() 
 
-        await send(
-            EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日\n%H:%M:%S"),"test",5.0,1.0,5,100,'5')
-        )
+        # await send(
+        #     EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日\n%H:%M:%S"),"test",5.0,1.0,5,100,'5')
+        # )
 
         
         async for each in eew.alert():
