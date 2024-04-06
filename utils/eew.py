@@ -1,7 +1,9 @@
+from .proxies import Proxies
 from dataclasses import dataclass
 from requests_html import AsyncHTMLSession
 import threading
 import asyncio
+import random
 import time
 import json
 
@@ -31,7 +33,19 @@ class EEW:
         self.session = AsyncHTMLSession()
         self.state    = True
         self.last_eew = None
+        self.use_proxy = True
 
+        if (self.use_proxy):
+            self.builder  = Proxies(url = self.URL)\
+                                .set_p(6)\
+                                .set_num(10)\
+                                .add_ssl_proxies()
+            
+            self.proxies  = self.builder\
+                                .build()\
+                                .get_proxies()
+            print(f"[*] proxies num : {len(self.proxies)}")
+    
     @classmethod
     def circle_depth(self,Depth):
         if Depth > 300:
@@ -64,7 +78,7 @@ class EEW:
         if intensity == 4:
             return self.YELLOW_CIRCLE
         return self.RED_CIRCLE
-
+    
     def json_to_eewdata(self,json_data) -> EEW_data:
         return EEW_data(
             json_data['ID'],
@@ -79,21 +93,26 @@ class EEW:
         )
 
     async def grab_result(self) -> EEW_data:
-        try:
-            r = await self.session.get(self.URL)
-            await r.html.arender()
-        except Exception as e:
-            print(e)
-            self.session = AsyncHTMLSession()
+
+        if (self.use_proxy and random.random() > 0.3):
+            this_proxy = random.choice(self.proxies)
+            try:
+                r = await self.session.get(self.URL,proxies={'http':this_proxy,'https':this_proxy})
+                await r.html.arender()
+            except:
+                print(f"{this_proxy} proxy error")
+                self.proxies.remove(this_proxy)
+                if (len(self.proxies) == 0):
+                    self.proxies = self.builder.build().get_proxies()
+                    print(f"[*] New proxies num : {len(self.proxies)}")
+                    r = await self.session.get(self.URL,proxies={'http':this_proxy,'https':this_proxy})
+                    await r.html.arender()
+        else:
             r = await self.session.get(self.URL)
             await r.html.arender()
 
-
-        r = await self.session.get(self.URL)
-        await r.html.arender()
         r.json()
         alert_json = r.json()
-
         return self.json_to_eewdata(alert_json)
     
 
@@ -101,7 +120,7 @@ class EEW:
         if self.last_eew is None:
             self.last_eew = await self.grab_result()
         while (self.state):
-            time.sleep(5)
+            time.sleep(3)
             this_eew = await self.grab_result()
             if (this_eew.id != self.last_eew.id):
                 yield this_eew
