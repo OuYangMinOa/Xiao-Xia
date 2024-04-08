@@ -98,7 +98,7 @@ def EarthQuakeWarning(bot):
         # )
 
         
-        async for each in eew.alert():
+        async for each in eew.ssw_alert():
             await send(each)
 
     def LoopChecking():

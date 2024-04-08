@@ -1,6 +1,9 @@
 from .proxies import Proxies
 from dataclasses import dataclass
 from requests_html import AsyncHTMLSession
+from typing import AsyncIterator
+
+import websockets
 import threading
 import asyncio
 import random
@@ -29,6 +32,7 @@ class EEW:
     YELLOW_CIRCLE = "`🟡`"
 
     URL = "https://api.wolfx.jp/cwa_eew.json"  ## The taiwan earthquake url endpoint.
+    URL_SSW = "wss://ws-api.wolfx.jp/cwa_eew"
     def __init__(self) -> None:
         self.session = AsyncHTMLSession()
         self.state    = True
@@ -82,7 +86,7 @@ class EEW:
     
     def json_to_eewdata(self,json_data) -> EEW_data:
         return EEW_data(
-            json_data['ID'],
+            str(json_data['ID']),
             json_data['ReportTime'].replace(" ","\n"),
             json_data['OriginTime'].replace(" ","\n"),
             json_data['HypoCenter'],
@@ -92,6 +96,27 @@ class EEW:
             json_data['Depth'],
             json_data['MaxIntensity'],
         )
+    
+    async def ssw_grab_result(self)-> AsyncIterator[EEW_data]:
+        while True:
+            try:
+                async with websockets.connect(self.URL_SSW,timeout=600) as websocket:
+                    while True:
+                        recv = await websocket.recv() 
+                        r    = json.loads(recv)
+                        # print(r)
+                        if (r["type"]!="heartbeat"):
+                            yield self.json_to_eewdata(recv)
+            except websockets.exceptions.ConnectionClosedError:
+                print("Connection closed")
+                time.sleep(10)
+                print("Reconnect")
+            
+
+    async def ssw_alert(self) -> AsyncIterator[EEW_data]:
+        async for each in self.ssw_grab_result():
+            print(each)
+            yield each
 
     async def grab_result(self) -> EEW_data:
         try:
