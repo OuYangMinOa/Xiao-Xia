@@ -35,6 +35,7 @@ class EEW:
         self.last_eew = None
         self.use_proxy = True
 
+    def build_proxy(self):
         if (self.use_proxy):
             self.builder  = Proxies(url = self.URL)\
                                 .set_p(6)\
@@ -45,7 +46,7 @@ class EEW:
                                 .build()\
                                 .get_proxies()
             print(f"[*] proxies num : {len(self.proxies)}")
-    
+
     @classmethod
     def circle_depth(self,Depth):
         if Depth > 300:
@@ -99,18 +100,23 @@ class EEW:
         except Exception as e:
             print(e)
             print("[*] use proxy")
-            this_proxy = random.choice(self.proxies)
-            try:
-                r = await self.session.get(self.URL,proxies={'http':this_proxy,'https':this_proxy})
-                await r.html.arender()
-            except:
-                print(f"{this_proxy} proxy error")
-                self.proxies.remove(this_proxy)
-                if (len(self.proxies) == 0):
-                    self.proxies = self.builder.build().get_proxies()
-                    print(f"[*] New proxies num : {len(self.proxies)}")
+            proxy_status = False
+            for this_proxy in self.proxies:
+                try:
                     r = await self.session.get(self.URL,proxies={'http':this_proxy,'https':this_proxy})
                     await r.html.arender()
+                    proxy_status = True
+                except Exception as e:
+                    print(e)
+                    print(f"{this_proxy} proxy error")
+                    self.proxies.remove(this_proxy)
+
+            ## However all proxy fails, SLEEP(10) and return the last_eew[EEW_DATA]
+            if (not proxy_status):
+                self.proxies = self.builder.build().get_proxies()
+                print(f"[*] New proxies num : {len(self.proxies)}")
+                time.sleep(10)
+                return self.last_eew
 
         r.json()
         alert_json = r.json()

@@ -79,9 +79,9 @@ def EarthQuakeWarning(bot):
         embed.add_field(name="最大震度",value=f"{EEW.circle_intensity(_EEW.MaxIntensity)} {_EEW.MaxIntensity}級",inline=True)
 
         embed.add_field(name="震央位置",value=_EEW.HypoCenter)
-        embed.add_field(name="經度",value=_EEW.Latitude,inline=True)
-        embed.add_field(name="緯度",value=_EEW.Longitude,inline=True)
- 
+        embed.add_field(name="緯度",value=_EEW.Latitude,inline=True)
+        embed.add_field(name="經度",value=_EEW.Longitude,inline=True)
+
         embed.set_footer(text = f"💭 發布於：{datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')}")
         
         for each_channel in alert_channel_id:   

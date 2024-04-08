@@ -4,7 +4,7 @@ __pycache__
 
 # Config
 .env
-
+/.vscode
 
 # data
 /logs/
