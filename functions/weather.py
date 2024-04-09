@@ -55,8 +55,6 @@ class Weather(discord.ext.commands.Cog):
     
 
         
-
-
     @slash_command(name="weather_week",description="Weather overview for the week ahead")
     async def weather_week(self,ctx):
         await ctx.respond(f"/weather_week - {ctx.author.mention}")

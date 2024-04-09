@@ -6,6 +6,7 @@ __pycache__
 .env
 /.vscode
 
+
 # data
 /logs/
 /data/music/
@@ -17,6 +18,7 @@ __pycache__
 /data/attachments/
 /data/download/
 data/*.txt
+start.bat
 
 .DS_Store
 
