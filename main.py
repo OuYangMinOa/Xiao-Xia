@@ -1,6 +1,6 @@
 # main.py
 from utils.OnMessage import prompt_openai, handle_message, ThreadHandleMessage 
-from utils.check     import StartChecking, DeleteAllResponse, EarthQuakeWarning
+from utils.check     import StartChecking, DeleteAllResponse, EarthQuakeWarning, EEWLoop
 from utils.info      import logger, CheckBool
 from traceback       import format_exception
 
@@ -71,7 +71,12 @@ if __name__ == '__main__':
 
     print(f"[*] Process id : {os.getpid()}")
     StartChecking(bot)
-    EarthQuakeWarning(bot)
+    EEWLoop(bot)\
+    .start_alert_fj()\
+    .start_alert_jp()\
+    .start_alert_sc()\
+    .start_alert_tw()\
+
     print("[*] Wait for `bot.run` to complete")
     bot.run(token)
 

@@ -57,12 +57,64 @@ async def RestartBot(bot):
 
 
 
-def EarthQuakeWarning(bot):
-    _map = mapper()
+class EEWLoop:
+    def __init__(self,bot) -> None:
+        self.bot = bot
+        self.EEW  = EEW()
 
+    def start_alert_tw(self):
+        threading.Thread(target=self.bot.loop.create_task, args=(self.loop_alert("tw"),)).start()
+        return self
+
+    def start_alert_jp(self):
+        threading.Thread(target=self.bot.loop.create_task, args=(self.loop_alert("jp"),)).start()
+        return self
     
-        
+    def start_alert_fj(self):
+        threading.Thread(target=self.bot.loop.create_task, args=(self.loop_alert("fj"),)).start()  
+        return self
+    
+    def start_alert_sc(self):
+        threading.Thread(target=self.bot.loop.create_task, args=(self.loop_alert("sc"),)).start()
+        return self
 
+    async def loop_alert(self,pos="tw"):
+        await self.bot.wait_until_ready()
+        print(f"[*] Start alert {pos} !")
+        async for each in self.EEW.wss_alert(pos):
+            await self.send(each)
+            print(each)
+
+    async def send(self, _EEW:EEW_data):
+        embed = discord.Embed(
+                title="地震 !",
+                description=f"{_EEW.HypoCenter} 發生規模{_EEW.Magnitude}有感地震, 最大震度{_EEW.MaxIntensity}級",
+                color=discord.Colour.green(), # Pycord provides a class with default colors you can choose from
+            )
+        
+        embed.add_field(name="ID",value=_EEW.id)
+        embed.add_field(name="發生時間",value=f"`{_EEW.OriginTime}`",inline=True)
+        embed.add_field(name="",value="",inline=True)
+
+        embed.add_field(name="規模",value=f"{EEW.circle_mag(_EEW.Magnitude)} 芮氏 {_EEW.Magnitude}",inline=True)
+        embed.add_field(name="深度",value=f"{EEW.circle_depth(_EEW.Depth)} {_EEW.Depth}公里")
+        embed.add_field(name="最大震度",value=f"{EEW.circle_intensity(_EEW.MaxIntensity)} {_EEW.MaxIntensity}級",inline=True)
+
+        embed.add_field(name="震央位置",value=_EEW.HypoCenter)
+        embed.add_field(name="緯度",value=_EEW.Latitude,inline=True)
+        embed.add_field(name="經度",value=_EEW.Longitude,inline=True)
+
+        embed.set_footer(text = f"💭 發布於：{datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')}")
+
+        tasks = []
+        for each_channel in alert_channel_id:   
+            this_ctx = self.bot.get_channel(each_channel)
+            tasks.append(asyncio.create_task( await this_ctx.send(embed=embed)))
+        await asyncio.gather(*tasks)
+
+
+
+def EarthQuakeWarning(bot):
     async def send(_EEW:EEW_data):
         embed = discord.Embed(
                 title="地震 !",
@@ -91,13 +143,7 @@ def EarthQuakeWarning(bot):
 
     async def loop():
         eew = EEW()
-        await bot.wait_until_ready() 
-
-        # await send(
-        #     EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日\n%H:%M:%S"),"test",5.0,1.0,5,100,'5')
-        # )
-
-        
+        await bot.wait_until_ready()
         async for each in eew.ssw_alert():
             await send(each)
 

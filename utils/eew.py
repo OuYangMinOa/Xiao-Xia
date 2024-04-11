@@ -38,6 +38,12 @@ class EEW:
         self.state    = True
         self.last_eew = None
         self.use_proxy = True
+        self.pos_url_wss_dict = {
+            "tw": "wss://ws-api.wolfx.jp/cwa_eew",
+            "jp": "wss://ws-api.wolfx.jp/jma_eew",
+            "fj": "wss://ws-api.wolfx.jp/fj_eew", # 福建
+            "sc": "wss://ws-api.wolfx.jp/sc_eew", # 四川
+        }
 
     def build_proxy(self):
         if (self.use_proxy):
@@ -97,15 +103,19 @@ class EEW:
             json_data['MaxIntensity'],
         )
     
-    async def ssw_grab_result(self)-> AsyncIterator[EEW_data]:
+    def _get_url_by_pos(self,pos="tw"):
+        if (pos in self.pos_url_wss_dict):
+            return self.pos_url_wss_dict[pos]
+        return self.pos_url_wss_dict["tw"]
+    
+    async def wss_grab_result(self,pos="tw")-> AsyncIterator[EEW_data]:
         while True:
             try:
-                async with websockets.connect(self.URL_SSW,timeout=600) as websocket:
+                async with websockets.connect(self._get_url_by_pos(pos),timeout=600) as websocket:
                     print("Connected !")
                     while True:
                         recv = await websocket.recv() 
                         r    = json.loads(recv)
-                        # print(r)
                         if (r["type"]!="heartbeat"):
                             yield self.json_to_eewdata(r)
             except Exception as e:
@@ -114,9 +124,9 @@ class EEW:
                 print("Reconnect")
             
 
-    async def ssw_alert(self) -> AsyncIterator[EEW_data]:
-        async for each in self.ssw_grab_result():
-            print(each)
+    async def wss_alert(self,pos="tw") -> AsyncIterator[EEW_data]:
+        async for each in self.wss_grab_result(pos):
+            print(pos,each)
             yield each
 
     async def grab_result(self) -> EEW_data:
