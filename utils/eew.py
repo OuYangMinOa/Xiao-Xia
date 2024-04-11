@@ -101,14 +101,15 @@ class EEW:
         while True:
             try:
                 async with websockets.connect(self.URL_SSW,timeout=600) as websocket:
+                    print("Connected !")
                     while True:
                         recv = await websocket.recv() 
                         r    = json.loads(recv)
                         # print(r)
                         if (r["type"]!="heartbeat"):
                             yield self.json_to_eewdata(r)
-            except websockets.exceptions.ConnectionClosedError:
-                print("Connection closed")
+            except Exception as e:
+                print(f"Connection closed : {e}")
                 time.sleep(10)
                 print("Reconnect")
             
