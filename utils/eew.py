@@ -59,6 +59,9 @@ class EEW:
 
     @classmethod
     def circle_depth(self,Depth):
+        if (Depth is None ):
+            return self.WHITE_CIRCLE
+        
         if Depth > 300:
             return self.WHITE_CIRCLE
         elif Depth > 70:
@@ -69,6 +72,8 @@ class EEW:
             return self.RED_CIRCLE
     @classmethod
     def circle_mag(self,mag):
+        if (mag is None ):
+            return self.WHITE_CIRCLE
         if mag < 4 :
             return self.WHITE_CIRCLE
         elif mag < 5:
