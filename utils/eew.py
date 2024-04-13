@@ -98,7 +98,7 @@ class EEW:
                 json_data['EventID'],
                 json_data['AnnouncedTime'].replace(" ","\n"),
                 json_data['OriginTime'].replace(" ","\n"),
-                json_data['HypoCenter'],
+                json_data['Hypocenter'],
                 json_data['Latitude'],
                 json_data['Longitude'],
                 json_data['Magunitude'],
