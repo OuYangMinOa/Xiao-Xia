@@ -109,7 +109,7 @@ class EEWLoop:
         tasks = []
         for each_channel in alert_channel_id:   
             this_ctx = self.bot.get_channel(each_channel)
-            tasks.append(asyncio.create_task( await this_ctx.send(embed=embed)))
+            tasks.append(asyncio.create_task(this_ctx.send(embed=embed)))
         await asyncio.gather(*tasks)
 
 
