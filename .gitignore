@@ -19,6 +19,7 @@ __pycache__
 /data/download/
 data/*.txt
 start.bat
+.vscode/settings.json
 
 .DS_Store
 
