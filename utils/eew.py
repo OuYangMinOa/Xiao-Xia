@@ -108,7 +108,7 @@ class EEW:
                 json_data['Longitude'],
                 json_data['Magunitude'],
                 json_data['Depth'],
-                json_data['MaxIntensity'],
+                int(json_data['MaxIntensity']),
             )
         elif (pos == "fj"):
             return EEW_data(
@@ -132,7 +132,7 @@ class EEW:
                 json_data['Longitude'],
                 json_data['Magunitude'],
                 json_data['Depth'],
-                json_data['MaxIntensity'],
+                int(json_data['MaxIntensity']),
             )
     
     def _get_url_by_pos(self,pos="tw"):
