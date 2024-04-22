@@ -61,6 +61,7 @@ class EEWLoop:
     def __init__(self,bot) -> None:
         self.bot = bot
         self._last_fj_time = None # 防止 福建 一直傳送
+        self._last_tw_time = None
         self._last_fj_mag  = None 
         self.EEW  = EEW()
 
@@ -89,14 +90,17 @@ class EEWLoop:
         if (pos == "fj"):
             async for each in self.EEW.wss_alert(pos):
                 this_time =  self.fj_time(each.OriginTime)
-                if (self._last_fj_time is None or ( (this_time - self._last_fj_time).total_seconds() > 120  or each.Magnitude > self._last_fj_mag+0.2 )):
-                    await self.send(each)
+                if (( self._last_tw_time is None or (this_time - self._last_tw_time).total_seconds() > 120 )): # 看台灣中央氣象局已發布此地震
+                    if  ( self._last_fj_time is None or(
+                        ( (this_time - self._last_fj_time).total_seconds() > 120 or each.Magnitude > self._last_fj_mag+0.2 ))):
+                        await self.send(each)
                 self._last_fj_time = this_time
                 self._last_fj_mag  = each.Magnitude
                 print(each)
         else:
             async for each in self.EEW.wss_alert(pos):
                 await self.send(each)
+                self._last_tw_time = self.fj_time(each.OriginTime)
                 print(each)
             
 
