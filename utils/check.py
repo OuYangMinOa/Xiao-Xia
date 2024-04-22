@@ -61,6 +61,7 @@ class EEWLoop:
     def __init__(self,bot) -> None:
         self.bot = bot
         self._last_fj_time = None # 防止 福建 一直傳送
+        self._last_fj_mag  = None 
         self.EEW  = EEW()
 
     def start_alert_tw(self):
@@ -85,16 +86,18 @@ class EEWLoop:
     async def loop_alert(self,pos="tw"):
         await self.bot.wait_until_ready()
         print(f"[*] Start alert {pos} !")
-        async for each in self.EEW.wss_alert(pos):
-            if (pos == "fj"):
+        if (pos == "fj"):
+            async for each in self.EEW.wss_alert(pos):
                 this_time =  self.fj_time(each.OriginTime)
-                if (self._last_fj_time is None or ( (this_time - self._last_fj_time).total_seconds() > 120)):
+                if (self._last_fj_time is None or ( (this_time - self._last_fj_time).total_seconds() > 120  or each.Magnitude > self._last_fj_mag+0.2 )):
                     await self.send(each)
-
                 self._last_fj_time = this_time
-            else:
+                self._last_fj_mag  = each.Magnitude
+                print(each)
+        else:
+            async for each in self.EEW.wss_alert(pos):
                 await self.send(each)
-            print(each)
+                print(each)
             
 
     async def send(self, _EEW:EEW_data):
