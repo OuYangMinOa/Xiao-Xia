@@ -60,6 +60,7 @@ async def RestartBot(bot):
 class EEWLoop:
     def __init__(self,bot) -> None:
         self.bot = bot
+        self._last_fj_eew = None # 防止 福建 一直傳送
         self.EEW  = EEW()
 
     def start_alert_tw(self):
@@ -82,8 +83,16 @@ class EEWLoop:
         await self.bot.wait_until_ready()
         print(f"[*] Start alert {pos} !")
         async for each in self.EEW.wss_alert(pos):
-            await self.send(each)
+            if (pos == "fj"):
+                if (self._last_fj_eew is None or ( 
+                    self._last_fj_eew.HypoCenter == each.HypoCenter and 
+                    self._last_fj_eew.Magnitude > each.Magnitude + 0.2 )):  ## 
+                    await self.send(each)
+                self._last_fj_eew = each
+            else:
+                await self.send(each)
             print(each)
+            
 
     async def send(self, _EEW:EEW_data):
         embed = discord.Embed(
