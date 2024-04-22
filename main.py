@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     print(f"[*] Process id : {os.getpid()}")
     StartChecking(bot)
-    EEWLoop(bot).start_alert_tw()
+    EEWLoop(bot).start_alert_tw()\
     .start_alert_fj()\
     .start_alert_jp()\
     .start_alert_sc()\
