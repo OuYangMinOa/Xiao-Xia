@@ -60,7 +60,7 @@ async def RestartBot(bot):
 class EEWLoop:
     def __init__(self,bot) -> None:
         self.bot = bot
-        self._last_fj_eew = None # 防止 福建 一直傳送
+        self._last_fj_time = None # 防止 福建 一直傳送
         self.EEW  = EEW()
 
     def start_alert_tw(self):
@@ -79,16 +79,19 @@ class EEWLoop:
         threading.Thread(target=self.bot.loop.create_task, args=(self.loop_alert("sc"),)).start()
         return self
 
+    def fj_time(self,date_string:str):
+        return datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
+
     async def loop_alert(self,pos="tw"):
         await self.bot.wait_until_ready()
         print(f"[*] Start alert {pos} !")
         async for each in self.EEW.wss_alert(pos):
             if (pos == "fj"):
-                if (self._last_fj_eew is None or ( 
-                    self._last_fj_eew.HypoCenter == each.HypoCenter and 
-                    self._last_fj_eew.Magnitude > each.Magnitude + 0.2 )):  ## 
+                this_time =  self.fj_time(each.OriginTime)
+                if (self._last_fj_time is None or ( (this_time - self._last_fj_time).total_seconds() > 120)):
                     await self.send(each)
-                self._last_fj_eew = each
+
+                self._last_fj_time = this_time
             else:
                 await self.send(each)
             print(each)
