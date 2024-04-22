@@ -20,6 +20,7 @@ __pycache__
 data/*.txt
 start.bat
 .vscode/settings.json
+data/alert_channel.txt
 
 .DS_Store
 
