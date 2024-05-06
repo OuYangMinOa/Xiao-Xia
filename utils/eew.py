@@ -9,6 +9,7 @@ import asyncio
 import random
 import time
 import json
+import math
 
 @dataclass
 class EEW_data:
@@ -83,10 +84,20 @@ class EEW:
         else:
             return self.RED_CIRCLE
     @classmethod
-    def circle_intensity(self,intensity):
-        if (intensity is None ):
+    def circle_intensity(self,intensity_str):
+        if (intensity_str is None ):
             return self.WHITE_CIRCLE
-        intensity = int(intensity)
+        
+        if (isinstance(intensity_str,str)):
+            if (intensity_str[0].isnumeric()):
+                intensity = int(intensity_str[0])
+            else:
+                return self.WHITE_CIRCLE
+        elif(isinstance(intensity_str,float) or isinstance(intensity_str,int)):
+            intensity = math.floor(intensity_str)
+        else:
+            return self.WHITE_CIRCLE
+        
         if intensity == 1:
             return self.WHITE_CIRCLE
         if intensity == 2:
@@ -152,7 +163,7 @@ class EEW:
                             yield self.json_to_eewdata(r,pos)
             except Exception as e:
                 print(f"{pos} Connection closed : {e}")
-                await asyncio.sleep(10)
+                await asyncio.sleep(1)
                 print("Reconnect")
             
 

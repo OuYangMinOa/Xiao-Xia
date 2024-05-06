@@ -2,11 +2,15 @@
 from utils.GrabYtList import *
 from utils.info     import logger, music_user, sound_user, MUSIC_folder
 from pytube import YouTube
+from pydub.utils import mediainfo
+
+
 
 import threading
 import discord
 import asyncio
 import time
+import numpy as np
 from pydub import AudioSegment
 # import youtube_dl
 import yt_dlp as youtube_dl
@@ -20,6 +24,16 @@ youtube_dl.utils.bug_reports_message = lambda: ''
 def match_target_amplitude(sound, target_dBFS):
     change_in_dBFS = target_dBFS - sound.dBFS
     return sound.apply_gain(change_in_dBFS)
+
+def change_sound_amp(each_file):
+    if (os.path.isfile(each_file)):
+        try:
+            original_bitrate = mediainfo(each_file)['bit_rate']
+            sound = AudioSegment.from_file(each_file)
+            normalized_sound = match_target_amplitude(sound, -20.0)
+            normalized_sound.export(each_file, bitrate=original_bitrate)
+        except Exception as e:
+            print(each_file +" -- error" + e)
 
 class MusicBot:   
     def __init__(self,channel, voice , ctx, client):
@@ -160,6 +174,7 @@ class MusicBot:
                         is_live = False
                         logger.info(f"[*] Downloading {this_song_url} due to it not a live")
                         ydl.download([this_song_url])
+                        change_sound_amp(song_path) # normalize the song
                     else:
                         logger.info(f"[*] {this_song_url} is a live stream")
                         song_path = info['formats'][0]['url']
@@ -182,6 +197,7 @@ class MusicBot:
                         logger.info(f"[*] Download to {song_path}")
                         YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=self.floder,filename=this_song_name)
                         logger.info("\n[*] ------------ download successful ------------")
+                        change_sound_amp(song_path) # normalize the song
                     else:
                         await self._next()
                         await self.dowloading.delete()

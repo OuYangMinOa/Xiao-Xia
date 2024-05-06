@@ -93,18 +93,21 @@ class EEWLoop:
                 if (( self._last_tw_time is None or (this_time - self._last_tw_time).total_seconds() > 120 )): # 看台灣中央氣象局已發布此地震
                     if  ( self._last_fj_time is None or(
                         ( (this_time - self._last_fj_time).total_seconds() > 120 or each.Magnitude > self._last_fj_mag+0.2 ))):
-                        await self.send(each)
+                        await self.send(each,pos)
                 self._last_fj_time = this_time
                 self._last_fj_mag  = each.Magnitude
                 print(each)
         else:
             async for each in self.EEW.wss_alert(pos):
-                await self.send(each)
+                await self.send(each,pos)
                 self._last_tw_time = self.fj_time(each.OriginTime)
                 print(each)
             
 
-    async def send(self, _EEW:EEW_data):
+    async def send(self, _EEW:EEW_data,pos):
+        if (pos == "jp" and int(_EEW.MaxIntensity[0]) < 5):
+            return
+            
         embed = discord.Embed(
                 title="地震 !",
                 description=f"{_EEW.HypoCenter} 發生規模{_EEW.Magnitude}有感地震, 最大震度{_EEW.MaxIntensity}級",
