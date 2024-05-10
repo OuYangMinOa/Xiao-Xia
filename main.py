@@ -67,7 +67,8 @@ if __name__ == '__main__':
 
     # from utils.wesAi import prompt_wes_com_main
     # print(prompt_wes_com_main("用戶:請自我介紹\n小俠:"))
-
+    # from utils.eew import EEW
+    # print(EEW.circle_intensity("5弱"))
 
     print(f"[*] Process id : {os.getpid()}")
     StartChecking(bot)
