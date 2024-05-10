@@ -8,6 +8,7 @@ from datetime import datetime
 import discord
 import threading
 import asyncio
+import math
 
 def StartChecking(bot):
     async def WhileChecking():
@@ -102,12 +103,33 @@ class EEWLoop:
                 await self.send(each,pos)
                 self._last_tw_time = self.fj_time(each.OriginTime)
                 print(each)
-            
+    
+    async def send_test(self,pos):
+        await self.bot.wait_until_ready()
+        await self.send(
+            EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日 %H:%M:%S"),pos,23.92,121.59,5.6,40,"5弱"),
+            pos
+        )
 
     async def send(self, _EEW:EEW_data,pos):
-        if (pos == "jp" and int(_EEW.MaxIntensity[0]) < 5):
-            return
+        if (pos == "jp"):
+
+            if (isinstance(_EEW.MaxIntensity,str)):
+                if (_EEW.MaxIntensity[0].isnumeric()):
+                    intensity = int(_EEW.MaxIntensity[0])
+                else:
+                    return
+            elif(isinstance(_EEW.MaxIntensity,float) or isinstance(_EEW.MaxIntensity,int)):
+                intensity = math.floor(_EEW.MaxIntensity)
+            else:
+                return
             
+            if (intensity < 5):
+                return
+            
+
+
+
         embed = discord.Embed(
                 title="地震 !",
                 description=f"{_EEW.HypoCenter} 發生規模{_EEW.Magnitude}有感地震, 最大震度{_EEW.MaxIntensity}級",
