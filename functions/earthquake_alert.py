@@ -23,7 +23,7 @@ class EarthQuakeAlert(discord.ext.commands.Cog):
         await ctx.respond(f"Alert start ...")
 
 
-    @slash_command(name="eew_alert_stop",description="停止地震預報系統(stop Earthquake Early Warning)")
+    @slash_command(name="stop_eew_alert",description="停止地震預報系統(stop Earthquake Early Warning)")
     async def eew_alert(self,ctx):
         channel_id = ctx.channel.id
         if (channel_id in alert_channel_id):
