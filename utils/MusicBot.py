@@ -173,8 +173,17 @@ class MusicBot:
                     if (not info['is_live']):
                         is_live = False
                         logger.info(f"[*] Downloading {this_song_url} due to it not a live")
-                        ydl.download([this_song_url])
-                        change_sound_amp(song_path) # normalize the song
+                        ## download with blocking ...
+                        # ydl.download([this_song_url])
+                        
+                        ## download without blocking ...
+                        loop = asyncio.get_event_loop()
+                        await loop.run_in_executor(None, lambda url:ydl.download(url), [this_song_url] )
+                        await loop.run_in_executor(None, lambda path:change_sound_amp(path), song_path )
+
+
+
+                        # change_sound_amp(song_path) # normalize the song
                     else:
                         logger.info(f"[*] {this_song_url} is a live stream")
                         song_path = info['formats'][0]['url']
@@ -195,9 +204,21 @@ class MusicBot:
                     if (not is_live):
                         # song_path = song_path + ".mp3"
                         logger.info(f"[*] Download to {song_path}")
-                        YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=self.floder,filename=this_song_name)
+                        # YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=self.floder,filename=this_song_name)
+
+                        loop = asyncio.get_event_loop()
+                        await loop.run_in_executor(None, 
+                                                   lambda x:YouTube(this_song_url
+                                                                    ).streams.filter(only_audio=True
+                                                                                     ).first().download(
+                                                                                         output_path=self.floder,filename=this_song_name) ,
+                                                   None )
+
                         logger.info("\n[*] ------------ download successful ------------")
-                        change_sound_amp(song_path) # normalize the song
+                        await loop.run_in_executor(None, lambda path:change_sound_amp(path), song_path )
+                        # change_sound_amp(song_path) # normalize the song
+                        logger.info("\n[*] ------------ apply gain successful ------------")
+
                     else:
                         await self._next()
                         await self.dowloading.delete()
