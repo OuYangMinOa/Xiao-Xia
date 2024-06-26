@@ -30,6 +30,8 @@ def change_sound_amp(each_file):
         try:
             original_bitrate = mediainfo(each_file)['bit_rate']
             sound = AudioSegment.from_file(each_file)
+            if ( sound.duration_seconds > 60*60):
+                return
             normalized_sound = match_target_amplitude(sound, -20.0)
             normalized_sound.export(each_file, bitrate=original_bitrate)
         except Exception as e:
