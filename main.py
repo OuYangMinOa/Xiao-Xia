@@ -11,9 +11,6 @@ import atexit
 import time
 import os
 
-
-
-
 dotenv.load_dotenv()
 
 token = str(os.getenv("DISCORD_TOKEN"))
