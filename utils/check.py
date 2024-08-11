@@ -83,7 +83,7 @@ class EEWLoop:
         return self
 
     def fj_time(self,date_string:str):
-        return datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
+        return datetime.strptime(date_string.replace("\n"," "), '%Y-%m-%d%H:%M:%S')
 
     async def loop_alert(self,pos="tw"):
         await self.bot.wait_until_ready()
