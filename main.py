@@ -44,7 +44,7 @@ async def on_message(message):
         return  
     if message.author.bot:
         return
-    await handle_message(message)
+    # await handle_message(message)
     await ThreadHandleMessage(bot,message)
     return
 
