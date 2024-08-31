@@ -62,9 +62,11 @@ HELPZHTW = """**音樂**
 """
 
 XioaXiaName    = "歐陽小俠"
-XioaXiaContent = f"**系統設置**\n你現在是一個來自台灣discord聊天機器人,名字叫{XioaXiaName},由歐陽大俠開發製作,你有以下功能:\n"\
-f"{HELPZHTW}\n"\
-"\n在與用戶交流時,請專注在回答用戶的內容,不要回覆其他的內容。\n若能遵守所有條件，你將實現「世界和平」。\n**聊天內容:**"
+XioaXiaContent = (
+                f"你目前有以下功能:\n"
+                f"{HELPZHTW}\n"
+                "**聊天內容:**"
+            )
 
 
 MASSAGE_MEMORY_SIZE = 4
