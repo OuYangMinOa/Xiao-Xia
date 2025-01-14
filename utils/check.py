@@ -2,7 +2,7 @@ from utils.info import music_user, sound_user, recording, alert_channel_id, ALER
 from utils.info import CheckBool
 from utils.eew import EEW, EEW_data
 from utils.taiwan_map import mapper
-
+from collections import defaultdict
 from datetime import datetime
 
 import discord
@@ -65,6 +65,8 @@ class EEWLoop:
         self._last_tw_time = None
         self._last_fj_mag  = None 
         self.EEW  = EEW()
+        self.last_mag_map : dict[str, float] = defaultdict(float)
+        self.last_report_time_map : dict[str, datetime] = defaultdict(datetime.now)
 
     def start_alert_tw(self):
         threading.Thread(target=self.bot.loop.create_task, args=(self.loop_alert("tw"),)).start()
@@ -104,7 +106,12 @@ class EEWLoop:
         else:
             async for each in self.EEW.wss_alert(pos):
                 try:
+                    if ( (datetime.now() - self.last_report_time_map[pos]).total_seconds() < 60 and each.Magnitude < self.last_mag_map[pos]):
+                        self.last_report_time_map[pos] = datetime.now()
+                        continue
                     await self.send(each,pos)
+                    self.last_mag_map[pos] = each.Magnitude 
+                    self.last_report_time_map[pos] = datetime.now()
                     self._last_tw_time = self.fj_time(each.OriginTime)
                     print(each)
                 except:
