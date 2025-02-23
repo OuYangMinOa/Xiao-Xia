@@ -1,0 +1,36 @@
+[project]
+name = "xiao-xia"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiohttp>=3.11.12",
+    "beautifulsoup4>=4.13.3",
+    "cartopy>=0.24.1",
+    "edge-tts>=7.0.0",
+    "gitpython>=3.1.44",
+    "google-api-python-client>=2.161.0",
+    "lxml>=5.3.1",
+    "lxml-html-clean>=0.4.1",
+    "numpy>=2.2.3",
+    "openai>=1.63.2",
+    "pip>=25.0.1",
+    "pipfile>=0.0.2",
+    "py-cord>=2.6.1",
+    "pydub>=0.25.1",
+    "pynacl>=1.5.0",
+    "pypdf2>=3.0.1",
+    "pyppeteer>=2.0.0",
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.3",
+    "python-dotenv>=1.0.1",
+    "pytube>=15.0.0",
+    "pytz>=2025.1",
+    "requests-html>=0.10.0",
+    "speechrecognition>=3.14.1",
+    "spotipy>=2.25.0",
+    "testcord>=0.0.1",
+    "tqdm>=4.67.1",
+    "yt-dlp>=2025.2.19",
+]
