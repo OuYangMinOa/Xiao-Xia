@@ -14,5 +14,5 @@ class Greetings(discord.ext.commands.Cog):
 
 
 
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(Greetings(bot))

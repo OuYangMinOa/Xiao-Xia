@@ -22,7 +22,7 @@ class Sounds(discord.ext.commands.Cog):
         self.bot = bot
 
     @slash_command( name="upload_sound",description="upload sound file")
-    async def upload_sound(self,ctx, filename : Option(str, "The name of the sound", required = True), file: discord.Attachment):
+    async def upload_sound(self,ctx : discord.ApplicationContext, filename : Option(str, "The name of the sound", required = True), file: discord.Attachment):
         for _ in range(10):
             try:
                 # await ctx.response.defer()
@@ -70,7 +70,7 @@ class Sounds(discord.ext.commands.Cog):
             await ctx.respond("No file attached.")
 
     @slash_command(name="list_sound",description="list all the sounds in this channel")
-    async def list_sound(self,ctx):
+    async def list_sound(self,ctx : discord.ApplicationContext):
         ThisRespond = await ctx.respond(f"/list_sound - {ctx.author.mention}",delete_after=10)
 
         ##  connect to a voice channel
@@ -148,7 +148,7 @@ class Sounds(discord.ext.commands.Cog):
 
 
     @slash_command( name="search_sound",description="Search sound file")
-    async def search_sound(self,ctx, keyword:Option(str, "The keywords", required = True)):
+    async def search_sound(self,ctx : discord.ApplicationContext, keyword:Option(str, "The keywords", required = True)):
         
         # await ctx.response.defer( ephemeral=True)
         ThisRespond = await ctx.respond(f"/search_sound - {ctx.author.mention}",ephemeral=True)
@@ -356,5 +356,5 @@ class MySelection:
         # await self.sound_class._next()
 
 
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(Sounds(bot))

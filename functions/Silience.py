@@ -12,7 +12,7 @@ class Silence(discord.ext.commands.Cog):
         self.bot = bot
 
     @slash_command(name="silence",description="Shut me up in this channel")
-    async def silence(self,ctx):
+    async def silence(self,ctx : discord.ApplicationContext):
         try:
             if (ctx.channel.id in talk_channel):
                 talk_channel.remove(ctx.channel.id)
@@ -33,7 +33,7 @@ class Silence(discord.ext.commands.Cog):
 
 
     @slash_command(name="talk",description="If no message is provided, enable reply to all messages.")
-    async def talk(self,ctx, msg:Option(str, "message",required=False,default=None)):
+    async def talk(self,ctx : discord.ApplicationContext, msg:Option(str, "message",required=False,default=None)):
         if (msg):
             if (ctx.channel.id not in chat_dict):
                 chat_dict[ctx.channel.id] = Chat(ctx.channel.id)
@@ -66,11 +66,11 @@ class Silence(discord.ext.commands.Cog):
 
 
     @slash_command(name="clear_talk",description="Clear past chat history")
-    async def clear_talk(self,ctx):
+    async def clear_talk(self,ctx : discord.ApplicationContext):
         if (ctx.channel.id in chat_dict):
             chat_dict[ctx.channel.id].clear_message()
             await ctx.respond("Past chat history has been cleared")
     
 
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(Silence(bot))

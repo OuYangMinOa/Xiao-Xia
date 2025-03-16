@@ -23,7 +23,7 @@ class Record(discord.ext.commands.Cog):
         self.bot = bot
 
     @slash_command(name="autosound",description="自動偵測語音播放音效版")
-    async def autosound(self, ctx):
+    async def autosound(self, ctx: discord.ApplicationContext):
         thisres = await ctx.respond(f"autosound -{ctx.author.mention}")
         try:
             if not ctx.author.voice:
@@ -90,7 +90,7 @@ class Record(discord.ext.commands.Cog):
 
 
     @slash_command(name="stop_autosound",description="結束 - 自動偵測語音播放音效版")
-    async def stopAutoSounding(self,ctx):
+    async def stopAutoSounding(self,ctx: discord.ApplicationContext):
         await ctx.respond(f"stop_autosound -{ctx.author.mention}",delete_after=10)
         await recording[ctx.guild.id].kill()
 
@@ -160,22 +160,20 @@ async def speech_to_text(path):
 
 class SoundAssist:
     def __init__(self,saveFolder,voice, ctx,bot,soundClass):
-        self.ctx         = ctx
-        self.bot         = bot
-        self.voice       = voice
-        self.alive       = True
-        self.soundClass  = soundClass
-        self.saveFolder  = saveFolder
-        self.channelid   = soundClass.channelid
-        self.countdown   = 0
-        
-        # empty.wav
-        self.waitProcess = False
-        self.start_time  = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
+        self.ctx         : discord.ApplicationContext = ctx
+        self.bot         : discord.Bot                = bot
+        self.voice       : discord.VoiceClient        = voice
+        self.alive       : bool                       = True
+        self.soundClass  : object                     = soundClass
+        self.saveFolder  : str                        = saveFolder
+        self.channelid   : str                        = soundClass.channelid
+        self.countdown   : int                        = 0
+        self.waitProcess : bool                       = False
+        self.start_time  : datetime                   = datetime.now().strftime('%y-%m-%d-%H-%M-%S')
         self.getsounds(ctx.guild.id)
         os.makedirs(saveFolder,exist_ok=True)
 
-    def getsounds(self,channel_id):
+    def getsounds(self,channel_id:str):
         save_folder = os.path.join("data/attachments", str(channel_id))
         threading.Thread(target=shutil.copyfile,args=("data/empty.wav", save_folder+"/empty.wav")).start()
 

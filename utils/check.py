@@ -1,9 +1,11 @@
-from utils.info import music_user, sound_user, recording, alert_channel_id, ALERT_CHANNEL
-from utils.info import CheckBool
-from utils.eew import EEW, EEW_data
+from utils.upload import get_this_eew_html, update_website
+from utils.info   import music_user, sound_user, recording, alert_channel_id, ALERT_CHANNEL
+from utils.info   import CheckBool
+from utils.eew    import EEW, EEW_data
+
 from utils.taiwan_map import mapper
-from collections import defaultdict
-from datetime import datetime
+from collections      import defaultdict
+from datetime         import datetime
 
 import discord
 import threading
@@ -56,32 +58,30 @@ async def RestartBot(bot):
     await asyncio.sleep(5)
     StartChecking(bot)
 
-
-
 class EEWLoop:
-    def __init__(self,bot) -> None:
-        self.bot = bot
-        self._last_fj_time = None # 防止 福建 一直傳送
-        self._last_tw_time = None
-        self._last_fj_mag  = None 
-        self.EEW  = EEW()
-        self.last_mag_map : dict[str, float] = defaultdict(float)
+    def __init__(self,bot : discord.Bot ) -> None:
+        self.bot                  : discord.Bot         = bot
+        self._last_fj_time        : datetime            = None # 防止 福建 一直傳送
+        self._last_tw_time        : datetime            = None
+        self._last_fj_mag         : datetime            = None
+        self.last_mag_map         : dict[str, float]    = defaultdict(float)
+        self.EEW                  : EEW                 = EEW()
         self.last_report_time_map : dict[str, datetime] = defaultdict(datetime.now)
 
     def start_alert_tw(self):
-        threading.Thread(target=self.bot.loop.create_task, args=(self.loop_alert("tw"),)).start()
+        self.bot.loop.create_task(self.loop_alert("tw"))
         return self
 
     def start_alert_jp(self):
-        threading.Thread(target=self.bot.loop.create_task, args=(self.loop_alert("jp"),)).start()
+        self.bot.loop.create_task(self.loop_alert("jp"))
         return self
     
     def start_alert_fj(self):
-        threading.Thread(target=self.bot.loop.create_task, args=(self.loop_alert("fj"),)).start()  
+        self.bot.loop.create_task(self.loop_alert("fj"))  
         return self
     
     def start_alert_sc(self):
-        threading.Thread(target=self.bot.loop.create_task, args=(self.loop_alert("sc"),)).start()
+        self.bot.loop.create_task(self.loop_alert("sc"))
         return self
 
     def fj_time(self,date_string:str):
@@ -140,9 +140,6 @@ class EEWLoop:
             if (intensity < 5):
                 return
             
-
-
-
         embed = discord.Embed(
                 title="地震 !",
                 description=f"{_EEW.HypoCenter} 發生規模{_EEW.Magnitude}有感地震, 最大震度{_EEW.MaxIntensity}級",
@@ -163,11 +160,14 @@ class EEWLoop:
 
         embed.set_footer(text = f"💭 發布於：{datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')}")
 
-        tasks = []
+        tasks = [update_website(_EEW),]
+        
         for each_channel in alert_channel_id:   
             this_ctx = self.bot.get_channel(each_channel)
             tasks.append(asyncio.create_task(this_ctx.send(embed=embed)))
         await asyncio.gather(*tasks)
+
+        
 
 
 

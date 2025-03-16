@@ -14,7 +14,7 @@ class EarthQuakeAlert(discord.ext.commands.Cog):
         self.bot = bot
         
     @slash_command(name="eew_alert",description="地震預報系統(Earthquake Early Warning)")
-    async def eew_alert(self,ctx):
+    async def eew_alert(self,ctx : discord.ApplicationContext):
         channel_id = ctx.channel.id
         if (channel_id not in alert_channel_id):
             alert_channel_id.append(channel_id)
@@ -22,15 +22,13 @@ class EarthQuakeAlert(discord.ext.commands.Cog):
         # print(alert_channel_id)
         await ctx.respond(f"Alert start ...")
 
-
     @slash_command(name="eew_alert_stop",description="停止地震預報系統(stop Earthquake Early Warning)")
-    async def stop_eew_alert(self,ctx):
+    async def stop_eew_alert(self,ctx : discord.ApplicationContext):
         channel_id = ctx.channel.id
         if (channel_id in alert_channel_id):
             alert_channel_id.remove(channel_id)
             newtxt(ALERT_CHANNEL,alert_channel_id)
         await ctx.respond(f"Alert stop ...")
 
-
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(EarthQuakeAlert(bot))

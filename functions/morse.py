@@ -25,7 +25,7 @@ class Morse(discord.ext.commands.Cog):
         self.bot = bot
 
     @slash_command(name="encrypt",description="Encrypt the given message")
-    async def encrypt(self,ctx, message: Option(str, "word", required = True)):
+    async def encrypt(self,ctx : discord.ApplicationContext, message: Option(str, "word", required = True)):
         
 
         logger.info(f"[*] {ctx.author.name} encrypting message : {message}")
@@ -44,7 +44,7 @@ class Morse(discord.ext.commands.Cog):
 
 
     @slash_command(name="decrypt",description="Decrypt the given message")
-    async def decrypt(self,ctx, message: Option(str, "word", required = True)):
+    async def decrypt(self,ctx : discord.ApplicationContext, message: Option(str, "word", required = True)):
         logger.info(f"[*]  {ctx.author.name} decrypting message : {message}")
         await ctx.respond(f"`/decrypt` {ctx.author.mention}")
 
@@ -69,5 +69,5 @@ class Morse(discord.ext.commands.Cog):
 
 
 
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(Morse(bot))

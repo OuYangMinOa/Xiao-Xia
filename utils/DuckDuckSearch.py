@@ -7,7 +7,7 @@ import urllib
 
 
 
-def DuckDuckSearchCommand(key):
+def DuckDuckSearchCommand(key : str):
     """Search on duckduckgo
 
     Args:
@@ -16,10 +16,10 @@ def DuckDuckSearchCommand(key):
     Returns:
         str: Search results
     """
-    query = quote(key)
-    site = urllib.request.urlopen("http://duckduckgo.com/html/?q="+query+'&kl=tw-tzh')
-    data = site.read()
-    soup = BeautifulSoup(data, "html.parser")
+    query   = quote(key)
+    site    = urllib.request.urlopen("http://duckduckgo.com/html/?q="+query+'&kl=tw-tzh')
+    data    = site.read()
+    soup    = BeautifulSoup(data, "html.parser")
     my_list = soup.find("div", {"id": "links"}).find_all("div", {'class': re.compile('.*web-result*.')})[0:10]
     (result__snippet, result_url) = ([] for i in range(2))
 

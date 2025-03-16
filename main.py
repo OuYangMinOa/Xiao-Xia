@@ -32,14 +32,14 @@ async def on_ready():
 
 
 @bot.before_invoke
-async def before_invoke(ctx):
+async def before_invoke(ctx : discord.ApplicationContext ):
     logger.info(f"{ctx.command} - {ctx.author.name}")
 
     if (str(ctx.command) not in ['autosound','vote']):
         await ctx.defer()
 
 @bot.event
-async def on_message(message):
+async def on_message(message : discord.ApplicationContext):
     if message.author == bot.user:
         return  
     if message.author.bot:
@@ -71,8 +71,8 @@ if __name__ == '__main__':
     StartChecking(bot)
     EEWLoop(bot).start_alert_tw()\
     .start_alert_fj()\
-    .start_alert_sc()\
     .start_alert_jp()\
+    # .start_alert_sc()\
     
 
     print("[*] Wait for `bot.run` to complete")

@@ -13,7 +13,7 @@ class Help(discord.ext.commands.Cog):
         self.bot = bot
 
     @slash_command(name="help_en",description="Show all commands")
-    async def help_en(self,ctx):
+    async def help_en(self,ctx : discord.ApplicationContext):
         await  ctx.respond("""* :notes: **MUSIC**
  - `/play {url}` play music (youtube or spotify).
  - `/platlist` show all playlist
@@ -61,7 +61,7 @@ class Help(discord.ext.commands.Cog):
 
     # @slash_command(name="幫助",description="幫助訊息")
     @slash_command(name="help_zhtw",description="幫助訊息")
-    async def help_zhtw(self,ctx):
+    async def help_zhtw(self,ctx : discord.ApplicationContext):
         await  ctx.respond("""* :notes: **音樂**
  - `/play {url}` 播放音樂 (youtube 或 spotify)。
  - `/platlist` 展示儲存的播放清單
@@ -109,5 +109,5 @@ class Help(discord.ext.commands.Cog):
 """)
 
 
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(Help(bot))

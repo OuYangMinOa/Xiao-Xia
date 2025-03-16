@@ -14,7 +14,7 @@ class Others(discord.ext.commands.Cog):
         self.bot = bot
 
     @slash_command(name="joke",description="Talk a joke")
-    async def joke(self, ctx):
+    async def joke(self, ctx : discord.ApplicationContext):
         await ctx.respond("joke"+ f' - {ctx.author.mention}')
 
         
@@ -34,7 +34,7 @@ class Others(discord.ext.commands.Cog):
 
 
     @slash_command(name="chickensoul",description="Chicken Soup for the Soul")
-    async def ChickenSoul(self, ctx):
+    async def ChickenSoul(self, ctx : discord.ApplicationContext):
         await ctx.respond("chickensoul"+ f' - {ctx.author.mention}')
 
         this_chicken = await prompt_wes_com('Q:請你說個一句心靈雞湯\nA:')
@@ -49,11 +49,11 @@ class Others(discord.ext.commands.Cog):
         await ctx.send(this_chicken)
 
     @slash_command(name="get_covid",description="Number of confirmed cases in Taiwan")
-    async def get_covid(self, ctx):
+    async def get_covid(self, ctx : discord.ApplicationContext):
         thisText = await my_Cd.get_covid()
         await ctx.respond(thisText)
     
 
 
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(Others(bot))

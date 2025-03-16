@@ -10,7 +10,7 @@ import os
 
 
 class Chat:
-    def __init__(self,channelId):
+    def __init__(self,channelId : int ):
         self.channelId = channelId
         self.DataName  = os.path.join(MASSAGE_FOLDER, f"{channelId}.txt")
         os.makedirs(MASSAGE_FOLDER, exist_ok=True)
@@ -72,7 +72,7 @@ class Chat:
         else:
             return "Hi"
 
-    def ClearMessage(self,msg,name):
+    def ClearMessage(self,msg : str, name : str):
         """Clean the message
 
         Args:
@@ -93,7 +93,7 @@ class Chat:
             msg =  msg.strip()
         return msg
 
-    async def Talk(self,name,message):
+    async def Talk(self,name : str,message : str):
         """Talk to LLM
 
         Args:

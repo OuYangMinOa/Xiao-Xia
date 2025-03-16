@@ -13,7 +13,7 @@ class Weather(discord.ext.commands.Cog):
 
 
     @slash_command(name="weather_day",description="Today's Weather Overview")
-    async def weather_day(self,ctx):
+    async def weather_day(self,ctx : discord.ApplicationContext):
         await ctx.respond(f"/weather_day - {ctx.author.mention}")
         try:
             url = "https://www.cwa.gov.tw/V8/C/W/index.html"
@@ -56,7 +56,7 @@ class Weather(discord.ext.commands.Cog):
 
         
     @slash_command(name="weather_week",description="Weather overview for the week ahead")
-    async def weather_week(self,ctx):
+    async def weather_week(self,ctx : discord.ApplicationContext):
         await ctx.respond(f"/weather_week - {ctx.author.mention}")
 
         try:
@@ -76,7 +76,7 @@ class Weather(discord.ext.commands.Cog):
             logger.error(e)
 
     @slash_command(name="weather_pos",description="Weather overview for the certain position.")
-    async def weather_pos(self,ctx):
+    async def weather_pos(self,ctx : discord.ApplicationContext):
         towns = ["基隆市",
                 "臺北市",
                 "新北市",
@@ -204,5 +204,5 @@ class MyWeatherSelection:
             logger.error(e)
         
 
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(Weather(bot))

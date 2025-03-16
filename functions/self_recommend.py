@@ -12,9 +12,9 @@ class Recommend(discord.ext.commands.Cog):
         self.bot = bot
 
     @slash_command(name="stop_recommend",description="忌妒....")
-    async def stop_recommend(self,ctx):
+    async def stop_recommend(self,ctx : discord.ApplicationContext):
         ctx.response("好的，我就不再提醒了 :pleading_face: ")
         addtxt(NO_RECOMMEND,ctx.guild.id)
 
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(Recommend(bot))

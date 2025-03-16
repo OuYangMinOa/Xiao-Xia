@@ -11,5 +11,5 @@ class Ping(discord.ext.commands.Cog):
         print(f"pong! ({self.bot.latency*1000:.2f} ms)")
         await ctx.respond(f"pong! ({self.bot.latency*1000:.2f} ms)")
 
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(Ping(bot))

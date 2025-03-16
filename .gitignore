@@ -1,7 +1,8 @@
 # Cache
 __pycache__
 *.pyc
-
+/*.pyc
+/__pycache__
 # Config
 .env
 /.vscode
@@ -17,7 +18,8 @@ __pycache__
 /data/playlist/
 /data/attachments/
 /data/download/
-data/*.txt
+/data/pdf/*
+/data/*.txt
 start.bat
 .vscode/settings.json
 data/alert_channel.txt
@@ -33,3 +35,5 @@ silence_channel.txt
 talk_channel.txt
 
 reboot.py
+/utils/__pycache__
+/functions/__pycache__

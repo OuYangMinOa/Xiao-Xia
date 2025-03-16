@@ -1,7 +1,8 @@
-from .proxies import Proxies
-from dataclasses import dataclass
+from dataclasses   import dataclass
 from requests_html import AsyncHTMLSession
-from typing import AsyncIterator
+from datetime      import datetime
+from .proxies      import Proxies
+from typing        import AsyncIterator
 
 import websockets
 import threading
@@ -13,31 +14,36 @@ import math
 
 @dataclass
 class EEW_data:
-    id: int
-    ReportTime: str
-    OriginTime: str
-    HypoCenter: str
-    Latitude: float 
-    Longitude: float
-    Magnitude: float
-    Depth: int
+    id          : int
+    ReportTime  : str
+    OriginTime  : str
+    HypoCenter  : str
+    Latitude    : float
+    Longitude   : float
+    Magnitude   : float
+    Depth       : int
     MaxIntensity: str
+
+    @classmethod
+    def fake_data(cls):
+        return EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日 %H:%M:%S"),"test",23.92,121.59,5.6,40,"5弱")
+
 
 
 
 class EEW:
-    WHITE_CIRCLE = "`⚪`"
-    GREEN_CIRCLE = "`🟢`"
-    BLUE_CIRCLE = "`🔵`"
-    RED_CIRCLE = "`🔴`"
+    WHITE_CIRCLE  = "`⚪`"
+    GREEN_CIRCLE  = "`🟢`"
+    BLUE_CIRCLE   = "`🔵`"
+    RED_CIRCLE    = "`🔴`"
     YELLOW_CIRCLE = "`🟡`"
 
     URL = "https://api.wolfx.jp/cwa_eew.json"  ## The taiwan earthquake url endpoint.
     URL_SSW = "wss://ws-api.wolfx.jp/cwa_eew"
     def __init__(self) -> None:
-        self.session = AsyncHTMLSession()
-        self.state    = True
-        self.last_eew = None
+        self.session   = AsyncHTMLSession()
+        self.state     = True
+        self.last_eew  = None
         self.use_proxy = True
         self.pos_url_wss_dict = {
             "tw": "wss://ws-api.wolfx.jp/cwa_eew",

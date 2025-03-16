@@ -21,7 +21,7 @@ class admin(discord.ext.commands.Cog):
 
     # reboot the discord bot
     @slash_command(name="reboot",description="重新啟動")
-    async def reboot(self, ctx, password: Option(str, "password", required = True)):
+    async def reboot(self, ctx: discord.ApplicationContext, password: Option(str, "password", required = True)):
         if ( str(os.getenv('RESTART_PASS'))==password):
             await ctx.respond("Restarting...",ephemeral=True)
             await RestartBot(self.bot)
@@ -29,7 +29,7 @@ class admin(discord.ext.commands.Cog):
             await ctx.respond("Permission denied",ephemeral=True)
 
     @slash_command(name="keep_alive",description="Keep my bot alive")
-    async def keep_alive(self, ctx, password: Option(str, "password", required = True)):
+    async def keep_alive(self, ctx: discord.ApplicationContext, password: Option(str, "password", required = True)):
 
         if ( str(os.getenv('RESTART_PASS'))==password):
             NowTime = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
@@ -42,5 +42,5 @@ class admin(discord.ext.commands.Cog):
         else:
             await ctx.respond("Permission denied",ephemeral=True)
 
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(admin(bot))

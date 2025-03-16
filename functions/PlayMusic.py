@@ -19,7 +19,7 @@ class Music(discord.ext.commands.Cog):
         self.bot = bot
 
     @slash_command(name="pause",description="Pause the music")
-    async def pause(self,ctx):
+    async def pause(self,ctx : discord.ApplicationContext):
         #  await ctx.response.defer( ephemeral=True)
 
         await ctx.respond("pause" + f' - {ctx.author.mention}')
@@ -32,7 +32,7 @@ class Music(discord.ext.commands.Cog):
             await music_user[ctx.channel.id].pause()
 
     @slash_command(name="play",description="play the music (supporting spotify and youtube)")
-    async def play(self,ctx,  url: Option(str, "The youtube url", required = False)):
+    async def play(self,ctx : discord.ApplicationContext,  url: Option(str, "The youtube url", required = False)):
         # await ctx.response.defer( ephemeral=True)
 
         if (not url):
@@ -107,7 +107,7 @@ class Music(discord.ext.commands.Cog):
                 
 
     @slash_command(name="list",description="List all the music")
-    async def list(self,ctx):
+    async def list(self,ctx : discord.ApplicationContext):
 
         await ctx.respond( f'list - {ctx.author.mention}')
 
@@ -128,7 +128,7 @@ class Music(discord.ext.commands.Cog):
             # await ctx.send(f"Total {len(self.queqed)} songs")
 
     @slash_command(name="leave",description="leave the voice channel")
-    async def leave(self,ctx):
+    async def leave(self,ctx : discord.ApplicationContext):
         # await ctx.response.defer( ephemeral=True)
 
         await ctx.respond('leave' + f' - {ctx.author.mention}')
@@ -172,7 +172,7 @@ class Music(discord.ext.commands.Cog):
             
 
     @slash_command(name="clear",description="clear the music")
-    async def clear(self,ctx):
+    async def clear(self,ctx : discord.ApplicationContext):
 
         # await ctx.response.defer(ephemeral=True)
         await ctx.respond('clear' + f' - {ctx.author.mention}' )
@@ -196,7 +196,7 @@ class Music(discord.ext.commands.Cog):
 
 
     @slash_command(name="skip",description="skip the current music")
-    async def skip(self,ctx):
+    async def skip(self,ctx : discord.ApplicationContext):
         # await ctx.response.defer( ephemeral=True)
 
         await ctx.respond('skip' + f' - {ctx.author.mention}')
@@ -221,7 +221,7 @@ class Music(discord.ext.commands.Cog):
             return
 
     @slash_command(name="stop_music",description="skip the current music")
-    async def stop_music(self,ctx):
+    async def stop_music(self,ctx : discord.ApplicationContext):
         # await ctx.response.defer( ephemeral=True)
 
         await ctx.respond('stop_music' + f' - {ctx.author.mention}')
@@ -241,7 +241,7 @@ class Music(discord.ext.commands.Cog):
             return
         
     @slash_command(name="stop_sound",description="skip the current sound")
-    async def stop_sound(self,ctx):
+    async def stop_sound(self,ctx : discord.ApplicationContext):
         # await ctx.response.defer( ephemeral=True)
 
         await ctx.respond('stop_sound' + f' - {ctx.author.mention}')
@@ -260,7 +260,7 @@ class Music(discord.ext.commands.Cog):
             return
 
     @slash_command(name="loop",description="loop the music list")
-    async def loop(self,ctx):
+    async def loop(self,ctx : discord.ApplicationContext):
         await ctx.respond('loop'  + f' - {ctx.author.mention}')
 
         
@@ -286,7 +286,7 @@ class Music(discord.ext.commands.Cog):
 
 
     @slash_command(name="skipnums",description="skip the current music")
-    async def skipnums(self,ctx,  nums: Option(int, "The number of music you want to skip", required = True)):
+    async def skipnums(self,ctx : discord.ApplicationContext,  nums: Option(int, "The number of music you want to skip", required = True)):
 
         # await ctx.response.defer( ephemeral=True)
         logger.info(f'[*] {nums} - {ctx.author.name}')
@@ -311,7 +311,7 @@ class Music(discord.ext.commands.Cog):
 
 
     @slash_command(name='save_playlist',description="Save current playlist")
-    async def savePlaylist(self,ctx, name : Option(str, "The name of the playlist", required = True)):
+    async def savePlaylist(self,ctx : discord.ApplicationContext, name : Option(str, "The name of the playlist", required = True)):
         # await ctx.response.defer( ephemeral=True)
         logger.info(f'[*] playlist : {name} - {ctx.author.name} in guild id - {ctx.guild.id}')
 
@@ -345,7 +345,7 @@ class Music(discord.ext.commands.Cog):
             logger.info(f"[*] Not in the voice channel")
 
     @slash_command(name="playlist",description="list all the playlist")
-    async def playlist(self,ctx):
+    async def playlist(self,ctx : discord.ApplicationContext):
 
         # for _ in range(10):
         #     try:
@@ -406,7 +406,7 @@ class Music(discord.ext.commands.Cog):
             await ctx.respond(f"Available playlist", view=PLS.view)
 
     @slash_command(name="say",description="Let me say something")
-    async def say(self,ctx, word:Option(str,"THe word you want me to say",required=True)):
+    async def say(self,ctx : discord.ApplicationContext, word:Option(str,"THe word you want me to say",required=True)):
         # await ctx.response.defer( ephemeral=True)
         logger.info(f'[*] {ctx.author.name} - {word}')
 
@@ -494,7 +494,7 @@ class Music(discord.ext.commands.Cog):
 
 
         
-def setup(bot):
+def setup(bot : discord.Bot):
     bot.add_cog(Music(bot))
 
 
