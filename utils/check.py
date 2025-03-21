@@ -124,7 +124,7 @@ class EEWLoop:
             pos
         )
 
-    async def send(self, _EEW:EEW_data,pos):
+    async def send(self, _EEW:EEW_data, pos : str):
         if (pos == "jp"):
 
             if (isinstance(_EEW.MaxIntensity,str)):

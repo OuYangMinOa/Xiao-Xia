@@ -64,15 +64,17 @@ async def update_website(data:EEW_data):
     old_content = response['content']['rendered'].replace(subtitle,"")
     new_content = subtitle + this_content + old_content
     data = {
-        'title'   : '<h1><strong>地震警報</strong></h1><p></p>',
+        'title'   : '地震警報',
         'content' : f"{new_content}",
         'status'  : 'publish' # 可以設置為'draft'或'publish'
     }
-
-    async with ClientSession() as session:
-        async with session.put(wordpress_url, headers = headers, data = data ) as resp:
-            response = await resp.json()
-            # logger.info(f"[*] update website content {response['content']['rendered']}")
+    try:
+        async with ClientSession() as session:  
+            async with session.put(wordpress_url, headers = headers, data = data ) as resp:
+                response = await resp.json()
+                logger.info(f"[*] update website content {response['content']['rendered']}")
+    except Exception as e:
+        logger.error(e)
 
 async def upload_wp(file_path : str):
 # 設定 WordPress 網站的 URL 和 API 端點
