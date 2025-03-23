@@ -2,11 +2,13 @@ import sys
 sys.path.append("..")
 
 try:
-    from utils.info import logger
+    from  utils.info import logger
 except:
     ...
+
+from google_map import GoogleMap
 from utils.eew  import EEW, EEW_data
-from datetime   import datetime
+from datetime   import datetime, timezone
 from aiohttp    import ClientSession, FormData
 from glob       import glob
 
@@ -14,7 +16,10 @@ import base64
 import random
 import os
 
-def chosse_head():
+
+
+
+def choose_rand_color_head():
     colors = [
         ("#007bff", "#cce5ff"),  # 藍色
         ("#28a745", "#d4edda"),  # 綠色
@@ -27,22 +32,30 @@ def chosse_head():
     border_color, background_color = random.choice(colors)
 
     # 生成 <div>
-    div_code = f'<div style="border: 2px solid {border_color}; padding: 20px; border-radius: 10px; background-color: {background_color}; margin: 20px 0; font-family: Arial, sans-serif;">'
+    div_code = f'<div style="border: 2px solid {border_color}; padding: 20px; border-radius: 10px; background-color: {background_color}; margin: 20px 0; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center;">'    
     return div_code
 
 def get_this_eew_html(data : EEW_data  ):
+    origin_tme = data.OriginTime #c .replace('\n','')
     return f"""
-{chosse_head()}
+{choose_rand_color_head()}
     <h2 style="color: #856404; text-align: center;">地震速報</h2>
-    <p style="font-size: 16px; margin: 5px 0;" ><strong>地點：</strong>{data.HypoCenter}</p>
-    <p style="font-size: 16px; margin: 5px 0;" ><strong>發生時間：</strong>{data.OriginTime}</p>
-    <p style="font-size: 16px; margin: 5px 0;" ><strong>地震規模：</strong>{EEW.circle_mag(data.Magnitude)[1]} 芮氏 {data.Magnitude}</p>
-    <p style="font-size: 16px; margin: 5px 0;" ><strong>地震深度：</strong>{EEW.circle_depth(data.Depth)[1]} {data.Depth}公里</p>
-    <p style="font-size: 16px; margin: 5px 0;" ><strong>最大震度：</strong>{EEW.circle_intensity(data.MaxIntensity)[1]} {data.MaxIntensity}級</p>
-    <p style="font-size: 16px; margin: 5px 0;" ><strong>震央位置：</strong>{data.HypoCenter}</p>
-    <p style="font-size: 16px; margin: 5px 0;" ><strong>緯度：</strong>{data.Latitude}</p>
-    <p style="font-size: 16px; margin: 5px 0;" ><strong>經度：</strong>{data.Longitude}</p>
-    <p style="font-size: 16px; margin: 5px 0;" ><strong>發布時間：</strong>{datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')}</p>
+    <div style="display: flex; width: 100%; margin-top: 10px;">
+        <div style="flex: 1; padding-right: 20px;">
+        <p style="font-size: 16px; margin: 5px 0;" ><strong>地點：</strong>{data.HypoCenter}</p>
+        <p style="font-size: 16px; margin: 5px 0;" ><strong>發生時間：</strong>{origin_tme}</p>
+        <p style="font-size: 16px; margin: 5px 0;" ><strong>地震規模：</strong>{EEW.circle_mag(data.Magnitude)[1]} 芮氏 {data.Magnitude}</p>
+        <p style="font-size: 16px; margin: 5px 0;" ><strong>地震深度：</strong>{EEW.circle_depth(data.Depth)[1]} {data.Depth}公里</p>
+        <p style="font-size: 16px; margin: 5px 0;" ><strong>最大震度：</strong>{EEW.circle_intensity(data.MaxIntensity)[1]} {data.MaxIntensity}級</p>
+        <p style="font-size: 16px; margin: 5px 0;" ><strong>震央位置：</strong>{data.HypoCenter}</p>
+        <p style="font-size: 16px; margin: 5px 0;" ><strong>緯度：</strong>{data.Latitude}</p>
+        <p style="font-size: 16px; margin: 5px 0;" ><strong>經度：</strong>{data.Longitude}</p>
+        <p style="font-size: 16px; margin: 5px 0;" ><strong>發布時間：</strong>{datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')}</p>
+        </div>
+        <div style="flex: 1;">
+        {GoogleMap.get_google_map_embed(data.Latitude, data.Longitude)}
+        </div>
+    </div>
 </div>
 <p></p>
 <hr class="wp-block-separator has-alpha-channel-opacity"/>
@@ -72,7 +85,7 @@ async def update_website(data:EEW_data):
         async with ClientSession() as session:  
             async with session.put(wordpress_url, headers = headers, data = data ) as resp:
                 response = await resp.json()
-                logger.info(f"[*] update website content {response['content']['rendered']}")
+                logger.info(f"[*] update website content succesful !")
     except Exception as e:
         logger.error(e)
 
@@ -121,6 +134,5 @@ if __name__ == '__main__':
     #     print(eachfile)
     #     asyncio.run(upload_wp(eachfile))
     
-
 
     asyncio.run(update_website(EEW_data.fake_data()))
