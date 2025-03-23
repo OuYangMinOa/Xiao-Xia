@@ -2,11 +2,12 @@ import sys
 sys.path.append("..")
 
 try:
-    from  utils.info import logger
+    from utils.google_map import GoogleMap
+    from utils.info import logger
 except:
+    from google_map import GoogleMap
     ...
 
-from google_map import GoogleMap
 from utils.eew  import EEW, EEW_data
 from datetime   import datetime, timezone
 from aiohttp    import ClientSession, FormData
