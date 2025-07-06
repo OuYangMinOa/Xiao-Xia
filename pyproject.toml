@@ -31,6 +31,7 @@ dependencies = [
     "pytz>=2025.1",
     "requests-html>=0.10.0",
     "speechrecognition>=3.14.1",
+    "spotify>=0.10.2",
     "spotipy>=2.25.0",
     "testcord>=0.0.1",
     "tqdm>=4.67.1",

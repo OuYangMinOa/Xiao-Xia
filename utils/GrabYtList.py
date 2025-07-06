@@ -5,8 +5,9 @@ import re
 import bs4
 import time
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import requests
+from requests_html import AsyncHTMLSession
 
 
 from pytube import YouTube, Playlist
@@ -195,6 +196,7 @@ def youtubeSearch(keyword,useKeyword=True):
     return None
 
 def GrabSongListFromSpotify(url,start=0,end=100):
+    # SpotifyOAuth(scope = "user-library-read") # SpotifyClientCredentials()
     auth_manager = SpotifyClientCredentials()
     sp = spotipy.Spotify(auth_manager=auth_manager)
     
@@ -216,9 +218,18 @@ def GrabSongListFromSpotify(url,start=0,end=100):
             time.sleep(0.1)
         return output
     
+    if ("album" in url):
+        results = sp.album(spId)
+        output = []
+        for eachItem in results['tracks']['items'][start:end]:
+            thisResult = youtubeSearch(eachItem['name']+'-'+eachItem['artists'][0]['name'])
+            if (thisResult):
+                output.append(thisResult)
+            time.sleep(0.1)
+        return output
 
     if ("playlist" in url):
-        results = sp.playlist_tracks(spId)
+        results = sp.playlist_tracks(f"{spId}")
         output = []
         for eachItem in results['items'][start:end]:
             thisResult = youtubeSearch(eachItem['track']['name']+'-'+eachItem['track']['artists'][0]['name'])
