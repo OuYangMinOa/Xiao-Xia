@@ -48,10 +48,10 @@ class Music(discord.ext.commands.Cog):
             channel = ctx.author.voice.channel
 
         sound_guild_id = [sound_user[x].ctx.guild.id for x in sound_user]  #  use for check if bot is in the sound dict
-        # print(sound_guild_id)
+        print(ctx.channel.id, sound_guild_id, music_user)
 
         if (ctx.channel.id in music_user):  #  if bot is in the music dict
-            
+            print(f"[*] {ctx.channel.id} is in music_user")
             if ctx.guild.voice_client not in self.bot.voice_clients:   # in same channel but not in any voice channel
                 logger.info("[*] rejoin the voice channel")
                 await music_user[ctx.channel.id].kill()
@@ -65,8 +65,6 @@ class Music(discord.ext.commands.Cog):
                 music_user[ctx.channel.id].channel    = channel
                 music_user[ctx.channel.id].channelid  = channel.id
                 music_user[ctx.channel.id].ctx        = ctx
-
-            
 
             if (not url):
                 logger.info("[*] no url specified",music_user[ctx.channel.id].state)
@@ -85,16 +83,18 @@ class Music(discord.ext.commands.Cog):
             try:
                 # print("[*] moving to voice channel")
                 if (ctx.guild.id in sound_guild_id):  # if bot is in the sound dict
-                    # print("[*] moving to voice channel 2222 ")
                     sound_channel_id = sound_user[list(sound_user)[sound_guild_id.index(ctx.guild.id)]].ctx.channel.id # FInd the client channel id
                     # print(sound_channel_id)
                     voice = sound_user[sound_channel_id].voice
                     await sound_user[sound_channel_id].clear()
                 else:
-                    voice =  await channel.connect()
+                    try:
+                        voice =  await channel.connect()
+                    except Exception as e:
+                        logger.error(f"[*] Error connecting to voice channel: {e}")
 
                 ############## Build the Music object 
-                # print("[*] voice channel connected")
+                print("[*] voice channel connected")
                 MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
                 logger.info(f"[*] creating Class id : {id(MB)} for serving channel {channel.id}")
                 music_user[ctx.channel.id] = MB

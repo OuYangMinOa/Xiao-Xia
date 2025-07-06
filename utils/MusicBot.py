@@ -161,6 +161,7 @@ class MusicBot:
         song_path  = os.path.join(self.floder , this_song_name)
         if ( not os.path.isfile(song_path)):            
             # download with yt_download
+            self.dowloading = await self.ctx.send(f'... Downloading {this_song_name}')
             is_yt_downloader_succeed = True
             try:
                 async with YouTubeDownloader() as downloader:
@@ -180,7 +181,7 @@ class MusicBot:
                     "outtmpl" : f"{song_path}",
                     'noplaylist': False, 
                 } 
-                self.dowloading = await self.ctx.send(f'... Downloading {this_song_name}')
+                
                 try:
                     print("[*] downloading ->", this_song_name,"\n")
                     is_live = True
