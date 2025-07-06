@@ -5,12 +5,14 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "aiofiles>=24.1.0",
     "aiohttp>=3.11.12",
     "beautifulsoup4>=4.13.3",
     "cartopy>=0.24.1",
     "edge-tts>=7.0.0",
     "gitpython>=3.1.44",
     "google-api-python-client>=2.161.0",
+    "httpx>=0.28.1",
     "lxml>=5.3.1",
     "lxml-html-clean>=0.4.1",
     "numpy>=2.2.3",

@@ -1,5 +1,6 @@
 ## music.py
 from utils.GrabYtList import *
+from utils.yt_music_grabber import YouTubeDownloader
 from utils.info     import logger, music_user, sound_user, MUSIC_folder
 from pytube import YouTube
 from pydub.utils import mediainfo
@@ -159,91 +160,98 @@ class MusicBot:
 
         song_path  = os.path.join(self.floder , this_song_name)
         if ( not os.path.isfile(song_path)):            
-            self.ytl  = {
-                'format': 'bestaudio/best',
-                "outtmpl" : f"{song_path}",
-                'noplaylist': False, 
-            } 
-            self.dowloading = await self.ctx.send(f'... Downloading {this_song_name}')
+            # download with yt_download
+            is_yt_downloader_succeed = True
             try:
-                print("[*] downloading ->", this_song_name,"\n")
-                is_live = True
-                with youtube_dl.YoutubeDL(self.ytl) as ydl:
-                    ydl.cache.remove()
-                    # ydl.download([this_song_url])
-                    info = ydl.extract_info(this_song_url, download=False)
-                    if (not info['is_live']):
-                        is_live = False
-                        logger.info(f"[*] Downloading {this_song_url} due to it not a live")
-                        ## download with blocking ...
-                        # ydl.download([this_song_url])
-                        
-                        ## download without blocking ...
-                        loop = asyncio.get_event_loop()
-                        await loop.run_in_executor(None, lambda url:ydl.download(url), [this_song_url] )
-                        await loop.run_in_executor(None, lambda path:change_sound_amp(path), song_path )
-
-
-
-                        # change_sound_amp(song_path) # normalize the song
-                    else:
-                        logger.info(f"[*] {this_song_url} is a live stream")
-                        song_path = info['formats'][0]['url']
-                # try:
-                #     sound = AudioSegment.from_file(song_path)
-                #     normalized_sound = match_target_amplitude(sound, -20.0)
-                #     normalized_sound.export(song_path)
-                # except:
-                #     pass
-                
-                logger.info("\n[*] ------------ download successful ------------")
-            except Exception as e:
-                logger.error(e)
-                logger.error("[*] ----- error ----- try to use pytube.")
-                print("[*] redownloaded in 5 second")
+                async with YouTubeDownloader() as downloader:
+                    await downloader.download_mp3(
+                        yt_url = this_song_url,
+                        download_folder = self.floder,
+                        filename = this_song_name,                    
+                    )
+            except:
+                is_yt_downloader_succeed = False
+            
+            if not is_yt_downloader_succeed:
+                logger.info("[*] Youtube Downloader failed, try to use youtube_dl")
+                # download with youtube_dl
+                self.ytl  = {
+                    'format': 'bestaudio/best',
+                    "outtmpl" : f"{song_path}",
+                    'noplaylist': False, 
+                } 
+                self.dowloading = await self.ctx.send(f'... Downloading {this_song_name}')
                 try:
-                    print("[*] redownloading ->", this_song_name)
-                    if (not is_live):
-                        # song_path = song_path + ".mp3"
-                        logger.info(f"[*] Download to {song_path}")
-                        # YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=self.floder,filename=this_song_name)
-
-                        loop = asyncio.get_event_loop()
-                        await loop.run_in_executor(None, 
-                                                   lambda x:YouTube(this_song_url
-                                                                    ).streams.filter(only_audio=True
-                                                                                     ).first().download(
-                                                                                         output_path=self.floder,filename=this_song_name) ,
-                                                   None )
-
-                        logger.info("\n[*] ------------ download successful ------------")
-                        await loop.run_in_executor(None, lambda path:change_sound_amp(path), song_path )
-                        # change_sound_amp(song_path) # normalize the song
-                        logger.info("\n[*] ------------ apply gain successful ------------")
-
-                    else:
-                        await self._next()
-                        await self.dowloading.delete()
-                        return
+                    print("[*] downloading ->", this_song_name,"\n")
+                    is_live = True
+                    with youtube_dl.YoutubeDL(self.ytl) as ydl:
+                        ydl.cache.remove()
+                        # ydl.download([this_song_url])
+                        info = ydl.extract_info(this_song_url, download=False)
+                        if (not info['is_live']):
+                            is_live = False
+                            logger.info(f"[*] Downloading {this_song_url} due to it not a live")
+                            ## download with blocking ...
+                            # ydl.download([this_song_url])
+                            ## download without blocking ...
+                            loop = asyncio.get_event_loop()
+                            await loop.run_in_executor(None, lambda url:ydl.download(url), [this_song_url] )
+                            await loop.run_in_executor(None, lambda path:change_sound_amp(path), song_path )
+                            # change_sound_amp(song_path) # normalize the song
+                        else:
+                            logger.info(f"[*] {this_song_url} is a live stream")
+                            song_path = info['formats'][0]['url']
                     # try:
                     #     sound = AudioSegment.from_file(song_path)
                     #     normalized_sound = match_target_amplitude(sound, -20.0)
                     #     normalized_sound.export(song_path)
                     # except:
                     #     pass
-
+                    logger.info("\n[*] ------------ download successful ------------")
                 except Exception as e:
-                    error_     = await self.ctx.channel.send(f':weary:  Error occurred again')
-                    redownload = await self.ctx.channel.send(f':weary:  Skipping this song ... {this_song_name}')
-                    logger.info("[*] error heppened again")
-                    logger.info("[*] play next song")
                     logger.error(e)
-                    await asyncio.sleep(1)
-                    await redownload.delete()
-                    await error_.delete()
-                    await self.dowloading.delete()
-                    await self._next()
-                    return 
+                    logger.error("[*] ----- error ----- try to use pytube.")
+                    print("[*] redownloaded in 5 second")
+                    try:
+                        print("[*] redownloading ->", this_song_name)
+                        if (not is_live):
+                            # song_path = song_path + ".mp3"
+                            logger.info(f"[*] Download to {song_path}")
+                            # YouTube(this_song_url).streams.filter(only_audio=True).first().download(output_path=self.floder,filename=this_song_name)
+                            loop = asyncio.get_event_loop()
+                            await loop.run_in_executor(None, 
+                                                    lambda x:YouTube(this_song_url
+                                                                        ).streams.filter(only_audio=True
+                                                                                        ).first().download(
+                                                                                            output_path=self.floder,filename=this_song_name) ,
+                                                    None )
+                            logger.info("\n[*] ------------ download successful ------------")
+                            await loop.run_in_executor(None, lambda path:change_sound_amp(path), song_path )
+                            # change_sound_amp(song_path) # normalize the song
+                            logger.info("\n[*] ------------ apply gain successful ------------")
+                        else:
+                            await self.dowloading.delete()
+                            await self._next()
+                            return
+                        # try:
+                        #     sound = AudioSegment.from_file(song_path)
+                        #     normalized_sound = match_target_amplitude(sound, -20.0)
+                        #     normalized_sound.export(song_path)
+                        # except:
+                        #     pass
+
+                    except Exception as e:
+                        await self.dowloading.delete()
+                        error_     = await self.ctx.channel.send(f':weary:  Error occurred again')
+                        redownload = await self.ctx.channel.send(f':weary:  Skipping this song ... {this_song_name}')
+                        logger.info("[*] error heppened again")
+                        logger.info("[*] play next song")
+                        logger.error(e)
+                        await asyncio.sleep(1)
+                        await redownload.delete()
+                        await error_.delete()
+                        await self._next()
+                        return 
             await self.dowloading.delete()
         else:
             print("[*] Audio exist " )
