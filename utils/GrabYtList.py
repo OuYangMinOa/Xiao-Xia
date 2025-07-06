@@ -200,7 +200,7 @@ def GrabSongListFromSpotify(url,start=0,end=100):
     auth_manager = SpotifyClientCredentials()
     sp = spotipy.Spotify(auth_manager=auth_manager)
     
-    spId = url.split('/')[-1]
+    spId = url.split('/')[-1].split('?')[0]
     logger.info(f"Id: {spId}")
 
     if ("track" in url):
