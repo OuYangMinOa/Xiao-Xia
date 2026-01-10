@@ -81,7 +81,6 @@ class Music(discord.ext.commands.Cog):
                 await music_user[ctx.channel.id].add(url) 
         else:
             try:
-                # print("[*] moving to voice channel")
                 if (ctx.guild.id in sound_guild_id):  # if bot is in the sound dict
                     sound_channel_id = sound_user[list(sound_user)[sound_guild_id.index(ctx.guild.id)]].ctx.channel.id # FInd the client channel id
                     # print(sound_channel_id)
@@ -89,7 +88,8 @@ class Music(discord.ext.commands.Cog):
                     await sound_user[sound_channel_id].clear()
                 else:
                     try:
-                        voice =  await channel.connect()
+                        print("[*] connecting to voice channel")
+                        voice = await channel.connect()
                     except Exception as e:
                         logger.error(f"[*] Error connecting to voice channel: {e}")
 

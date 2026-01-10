@@ -53,9 +53,6 @@ async def on_message(message : discord.ApplicationContext):
 
 
 if __name__ == '__main__': 
-
-
-
     # import cogs from cogs folder
     for filename in os.listdir("functions"):
         if filename.endswith(".py"):
