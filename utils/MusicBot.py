@@ -538,11 +538,18 @@ class MusicBot:
                     await self.ctx.send(f'oops... somthing goes wrong, I cannot this music')
                     await self.ctx.send('Try "!play music" to play local music')
                     return
-                for each in output[0:10]:
-                    self.queqed.append(each)
+                
+                if len(output) == 0:
+                    print(f"[*] Can't grab list, adding single music.")
+                    this_title = get_title(url)
+                    logger.info(f"[*] Adding a single video {this_title} in {self.channelid}")
+                    self.queqed.append((this_title,url))
+                else:
+                    for each in output[0:10]:
+                        self.queqed.append(each)
 
-                threading.Thread(target = self.add_thread, args=(url,),daemon=True).start()
-                logger.info(f"[*] Queqed : {self.queqed}")
+                    threading.Thread(target = self.add_thread, args=(url,),daemon=True).start()
+                    logger.info(f"[*] Queqed : {self.queqed}")
 
             else:
                 this_title = get_title(url)
