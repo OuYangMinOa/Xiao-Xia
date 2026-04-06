@@ -48,9 +48,10 @@ async def on_message(message : discord.ApplicationContext):
     await ThreadHandleMessage(bot,message)
     return
 
-
-
-
+@bot.event
+async def on_close():
+    for vc in bot.voice_clients:
+        await vc.disconnect(force=True)
 
 if __name__ == '__main__': 
     # import cogs from cogs folder

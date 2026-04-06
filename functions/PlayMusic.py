@@ -89,12 +89,16 @@ class Music(discord.ext.commands.Cog):
                 else:
                     try:
                         print("[*] connecting to voice channel")
-                        voice = await channel.connect()
+                        voice = await channel.connect(timeout = 120)
+                        await asyncio.sleep(1)
                     except Exception as e:
                         logger.error(f"[*] Error connecting to voice channel: {e}")
 
                 ############## Build the Music object 
-                print("[*] voice channel connected")
+                if voice.is_connected():
+                    print("[*] voice channel connected")
+                else:
+                    print("Not connected to voice")
                 MB = my_mb.MusicBot(channel, voice , ctx, self.bot)
                 logger.info(f"[*] creating Class id : {id(MB)} for serving channel {channel.id}")
                 music_user[ctx.channel.id] = MB
