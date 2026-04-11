@@ -33,7 +33,6 @@ class SummaryThesis(discord.ext.commands.Cog):
 
             reader = PdfReader(f"{save_folder}/{attachment.filename}") 
 
-
             totalText = ""
             print("[*] Summarizing the PDF...")
             for num,each in tqdm(enumerate(reader.pages)):

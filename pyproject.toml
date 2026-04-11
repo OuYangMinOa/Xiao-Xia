@@ -12,6 +12,7 @@ dependencies = [
     "edge-tts>=7.0.0",
     "gitpython>=3.1.44",
     "google-api-python-client>=2.161.0",
+    "google-generativeai>=0.8.6",
     "httpx>=0.28.1",
     "lxml>=5.3.1",
     "lxml-html-clean>=0.4.1",

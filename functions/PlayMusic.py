@@ -109,7 +109,6 @@ class Music(discord.ext.commands.Cog):
             except Exception as e:
                 logger.error(e)
                 
-
     @slash_command(name="list",description="List all the music")
     async def list(self,ctx : discord.ApplicationContext):
 
@@ -174,7 +173,6 @@ class Music(discord.ext.commands.Cog):
             logger.info(f"[*] leaving {channel.id}")
             del sound_user[ctx.channel.id]
             
-
     @slash_command(name="clear",description="clear the music")
     async def clear(self,ctx : discord.ApplicationContext):
 
@@ -197,7 +195,6 @@ class Music(discord.ext.commands.Cog):
             await music_user[ctx.channel.id].clear()
         else:
             await ctx.send("I'm not singing")
-
 
     @slash_command(name="skip",description="skip the current music")
     async def skip(self,ctx : discord.ApplicationContext):
@@ -288,7 +285,6 @@ class Music(discord.ext.commands.Cog):
                 music_user[ctx.channel.id].loop = False
                 await ctx.send("disable loop")
 
-
     @slash_command(name="skipnums",description="skip the current music")
     async def skipnums(self,ctx : discord.ApplicationContext,  nums: Option(int, "The number of music you want to skip", required = True)):
 
@@ -312,7 +308,6 @@ class Music(discord.ext.commands.Cog):
             await music_user[ctx.channel.id].skipnums(nums)
         else:
             await ctx.send("I'm not singing")
-
 
     @slash_command(name='save_playlist',description="Save current playlist")
     async def savePlaylist(self,ctx : discord.ApplicationContext, name : Option(str, "The name of the playlist", required = True)):
@@ -493,9 +488,6 @@ class Music(discord.ext.commands.Cog):
         music_user[ctx.channel.id].queqed = tempqueqe
         music_user[ctx.channel.id].passed = temppasse
         await music_user[ctx.channel.id].pause()
-
-        
-
 
         
 def setup(bot : discord.Bot):
