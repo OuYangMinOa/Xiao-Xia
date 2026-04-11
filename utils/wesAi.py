@@ -5,6 +5,12 @@ from aiohttp import ClientSession
 import google.generativeai as genai
 from dotenv import load_dotenv
 import os
+import re
+
+THOUGHT_RE = re.compile(r"<\|channel\|?>thought.*?<\|?channel\|?>\s*", re.DOTALL)
+
+def strip_thought(text: str) -> str:
+    return THOUGHT_RE.sub("", text).strip()
 
 def is_port_in_use(port: int) -> bool:
     import socket
@@ -61,7 +67,15 @@ async def prompt_wes_com(text : str):   # use my own LLM AI
     model = genai.GenerativeModel('gemma-4-31b-it')
     print("使用 model gemma4")
     response = model.generate_content(text)
-    return response.text
+    visible = []
+    for part in response.candidates[0].content.parts:
+        # thought part 會標 thought=True,過濾掉
+        if getattr(part, "thought", False):
+            continue
+        if getattr(part, "text", None):
+            visible.append(part.text)
+
+    return "".join(visible)
 
 
 def prompt_wes_com_main(text):
