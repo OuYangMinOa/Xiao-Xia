@@ -71,7 +71,8 @@ class Silence(discord.ext.commands.Cog):
     async def clear_talk(self,ctx : discord.ApplicationContext):
         if (ctx.channel.id in chat_dict):
             chat_dict[ctx.channel.id].clear_message()
-            await ctx.respond("Past chat history has been cleared")
+        await ctx.respond("Past chat history has been cleared")
+
     
 
 def setup(bot : discord.Bot):
