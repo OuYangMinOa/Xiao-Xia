@@ -67,8 +67,12 @@ async def prompt_wes_com(text : str):   # use my own LLM AI
     model = genai.GenerativeModel('gemma-4-31b-it')
     print("使用 model gemma4")
     response = model.generate_content(text)
-    visible_text = "".join([part.text for part in response.candidates[0].content.parts if not part.thought])
-    return visible_text
+    raw_text = response.text
+    # 使用正則表達式移除 <think> 到 </think> 之間的所有內容
+    # re.DOTALL 確保正則表達式可以跨越多行進行匹配
+    cleaned_text = re.sub(r'<think>.*?</think>', '', raw_text, flags=re.DOTALL)
+    # 去除頭尾可能殘留的空白與換行符號
+    return cleaned_text.strip()
 
 def prompt_wes_com_main(text):
     import asyncio
