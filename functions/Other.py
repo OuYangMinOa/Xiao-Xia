@@ -7,8 +7,6 @@ from utils.wesAi      import prompt_wes_com
 import utils.Covid as my_Cd
 import discord
 
-    
-
 class Others(discord.ext.commands.Cog):
     def __init__(self, bot):
         self.bot = bot

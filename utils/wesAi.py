@@ -60,7 +60,6 @@ async def prompt_wes_com(text : str):   # use my own LLM AI
     # return None
 
     # 1. 設定您的 API 金鑰
-    
 
     # 2. 初始化 Gemma 4 31B 模型
     # 注意：模型名稱為 'models/gemma-4-31b-it'

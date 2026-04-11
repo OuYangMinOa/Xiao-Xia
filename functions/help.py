@@ -16,6 +16,7 @@ class Help(discord.ext.commands.Cog):
     async def help_en(self,ctx : discord.ApplicationContext):
         await  ctx.respond("""* :notes: **MUSIC**
  - `/play {url}` play music (youtube or spotify).
+ - `/play_next {url}` insert the music to the next of playlist.
  - `/platlist` show all playlist
  - `/save_platlist {name}` save current playlist
  - `/skip` to skip the song.
@@ -57,6 +58,14 @@ class Help(discord.ext.commands.Cog):
  - `/vote` vote
  - `/ping` Show latency
  - `/骰子` dice
+                           
+* ⚙️ **tips**
+```
+If you're not sure how to use the above commands, you can directly ask me by `/talk {question}`,
+and I'll try to explain how to use it. 
+For example, you can say "/talk /play how to use?" or "/talk /play {url} what does it mean?" 
+I'll try to explain the usage of the command in simple language.
+```
 """)
 
     # @slash_command(name="幫助",description="幫助訊息")
@@ -64,6 +73,7 @@ class Help(discord.ext.commands.Cog):
     async def help_zhtw(self,ctx : discord.ApplicationContext):
         await  ctx.respond("""* :notes: **音樂**
  - `/play {url}` 播放音樂 (youtube 或 spotify)。
+ - `/play_next {url}` 將音樂插入播放清單的下一個位置。
  - `/platlist` 展示儲存的播放清單
  - `/save_platlist {name}` 儲存現在正在撥放的歌單
  - `/skip` 跳過。
@@ -79,7 +89,7 @@ class Help(discord.ext.commands.Cog):
  - `/upload_sound {name} {file}` 上傳你自己的音效。
  - `/list_sound` 查看所有的音效並撥放。
  - `/search_sound` {keyword} 用關鍵字查詢音效。
- - `/say` 讓我說出你要我說的話.
+ - `/say` 讓我使用語音說出你要我說的話.
  - `/autosound` 自動偵測語音 然後撥放音效板
  - `/stop_autosound` 停止 autosound
 
@@ -101,11 +111,18 @@ class Help(discord.ext.commands.Cog):
  - `/eew_alert` 地震預警
  - `/eew_alert_stop` 停止地震預警
 
-                           
 * 📑 **功能**                     
  - `/vote` 投票
  - `/ping` 顯示跟機器人的延遲
  - `/骰子` 骰骰子
+                           
+* ⚙️ **tips**
+
+```
+如果上面的指令你不確定怎麼用，可以直接 `/talk {問題}` 問我，我會試著幫你解釋怎麼用。
+比如說你可以說「/talk /play 怎麼用？」或者「/talk /play {url} 是什麼意思？」
+我會盡量用簡單的語言來解釋指令的使用方法。
+```
 """)
 
 

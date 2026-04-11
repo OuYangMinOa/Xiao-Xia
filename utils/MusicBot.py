@@ -113,7 +113,6 @@ class MusicBot:
         self.StartCount = True
         threading.Thread(target=self.countLoop,daemon=True).start()
 
-
     async def _next(self):
         
         self.StartCount = False  ## 
@@ -358,7 +357,6 @@ class MusicBot:
         
         threading.Thread(target=LoopChecking,daemon=True).start()
 
-
     async def play_downloaded_music(self):
         musics = os.listdir(self.floder)
         for each in musics:
@@ -506,7 +504,7 @@ class MusicBot:
         logger.info(f"[*] {self.channelid} Adding Thread done.")
         logger.info(f"[*] Qeuqed {len(self.queqed)} songs -> {self.channelid}")
 
-    async def add(self,url):
+    async def add(self,url, next=False):
         self.dont_stop = 0
         try:
             logger.info(f"[*] {url}")
@@ -517,12 +515,19 @@ class MusicBot:
             
             if ("http" not in url):
                 tempWord = await self.ctx.send(f'Searching for {url} ... ')
-                self.queqed.append(youtubeSearch(url,useKeyword=False))
+                this_url = youtubeSearch(url,useKeyword=False)
+                if next:
+                    self.queqed.insert(0, this_url)
+                else:
+                    self.queqed.append(this_url)
                 await tempWord.delete()
 
-
             elif ("spotify" in url):  
-                self.queqed.extend( GrabSongListFromSpotify(url,start=0,end=5) )
+                this_url = GrabSongListFromSpotify(url,start=0,end=5)
+                if next:
+                    self.queqed.insert(0, this_url[0])
+                else:
+                    self.queqed.append(this_url)
 
                 threading.Thread(target = self.addThreadSpotify, args=(url,),daemon=True).start()
                 logger.info(f"[*] Queqed : {self.queqed}")
@@ -543,7 +548,10 @@ class MusicBot:
                     print(f"[*] Can't grab list, adding single music.")
                     this_title = get_title(url)
                     logger.info(f"[*] Adding a single video {this_title} in {self.channelid}")
-                    self.queqed.append((this_title,url))
+                    if next:
+                        self.queqed.insert(0, (this_title,url))
+                    else:
+                        self.queqed.append((this_title,url))
                 else:
                     for each in output[0:10]:
                         self.queqed.append(each)

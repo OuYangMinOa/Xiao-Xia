@@ -73,7 +73,23 @@ class Silence(discord.ext.commands.Cog):
             chat_dict[ctx.channel.id].clear_message()
         await ctx.respond("Past chat history has been cleared")
 
-    
+    @slash_command(name="history",description="Show the conversation history I remember in this channel")
+    async def history(self,ctx : discord.ApplicationContext):
+        if (ctx.channel.id in chat_dict):
+            history = chat_dict[ctx.channel.id].memory
+            if history:
+                output = "Here is the conversation history I remember in this channel:\n\n"
+                for i in range(len(history)):
+                    output += f"{history[i]}\n"
+                if len(output) < 2000:
+                    await ctx.respond(output)
+                else:
+                    for i in range(len(output)//2000+1):
+                        await ctx.respond(output[2000*i :2000*(i+1)])
+            else:
+                await ctx.respond("I don't remember any conversation in this channel.")
+        else:
+            await ctx.respond("I don't remember any conversation in this channel.")
 
 def setup(bot : discord.Bot):
     bot.add_cog(Silence(bot))

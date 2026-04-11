@@ -34,7 +34,6 @@ class Music(discord.ext.commands.Cog):
     @slash_command(name="play",description="play the music (supporting spotify and youtube)")
     async def play(self,ctx : discord.ApplicationContext,  url: Option(str, "The youtube url", required = False)):
         # await ctx.response.defer( ephemeral=True)
-
         if (not url):
             await ctx.respond(f'/play\n- {ctx.author.mention}')
         else:
@@ -108,7 +107,28 @@ class Music(discord.ext.commands.Cog):
                     await MB.add(url)
             except Exception as e:
                 logger.error(e)
-                
+
+    @slash_command(name="play_next",description="Insert a music to the next of the playlist")
+    async def play_next(self,ctx : discord.ApplicationContext,  url: Option(str, "The youtube url", required = True)):
+        await ctx.respond(f'{url}\n- {ctx.author.mention}')
+        logger.info(f'[*] {url} - {ctx.author.name}')
+
+        if not ctx.author.voice:
+            await ctx.send('you are not connected to a voice channel')
+            return
+        else:
+            channel = ctx.author.voice.channel
+
+        if ctx.guild.voice_client not in self.bot.voice_clients:
+            await ctx.send("I'm not singing")
+            return
+
+        if (ctx.channel.id in music_user):
+            await music_user[ctx.channel.id].add(url, next = True) 
+        else:
+            await ctx.send("I'm not singing")
+    
+
     @slash_command(name="list",description="List all the music")
     async def list(self,ctx : discord.ApplicationContext):
 
