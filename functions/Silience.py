@@ -37,12 +37,15 @@ class Silence(discord.ext.commands.Cog):
         if (msg):
             if (ctx.channel.id not in chat_dict):
                 chat_dict[ctx.channel.id] = Chat(ctx.channel.id)
-
+            await ctx.respond("請等我想一下 ... ")
             chatgpt_result = await chat_dict[ctx.channel.id].Talk(ctx.author.name,msg)
             if chatgpt_result:
-                await ctx.respond(chatgpt_result)
+                if len(chatgpt_result) < 2000:
+                    await ctx.send(chatgpt_result)
+                else:
+                    for i in range(len(chatgpt_result)//2000+1):
+                        await ctx.send(chatgpt_result[2000*i :2000*(i+1)])
                 return
-
 
         try:
             if (ctx.channel.id not in talk_channel):
