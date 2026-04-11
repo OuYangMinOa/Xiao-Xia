@@ -67,16 +67,8 @@ async def prompt_wes_com(text : str):   # use my own LLM AI
     model = genai.GenerativeModel('gemma-4-31b-it')
     print("使用 model gemma4")
     response = model.generate_content(text)
-    visible = []
-    for part in response.candidates[0].content.parts:
-        # thought part 會標 thought=True,過濾掉
-        if getattr(part, "thought", False):
-            continue
-        if getattr(part, "text", None):
-            visible.append(part.text)
-
-    return "".join(visible)
-
+    visible_text = "".join([part.text for part in response.candidates[0].content.parts if not part.thought])
+    return visible_text
 
 def prompt_wes_com_main(text):
     import asyncio
