@@ -36,7 +36,7 @@ class Silence(discord.ext.commands.Cog):
         if (msg):
             if (ctx.channel.id not in chat_dict):
                 chat_dict[ctx.channel.id] = Chat(ctx.channel.id)
-            await ctx.respond("請等我想一下 ... ")
+            await ctx.respond(f"{ctx.author.mention} 請等我想一下 `{msg}` 的回答。")
             chatgpt_result = await chat_dict[ctx.channel.id].Talk(ctx.author.name,msg)
             if chatgpt_result:
                 if len(chatgpt_result) < 2000:
@@ -75,19 +75,18 @@ class Silence(discord.ext.commands.Cog):
 
     @slash_command(name="history",description="Show the conversation history I remember in this channel")
     async def history(self,ctx : discord.ApplicationContext):
-        if (ctx.channel.id in chat_dict):
-            history = chat_dict[ctx.channel.id].memory
-            if history:
-                output = "Here is the conversation history I remember in this channel:\n\n"
-                for i in range(len(history)):
-                    output += f"{history[i]}\n"
-                if len(output) < 2000:
-                    await ctx.respond(output)
-                else:
-                    for i in range(len(output)//2000+1):
-                        await ctx.respond(output[2000*i :2000*(i+1)])
+        if (ctx.channel.id not in chat_dict):
+            chat_dict[ctx.channel.id] = Chat(ctx.channel.id)
+        history = chat_dict[ctx.channel.id].memory
+        if history:
+            output = "Here is the conversation history I remember in this channel:\n\n"
+            for i in range(len(history)):
+                output += f"{history[i]}\n"
+            if len(output) < 2000:
+                await ctx.respond(output)
             else:
-                await ctx.respond("I don't remember any conversation in this channel.")
+                for i in range(len(output)//2000+1):
+                    await ctx.respond(output[2000*i :2000*(i+1)])
         else:
             await ctx.respond("I don't remember any conversation in this channel.")
 

@@ -71,9 +71,20 @@ async def prompt_wes_com(text : str):   # use my own LLM AI
     print(raw_text)
     # 使用正則表達式移除 <think> 到 </think> 之間的所有內容
     # re.DOTALL 確保正則表達式可以跨越多行進行匹配
-    cleaned_text = "\n".join([line for line in raw_text.splitlines() if not line.strip().startswith("*")])
-    # 去除頭尾可能殘留的空白與換行符號
-    return cleaned_text.strip()
+    cleaned_text = ""
+    split_text = raw_text.splitlines()[1:]
+    clean_text_start_from = -1 # 用於標記從哪一行開始是清理後的文本
+    for lines_num in range(len(split_text)):
+        line = split_text[lines_num]
+        if clean_text_start_from == -1 and (not line.startswith("    ")):
+            clean_text_start_from = lines_num
+        elif line.startswith("    ") and clean_text_start_from != -1:
+            clean_text_start_from = -1
+            cleaned_text = ""
+        if clean_text_start_from != -1:
+            cleaned_text += line + "\n"
+
+    return cleaned_text
 
 def prompt_wes_com_main(text):
     import asyncio
