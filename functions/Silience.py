@@ -33,7 +33,7 @@ class Silence(discord.ext.commands.Cog):
 
 
     @slash_command(name="talk",description="If no message is provided, enable reply to all messages.")
-    async def talk(self,ctx : discord.ApplicationContext, msg:Option(str, "message",required=False,default=None)):
+    async def talk(self,ctx : discord.ApplicationContext, msg: Option(str, "message",required=False,default=None)):
         if (msg):
             if (ctx.channel.id not in chat_dict):
                 chat_dict[ctx.channel.id] = Chat(ctx.channel.id)

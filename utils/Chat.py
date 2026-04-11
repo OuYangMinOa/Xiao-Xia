@@ -47,15 +47,17 @@ class Chat:
         MemoryParaGraph= '\n'.join(self.memory)
 
         if (len(self.memory)!=0):
-            word = (f"{XioaXiaContent}\n"
+            word = (
                     f"{MemoryParaGraph}"
                     f"\n{name}:{message}\n"
-                    f"{XioaXiaName}:")
+                    )
         else:
-            word = (f"{XioaXiaContent}"
+            word = (
                     f"\n{name}:{message}\n"
-                    f"{XioaXiaName}:")
-        return  word
+                    )
+        return  [{"role": "system", "content": XioaXiaContent},
+                {"role": "user", "content":word}
+            ]
 
     def RandomPickFromData(self):
         """Pick a random text from the file.
