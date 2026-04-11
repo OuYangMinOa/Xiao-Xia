@@ -72,7 +72,7 @@ async def prompt_wes_com(text : str):   # use my own LLM AI
     print(raw_text)
     # 使用正則表達式移除 <think> 到 </think> 之間的所有內容
     # re.DOTALL 確保正則表達式可以跨越多行進行匹配
-    cleaned_text = "".join([line for line in raw_text.splitlines() if not line.strip().startswith("*")])
+    cleaned_text = "\n".join([line for line in raw_text.splitlines() if not line.strip().startswith("*")])
     # 去除頭尾可能殘留的空白與換行符號
     return cleaned_text.strip()
 
