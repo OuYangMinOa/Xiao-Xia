@@ -81,8 +81,6 @@ class Chat:
                 msg = "\n".join(msg.split(split_msg)[0:2]).strip()
             if (split_msg2 in msg):
                 msg = "\n".join(msg.split(split_msg2)[0:2]).strip()
-
-
             msg =  msg.strip()
         return msg
 
@@ -98,8 +96,7 @@ class Chat:
         """
         ThisPrompt = self.BuildPrompt(name,message)
         result =  await prompt_wes_com(ThisPrompt)
-
-        result = self.ClearMessage(result,name)
+        # result = self.ClearMessage(result,name)
         if (not result):
             logger.info("[*] Cause to prompt failed, using random way to reply user.")
             result = self.RandomPickFromData()
@@ -117,4 +114,4 @@ class Chat:
         with open(self.DataName,'w',encoding='utf-8') as f:
             pass
         self.memory    = deque(maxlen=MASSAGE_MEMORY_SIZE)
-        self.LoadMessage()
+        self.LoadMessage()  
