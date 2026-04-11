@@ -1,5 +1,5 @@
 # on raspi
-from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger,HOST,PORT
+from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger,HOST,PORT, XioaXiaContent
 import socket
 from aiohttp import ClientSession
 import google.generativeai as genai
@@ -64,13 +64,15 @@ async def prompt_wes_com(text : str):   # use my own LLM AI
 
     # 2. 初始化 Gemma 4 31B 模型
     # 注意：模型名稱為 'models/gemma-4-31b-it'
-    model = genai.GenerativeModel('gemma-4-31b-it')
+    model = genai.GenerativeModel('gemma-4-31b-it', system_instruction=XioaXiaContent)
     print("使用 model gemma4")
-    response = model.generate_content(text)
+    print(text)
+    response = model.generate_content(contents=text)
     raw_text = response.text
+    print(raw_text)
     # 使用正則表達式移除 <think> 到 </think> 之間的所有內容
     # re.DOTALL 確保正則表達式可以跨越多行進行匹配
-    cleaned_text = re.sub(r'<think>.*?</think>', '', raw_text, flags=re.DOTALL)
+    cleaned_text = "".join([line for line in raw_text.splitlines() if not line.strip().startswith("*")])
     # 去除頭尾可能殘留的空白與換行符號
     return cleaned_text.strip()
 

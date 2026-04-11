@@ -44,20 +44,11 @@ class Chat:
         Returns:
             str: The text prompt to LLM
         """
-        MemoryParaGraph= '\n'.join(self.memory)
-
-        if (len(self.memory)!=0):
-            word = (
-                    f"{MemoryParaGraph}"
-                    f"\n{name}:{message}\n"
-                    )
-        else:
-            word = (
-                    f"\n{name}:{message}\n"
-                    )
-        return  [{"role": "system", "content": XioaXiaContent},
-                {"role": "user", "content":word}
-            ]
+        output = []
+        for i in range(len(self.memory)):
+            output.append({"role":"user","parts":f"{self.memory[i]}"})
+        output.append({"role":"user","parts":f"{name}: {message}"})
+        return output
 
     def RandomPickFromData(self):
         """Pick a random text from the file.
@@ -114,10 +105,11 @@ class Chat:
             result = self.RandomPickFromData()
         
         addtxt( self.DataName,f"{name}:"+message.strip())
-        addtxt( self.DataName,"歐陽小俠:"+result.strip())
-        self.memory.append(f"{name}:"+message.strip())
-        self.memory.append("歐陽小俠:"+result.strip())
-        
+        addtxt( self.DataName,f"{XioaXiaName}:"+result.strip())
+        self.memory.append(f"{name}:{message.strip()}")
+        # self.name_mem.append(name)
+        self.memory.append(f"{XioaXiaName}:{result.strip()}")
+        # self.name_mem.append(XioaXiaName)        
         return result
     
 

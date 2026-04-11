@@ -31,7 +31,6 @@ class Silence(discord.ext.commands.Cog):
         # except Exception as e:
         #     logger.error(e)
 
-
     @slash_command(name="talk",description="If no message is provided, enable reply to all messages.")
     async def talk(self,ctx : discord.ApplicationContext, msg: Option(str, "message",required=False,default=None)):
         if (msg):
