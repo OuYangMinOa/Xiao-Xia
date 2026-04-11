@@ -18,7 +18,6 @@ class admin(discord.ext.commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
     # reboot the discord bot
     @slash_command(name="reboot",description="重新啟動")
     async def reboot(self, ctx: discord.ApplicationContext, password: Option(str, "password", required = True)):
