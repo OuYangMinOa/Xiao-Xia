@@ -29,6 +29,7 @@ async def _fetch_html(url: str) -> str:
         await page.goto(url, wait_until="networkidle", timeout=60000)
         await page.wait_for_selector("main", timeout=15000)
         content = await page.content()
+        await page.screenshot(path="debug.png", full_page=True)
         await context.close()
         await browser.close()
         return content
