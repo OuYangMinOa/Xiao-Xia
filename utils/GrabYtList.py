@@ -7,8 +7,6 @@ import time
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import requests
-from requests_html import AsyncHTMLSession
-
 
 from pytube import YouTube, Playlist
 from pip._vendor import requests

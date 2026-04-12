@@ -3,9 +3,19 @@ from discord.ext      import commands
 from utils.file_os import *
 import discord
 
-from requests_html import AsyncHTMLSession
-import requests
+from lxml import html as lxml_html
+from playwright.async_api import async_playwright
 from utils.info import logger
+
+
+async def _fetch_html(url: str) -> str:
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        page = await browser.new_page()
+        await page.goto(url, wait_until="networkidle")
+        content = await page.content()
+        await browser.close()
+        return content
 
 class Weather(discord.ext.commands.Cog):
     def __init__(self, bot):
@@ -17,15 +27,12 @@ class Weather(discord.ext.commands.Cog):
         await ctx.respond(f"/weather_day - {ctx.author.mention}")
         try:
             url = "https://www.cwa.gov.tw/V8/C/W/index.html"
-            session = AsyncHTMLSession()
-            r = await session.get(url)
             image_links = "https://www.cwa.gov.tw/Data/fcst_img/cloud_weather.png"
-            
-            print("arendering ...")
-            await r.html.arender()
-            print("arender success")
 
-            text = r.html.xpath("/html/body/div[3]/main/div/div[1]/div/div/div[1]/div")[0].text
+            page_text = await _fetch_html(url)
+            tree = lxml_html.fromstring(page_text)
+
+            text = tree.xpath("/html/body/div[3]/main/div/div[1]/div/div/div[1]/div")[0].text_content()
             ####################  handle text ####################
             text = "\n".join(text.split("\n")[1:])
             text = "# "+ text
@@ -33,21 +40,21 @@ class Weather(discord.ext.commands.Cog):
             for num,each_ch_num in enumerate(ch_num):
                 if (each_ch_num in text):
                     text = text.replace(each_ch_num+'、',f"## {each_ch_num}\n - ")
-            
+
             await ctx.send(text)
-            
+
             await ctx.send(image_links)
             #################### warning message #################
 
             next_text = "\n# :warning:  天氣特報  :warning: \n"
             url = "https://www.cwa.gov.tw/V8/C/"
-            r = await session.get(url)
-
-            await r.html.arender()
-            for each_link in r.html.xpath("/html/body/header/div[2]/div/div/div[1]/div/div/ol")[0].links:
-                next_text = next_text + f" * https://www.cwa.gov.tw{each_link}\n"
+            page_text2 = await _fetch_html(url)
+            tree2 = lxml_html.fromstring(page_text2)
+            ol_nodes = tree2.xpath("/html/body/header/div[2]/div/div/div[1]/div/div/ol")
+            if ol_nodes:
+                for a in ol_nodes[0].xpath('.//a[@href]'):
+                    next_text = next_text + f" * https://www.cwa.gov.tw{a.get('href')}\n"
             next_text = next_text + "\n資料來源:中央氣象局"
-            await session.close()
             await ctx.send(next_text)
         except Exception as e:
             logger.error(e)
@@ -61,13 +68,10 @@ class Weather(discord.ext.commands.Cog):
 
         try:
             url = "https://www.cwa.gov.tw/V8/C/W/index.html"
-            session = AsyncHTMLSession()
-            r = await  session.get(url)
+            page_text = await _fetch_html(url)
+            tree = lxml_html.fromstring(page_text)
 
-            await r.html.arender()
-
-            text = r.html.xpath("/html/body/div[3]/main/div/div[1]/div/div/div[2]")[0].text
-            await session.close()
+            text = tree.xpath("/html/body/div[3]/main/div/div[1]/div/div/div[2]")[0].text_content()
             text = "\n".join(text.split("\n")[1:])
             text = "# "+ text
             text = text + "\n資料來源:中央氣象局"
@@ -160,46 +164,40 @@ class MyWeatherSelection:
 
     async def grabWeatherPositionInformation(self,url):
         try:
-            session = AsyncHTMLSession()
-            r = await  session.get(url)
-            await r.html.arender() 
-            
-            await self.ctx.send("# " + r.html.xpath("/html/body/div[2]/main/div/div[1]/div[1]/div/h2")[0].text)
-            await self.ctx.send("* " + r.html.xpath("/html/body/div[2]/main/div/div[2]/a")[0].text)
+            page_text = await _fetch_html(url)
+            tree = lxml_html.fromstring(page_text)
 
-            filename, filepath1 = SvgToPng(f"https://www.cwa.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/img')[0].attrs['src']}")
+            await self.ctx.send("# " + tree.xpath("/html/body/div[2]/main/div/div[1]/div[1]/div/h2")[0].text_content())
+            await self.ctx.send("* " + tree.xpath("/html/body/div[2]/main/div/div[2]/a")[0].text_content())
+
+            filename, filepath1 = SvgToPng(f"https://www.cwa.gov.tw{tree.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/img')[0].get('src')}")
             file1 = discord.File(filepath1,filename="output1.png")
             embed1=discord.Embed(title="今晚明晨")
             embed1.set_thumbnail(url = f"attachment://output1.png")
-            embed1.add_field(name="溫度",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[2]/span[1]")[0].text,inline=False)
-            embed1.add_field(name=":umbrella: 降雨機率",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[3]")[0].text.replace("降雨機率",'\t'),inline=False)
-            embed1.add_field(value="\u200B",name=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[4]")[0].text,inline=False)
+            embed1.add_field(name="溫度",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[2]/span[1]")[0].text_content(),inline=False)
+            embed1.add_field(name=":umbrella: 降雨機率",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[3]")[0].text_content().replace("降雨機率",'\t'),inline=False)
+            embed1.add_field(value="\u200B",name=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[4]")[0].text_content(),inline=False)
             await self.ctx.send(file=file1,embed=embed1)
 
-
-
-            filename,filepath2 = SvgToPng(f"https://www.cwa.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/img')[0].attrs['src']}")
+            filename,filepath2 = SvgToPng(f"https://www.cwa.gov.tw{tree.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/img')[0].get('src')}")
             file2 = discord.File(filepath2,filename="output2.png")
             embed2=discord.Embed(title="明日白天")
             embed2.set_thumbnail(url = f"attachment://output2.png")
-            embed2.add_field(name="溫度",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[2]/span[1]")[0].text,inline=False)
-            embed2.add_field(name=":umbrella: 降雨機率",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[3]")[0].text.replace("降雨機率",'\t'),inline=False)
-            embed2.add_field(value="\u200B",name=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[4]")[0].text,inline=False)
+            embed2.add_field(name="溫度",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[2]/span[1]")[0].text_content(),inline=False)
+            embed2.add_field(name=":umbrella: 降雨機率",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[3]")[0].text_content().replace("降雨機率",'\t'),inline=False)
+            embed2.add_field(value="\u200B",name=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[4]")[0].text_content(),inline=False)
             await self.ctx.send(file=file2,embed=embed2)
 
-
-            filename,filepath3 = SvgToPng(f"https://www.cwa.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/img')[0].attrs['src']}")
+            filename,filepath3 = SvgToPng(f"https://www.cwa.gov.tw{tree.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/img')[0].get('src')}")
             file3 = discord.File(filepath3,filename="output3.png")
             embed3=discord.Embed(title="明日晚上")
             embed3.set_thumbnail(url = f"attachment://output3.png")
-            embed3.add_field(name="溫度",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[2]/span[1]")[0].text,inline=False)
-            embed3.add_field(name=":umbrella: 降雨機率",value=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[3]")[0].text.replace("降雨機率",'\t'),inline=False)
-            embed3.add_field(name=r.html.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[4]")[0].text,value="\u200B",inline=False)
+            embed3.add_field(name="溫度",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[2]/span[1]")[0].text_content(),inline=False)
+            embed3.add_field(name=":umbrella: 降雨機率",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[3]")[0].text_content().replace("降雨機率",'\t'),inline=False)
+            embed3.add_field(name=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[4]")[0].text_content(),value="\u200B",inline=False)
             await self.ctx.send(file=file3,embed=embed3)
 
-            await session.close()
-
-            await self.ctx.send(f"https://www.cwa.gov.tw{r.html.xpath('/html/body/div[2]/main/div/div[5]/div[1]/div/img')[0].attrs['src']}")
+            await self.ctx.send(f"https://www.cwa.gov.tw{tree.xpath('/html/body/div[2]/main/div/div[5]/div[1]/div/img')[0].get('src')}")
         except Exception as e:
             logger.error(e)
         
