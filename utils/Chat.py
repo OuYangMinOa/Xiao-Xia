@@ -46,8 +46,8 @@ class Chat:
         """
         output = []
         for i in range(len(self.memory)):
-            output.append({"role":"user","parts":f"{self.memory[i]}"})
-        output.append({"role":"user","parts":f"{name}: {message}"})
+            output.append({"role":"user","parts":[{"text": f"{self.memory[i]}"}]})
+        output.append({"role":"user","parts":[{"text": f"{name}: {message}"}]})
         return output
 
     def RandomPickFromData(self):

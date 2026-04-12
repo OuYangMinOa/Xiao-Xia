@@ -2,7 +2,8 @@
 from utils.info    import MASSAGE_DATA, PASS_MSG, silinece_channel, logger,HOST,PORT, XioaXiaContent
 import socket
 from aiohttp import ClientSession
-import google.generativeai as genai
+import google.genai as genai
+from google.genai import types
 from dotenv import load_dotenv
 import os
 import re
@@ -18,7 +19,6 @@ def is_port_in_use(port: int) -> bool:
         return s.connect_ex(('localhost', port)) == 0
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API"))
 
 async def prompt_wes_com(text : str):   # use my own LLM AI
     """_summary_
@@ -63,28 +63,25 @@ async def prompt_wes_com(text : str):   # use my own LLM AI
 
     # 2. 初始化 Gemma 4 31B 模型
     # 注意：模型名稱為 'models/gemma-4-31b-it'
-    model = genai.GenerativeModel('gemma-4-31b-it', system_instruction=XioaXiaContent)
+    # 定義 Google Search 工具
+    grounding_tool = types.Tool(
+        google_search=types.GoogleSearch()
+    )
+
+    config = types.GenerateContentConfig(
+        system_instruction=XioaXiaContent,
+        tools=[grounding_tool]
+    )
+    client = genai.Client(api_key = os.getenv("GEMINI_API"))
     print("使用 model gemma4")
     print(text)
-    response = model.generate_content(contents=text)
+    response = client.models.generate_content(
+        model='gemma-4-31b-it',  
+        contents=text,
+        config=config,
+    )
     raw_text = response.text
-    print(raw_text)
-    # 使用正則表達式移除 <think> 到 </think> 之間的所有內容
-    # re.DOTALL 確保正則表達式可以跨越多行進行匹配
-    cleaned_text = ""
-    split_text = raw_text.splitlines()[1:]
-    clean_text_start_from = -1 # 用於標記從哪一行開始是清理後的文本
-    for lines_num in range(len(split_text)):
-        line = split_text[lines_num]
-        if clean_text_start_from == -1 and (not line.startswith("    ")):
-            clean_text_start_from = lines_num
-        elif line.startswith("    ") and clean_text_start_from != -1:
-            clean_text_start_from = -1
-            cleaned_text = ""
-        if clean_text_start_from != -1:
-            cleaned_text += line + "\n"
-
-    return cleaned_text
+    return raw_text
 
 def prompt_wes_com_main(text):
     import asyncio

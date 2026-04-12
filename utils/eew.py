@@ -1,6 +1,6 @@
 from dataclasses   import dataclass
-from requests_html import AsyncHTMLSession
 from datetime      import datetime
+import aiohttp
 from .proxies      import Proxies
 from typing        import AsyncIterator
 
@@ -28,9 +28,6 @@ class EEW_data:
     def fake_data(cls):
         return EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日 %H:%M:%S"),"test",23.92,121.59,5.6,40,"5弱")
 
-
-
-
 class EEW:
     WHITE_CIRCLE  = "`⚪`"
     GREEN_CIRCLE  = "`🟢`"
@@ -41,7 +38,7 @@ class EEW:
     URL = "https://api.wolfx.jp/cwa_eew.json"  ## The taiwan earthquake url endpoint.
     URL_SSW = "wss://ws-api.wolfx.jp/cwa_eew"
     def __init__(self) -> None:
-        self.session   = AsyncHTMLSession()
+        self.session   = None
         self.state     = True
         self.last_eew  = None
         self.use_proxy = True
@@ -160,7 +157,7 @@ class EEW:
     async def wss_grab_result(self,pos="tw")-> AsyncIterator[EEW_data]:
         while True:
             try:
-                async with websockets.connect(self._get_url_by_pos(pos),timeout=600) as websocket:
+                async with websockets.connect(self._get_url_by_pos(pos),open_timeout=600) as websocket:
                     print("Connected !")
                     while True:
                         recv = await websocket.recv() 
@@ -179,18 +176,22 @@ class EEW:
             yield each
 
     async def grab_result(self) -> EEW_data:
+        if self.session is None:
+            self.session = aiohttp.ClientSession()
         try:
-            r = await self.session.get(self.URL)
-            await r.html.arender()
+            async with self.session.get(self.URL) as r:
+                alert_json = await r.json(content_type=None)
+            return self.json_to_eewdata(alert_json)
         except Exception as e:
             print(e)
             print("[*] use proxy")
             proxy_status = False
             for this_proxy in self.proxies:
                 try:
-                    r = await self.session.get(self.URL,proxies={'http':this_proxy,'https':this_proxy})
-                    await r.html.arender()
+                    async with self.session.get(self.URL, proxy=this_proxy) as r:
+                        alert_json = await r.json(content_type=None)
                     proxy_status = True
+                    return self.json_to_eewdata(alert_json)
                 except Exception as e:
                     print(e)
                     print(f"{this_proxy} proxy error")
@@ -202,10 +203,6 @@ class EEW:
                 print(f"[*] New proxies num : {len(self.proxies)}")
                 time.sleep(10)
                 return self.last_eew
-
-        r.json()
-        alert_json = r.json()
-        return self.json_to_eewdata(alert_json)
     
 
     async def alert(self):

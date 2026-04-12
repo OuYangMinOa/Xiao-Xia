@@ -71,6 +71,9 @@ class Silence(discord.ext.commands.Cog):
     async def clear_talk(self,ctx : discord.ApplicationContext):
         if (ctx.channel.id in chat_dict):
             chat_dict[ctx.channel.id].clear_message()
+        else:
+            chat_dict[ctx.channel.id] = Chat(ctx.channel.id)
+            chat_dict[ctx.channel.id].clear_message()
         await ctx.respond("Past chat history has been cleared")
 
     @slash_command(name="history",description="Show the conversation history I remember in this channel")
