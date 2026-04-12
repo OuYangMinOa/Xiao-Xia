@@ -1,223 +1,231 @@
-from discord.commands import slash_command
-from discord.ext      import commands
-from utils.file_os import *
+"""
+Weather cog — 使用中央氣象署開放資料 API (CWA Open Data)
+需要在環境變數 CWA_API_KEY 放入你註冊的授權碼
+註冊網址: https://opendata.cwa.gov.tw/
+"""
+import os
+import aiohttp
 import discord
-
-from lxml import html as lxml_html
-from playwright.async_api import async_playwright
+from datetime import datetime
+from discord.commands import slash_command
+from discord.ext import commands
 from utils.info import logger
 
+CWA_API_KEY = os.getenv("CWA_API_KEY", "")
+BASE = "https://opendata.cwa.gov.tw/api/v1/rest/datastore"
 
-async def _fetch_html(url: str) -> str:
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(
-            headless=True,
-            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"],
-        )
-        context = await browser.new_context(
-            user_agent=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
-            ),
-            locale="zh-TW",
-            timezone_id="Asia/Taipei",
-            viewport={"width": 1920, "height": 1080},
-            extra_http_headers={"Accept-Language": "zh-TW,zh;q=0.9"},
-        )
-        page = await context.new_page()
-        await page.goto(url, wait_until="networkidle", timeout=60000)
-        await page.wait_for_selector("main", timeout=15000)
-        content = await page.content()
-        await page.screenshot(path="debug.png", full_page=True)
-        await context.close()
-        await browser.close()
-        return content
+# 縣市對照
+CITIES = [
+    "基隆市", "臺北市", "新北市", "桃園市", "新竹市", "新竹縣", "苗栗縣",
+    "臺中市", "彰化縣", "南投縣", "雲林縣", "嘉義市", "嘉義縣", "臺南市",
+    "高雄市", "屏東縣", "宜蘭縣", "花蓮縣", "臺東縣", "澎湖縣", "金門縣", "連江縣",
+]
 
-class Weather(discord.ext.commands.Cog):
+# 依天氣現象挑 emoji
+def weather_emoji(desc: str) -> str:
+    d = desc or ""
+    if "雷" in d:           return "⛈️"
+    if "雨" in d:           return "🌧️"
+    if "雪" in d:           return "❄️"
+    if "霧" in d:           return "🌫️"
+    if "陰" in d:           return "☁️"
+    if "多雲" in d:         return "⛅"
+    if "晴" in d:           return "☀️"
+    return "🌡️"
+
+# 依溫度決定 embed 顏色
+def temp_color(t: int) -> discord.Color:
+    if t >= 32: return discord.Color.from_rgb(231, 76, 60)
+    if t >= 26: return discord.Color.from_rgb(241, 153, 60)
+    if t >= 20: return discord.Color.from_rgb(241, 196, 15)
+    if t >= 14: return discord.Color.from_rgb(46, 204, 113)
+    if t >= 8:  return discord.Color.from_rgb(52, 152, 219)
+    return discord.Color.from_rgb(155, 89, 182)
+
+
+async def cwa_get(session: aiohttp.ClientSession, dataset: str, **params) -> dict:
+    params["Authorization"] = CWA_API_KEY
+    params.setdefault("format", "JSON")
+    async with session.get(f"{BASE}/{dataset}", params=params, timeout=20) as r:
+        r.raise_for_status()
+        return await r.json()
+
+
+def parse_36h(record: dict) -> dict:
+    """把 F-C0032-001 一個 location 解析成 dict"""
+    out = {}
+    for el in record["weatherElement"]:
+        out[el["elementName"]] = el["time"]
+    return out
+
+
+class Weather(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
-    @slash_command(name="weather_day",description="Today's Weather Overview")
-    async def weather_day(self,ctx : discord.ApplicationContext):
-        await ctx.respond(f"/weather_day - {ctx.author.mention}")
+    # ---------- 今日 ----------
+    @slash_command(name="weather_day", description="今日天氣概況（全台）")
+    async def weather_day(self, ctx: discord.ApplicationContext):
+        # 注意: bot.before_invoke 已經 defer 過，這裡直接用 followup
         try:
-            url = "https://www.cwa.gov.tw/V8/C/W/index.html"
-            image_links = "https://www.cwa.gov.tw/Data/fcst_img/cloud_weather.png"
+            async with aiohttp.ClientSession() as s:
+                data = await cwa_get(s, "F-C0032-001")
+                warn = await cwa_get(s, "W-C0033-001")
 
-            page_text = await _fetch_html(url)
-            tree = lxml_html.fromstring(page_text)
-
-            text = tree.xpath("/html/body/div[3]/main/div/div[1]/div/div/div[1]/div")[0].text_content()
-            ####################  handle text ####################
-            text = "\n".join(text.split("\n")[1:])
-            text = "# "+ text
-            ch_num = ['一','二','三','四','五','六','七','八','九']
-            for num,each_ch_num in enumerate(ch_num):
-                if (each_ch_num in text):
-                    text = text.replace(each_ch_num+'、',f"## {each_ch_num}\n - ")
-
-            await ctx.send(text)
-
-            await ctx.send(image_links)
-            #################### warning message #################
-
-            next_text = "\n# :warning:  天氣特報  :warning: \n"
-            url = "https://www.cwa.gov.tw/V8/C/"
-            page_text2 = await _fetch_html(url)
-            tree2 = lxml_html.fromstring(page_text2)
-            ol_nodes = tree2.xpath("/html/body/header/div[2]/div/div/div[1]/div/div/ol")
-            if ol_nodes:
-                for a in ol_nodes[0].xpath('.//a[@href]'):
-                    next_text = next_text + f" * https://www.cwa.gov.tw{a.get('href')}\n"
-            next_text = next_text + "\n資料來源:中央氣象局"
-            await ctx.send(next_text)
-        except Exception as e:
-            logger.error(e)
-    
-    
-
-        
-    @slash_command(name="weather_week",description="Weather overview for the week ahead")
-    async def weather_week(self,ctx : discord.ApplicationContext):
-        await ctx.respond(f"/weather_week - {ctx.author.mention}")
-
-        try:
-            url = "https://www.cwa.gov.tw/V8/C/W/index.html"
-            page_text = await _fetch_html(url)
-            tree = lxml_html.fromstring(page_text)
-
-            text = tree.xpath("/html/body/div[3]/main/div/div[1]/div/div/div[2]")[0].text_content()
-            text = "\n".join(text.split("\n")[1:])
-            text = "# "+ text
-            text = text + "\n資料來源:中央氣象局"
-            await ctx.send(text)
-        except Exception as e:
-            logger.error(e)
-
-    @slash_command(name="weather_pos",description="Weather overview for the certain position.")
-    async def weather_pos(self,ctx : discord.ApplicationContext):
-        towns = ["基隆市",
-                "臺北市",
-                "新北市",
-                "桃園市",
-                "新竹市",
-                "新竹縣",
-                "苗栗縣",
-                "臺中市",
-                "彰化縣",
-                "南投縣",
-                "雲林縣",
-                "嘉義市",
-                "嘉義縣",
-                "臺南市",
-                "高雄市",
-                "屏東縣",
-                "宜蘭縣",
-                "花蓮縣",
-                "臺東縣",
-                "澎湖縣",
-                "金門縣",
-                "連江縣"]
-        values = ["10017",
-                "63",
-                "65",
-                "68",
-                "10018",
-                "10004",
-                "10005",
-                "66",
-                "10007",
-                "10008",
-                "10009",
-                "10020",
-                "10010",
-                "67",
-                "64",
-                "10013",
-                "10002",
-                "10015",
-                "10014",
-                "10016",
-                "09020",
-                "09007",]
-        MWS = MyWeatherSelection(ctx,towns,values)
-        await ctx.respond(f"weather_pos {ctx.author.mention}", view=MWS.view, ephemeral=True)
-
-def SvgToPng(url):
-    # print(url)
-    numbers = url.split("/")[-1][0:2]
-    ouput_filename = f"data/cwbgov_pic/cwbgov{numbers}.png"
-    return "cwbgov{numbers}.png", ouput_filename
-    # https://www.cwb.gov.tw/V8/assets/img/weather_icons/weathers/svg_icon/night/.svg
-
-
-class MyWeatherSelection:
-    def __init__(self,ctx, towns,values):
-        self.ctx, self.towns, self.values,  = ctx,towns,values
-        options = [ discord.SelectOption(label=towns[i])for i in range(len(towns))]
-
-        self.select = discord.ui.Select(
-                placeholder = "選擇縣市",
-                min_values  = 1, 
-                max_values  = 1,
-                options = options
+            embed = discord.Embed(
+                title="🌏 今日全台天氣概況",
+                color=discord.Color.blurple(),
+                timestamp=datetime.now(),
             )
-        self.view = discord.ui.View(timeout=24*60*60*7)
-        self.view.add_item(self.select)
-        self.select.callback = self.callback
-    async def callback(self, interaction):
-        which_chosen = self.towns.index(self.select.values[0])
-        if (which_chosen==0):
-            url = "https://www.cwa.gov.tw/V8/C/W/County/index.html"
-        else:
-            url = f"https://www.cwa.gov.tw/V8/C/W/County/County.html?CID={self.values[which_chosen]}"
+            embed.set_footer(text="資料來源：中央氣象署 CWA Open Data")
 
-        await interaction.response.send_message(self.select.values[0])
+            for loc in data["records"]["location"]:
+                name = loc["locationName"]
+                el = parse_36h(loc)
+                wx = el["Wx"][0]["parameter"]["parameterName"]
+                mint = el["MinT"][0]["parameter"]["parameterName"]
+                maxt = el["MaxT"][0]["parameter"]["parameterName"]
+                pop = el["PoP"][0]["parameter"]["parameterName"]
+                emoji = weather_emoji(wx)
+                embed.add_field(
+                    name=f"{emoji} {name}",
+                    value=f"{wx}\n🌡️ {mint}–{maxt}°C  ☔ {pop}%",
+                    inline=True,
+                )
+            await ctx.followup.send(embed=embed)
 
+            # 天氣特報
+            warn_embed = discord.Embed(
+                title="⚠️ 天氣特報",
+                color=discord.Color.orange(),
+            )
+            records = warn["records"]["location"]
+            active = [r for r in records if r.get("hazardConditions", {}).get("hazards")]
+            if not active:
+                warn_embed.description = "✅ 目前無天氣特報"
+            else:
+                for r in active[:25]:
+                    hazards = r["hazardConditions"]["hazards"]
+                    txt = "\n".join(
+                        f"• {h['info']['phenomena']}{h['info'].get('significance','')}"
+                        for h in hazards
+                    )
+                    warn_embed.add_field(name=r["locationName"], value=txt, inline=True)
+            await ctx.followup.send(embed=warn_embed)
 
-        await self.grabWeatherPositionInformation(url)
-
-    async def grabWeatherPositionInformation(self,url):
-        try:
-            page_text = await _fetch_html(url)
-            tree = lxml_html.fromstring(page_text)
-
-            await self.ctx.send("# " + tree.xpath("/html/body/div[2]/main/div/div[1]/div[1]/div/h2")[0].text_content())
-            await self.ctx.send("* " + tree.xpath("/html/body/div[2]/main/div/div[2]/a")[0].text_content())
-
-            filename, filepath1 = SvgToPng(f"https://www.cwa.gov.tw{tree.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/img')[0].get('src')}")
-            file1 = discord.File(filepath1,filename="output1.png")
-            embed1=discord.Embed(title="今晚明晨")
-            embed1.set_thumbnail(url = f"attachment://output1.png")
-            embed1.add_field(name="溫度",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[2]/span[1]")[0].text_content(),inline=False)
-            embed1.add_field(name=":umbrella: 降雨機率",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[3]")[0].text_content().replace("降雨機率",'\t'),inline=False)
-            embed1.add_field(value="\u200B",name=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[1]/span[4]")[0].text_content(),inline=False)
-            await self.ctx.send(file=file1,embed=embed1)
-
-            filename,filepath2 = SvgToPng(f"https://www.cwa.gov.tw{tree.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/img')[0].get('src')}")
-            file2 = discord.File(filepath2,filename="output2.png")
-            embed2=discord.Embed(title="明日白天")
-            embed2.set_thumbnail(url = f"attachment://output2.png")
-            embed2.add_field(name="溫度",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[2]/span[1]")[0].text_content(),inline=False)
-            embed2.add_field(name=":umbrella: 降雨機率",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[3]")[0].text_content().replace("降雨機率",'\t'),inline=False)
-            embed2.add_field(value="\u200B",name=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[2]/span[4]")[0].text_content(),inline=False)
-            await self.ctx.send(file=file2,embed=embed2)
-
-            filename,filepath3 = SvgToPng(f"https://www.cwa.gov.tw{tree.xpath('/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/img')[0].get('src')}")
-            file3 = discord.File(filepath3,filename="output3.png")
-            embed3=discord.Embed(title="明日晚上")
-            embed3.set_thumbnail(url = f"attachment://output3.png")
-            embed3.add_field(name="溫度",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[2]/span[1]")[0].text_content(),inline=False)
-            embed3.add_field(name=":umbrella: 降雨機率",value=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[3]")[0].text_content().replace("降雨機率",'\t'),inline=False)
-            embed3.add_field(name=tree.xpath("/html/body/div[2]/main/div/div[1]/div[3]/div[2]/ul/li[3]/span[4]")[0].text_content(),value="\u200B",inline=False)
-            await self.ctx.send(file=file3,embed=embed3)
-
-            await self.ctx.send(f"https://www.cwa.gov.tw{tree.xpath('/html/body/div[2]/main/div/div[5]/div[1]/div/img')[0].get('src')}")
         except Exception as e:
             logger.error(e)
-        
+            await ctx.followup.send(f"❌ 取得天氣資料失敗：{e}")
 
-def setup(bot : discord.Bot):
+    # ---------- 一週 ----------
+    @slash_command(name="weather_week", description="未來一週天氣預報（縣市選擇）")
+    async def weather_week(self, ctx: discord.ApplicationContext):
+        await ctx.followup.send("請選擇縣市：", view=WeekView())
+
+    # ---------- 指定縣市 ----------
+    @slash_command(name="weather_pos", description="指定縣市的天氣概況")
+    async def weather_pos(self, ctx: discord.ApplicationContext):
+        await ctx.followup.send("請選擇縣市：", view=PosView())
+
+
+# ============ Views ============
+
+class CitySelect(discord.ui.Select):
+    def __init__(self, placeholder="選擇縣市"):
+        opts = [discord.SelectOption(label=c) for c in CITIES]
+        super().__init__(placeholder=placeholder, min_values=1, max_values=1, options=opts)
+
+
+class PosView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=600)
+        self.select = CitySelect()
+        self.select.callback = self.on_select
+        self.add_item(self.select)
+
+    async def on_select(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=False, invisible=False)
+        city = self.select.values[0]
+        try:
+            async with aiohttp.ClientSession() as s:
+                data = await cwa_get(s, "F-C0032-001", locationName=city)
+            loc = data["records"]["location"][0]
+            el = parse_36h(loc)
+
+            wx_now = el["Wx"][0]["parameter"]["parameterName"]
+            mint = int(el["MinT"][0]["parameter"]["parameterName"])
+            maxt = int(el["MaxT"][0]["parameter"]["parameterName"])
+            pop = el["PoP"][0]["parameter"]["parameterName"]
+            ci = el["CI"][0]["parameter"]["parameterName"]
+            avg = (mint + maxt) // 2
+
+            embed = discord.Embed(
+                title=f"{weather_emoji(wx_now)} {city} 天氣預報",
+                description=f"**{wx_now}**",
+                color=temp_color(avg),
+                timestamp=datetime.now(),
+            )
+            # 三個時段
+            periods = ["🌙 今晚", "☀️ 明日白天", "🌙 明日晚上"]
+            for i, label in enumerate(periods):
+                if i >= len(el["Wx"]): break
+                w = el["Wx"][i]["parameter"]["parameterName"]
+                lo = el["MinT"][i]["parameter"]["parameterName"]
+                hi = el["MaxT"][i]["parameter"]["parameterName"]
+                p = el["PoP"][i]["parameter"]["parameterName"]
+                c = el["CI"][i]["parameter"]["parameterName"]
+                embed.add_field(
+                    name=label,
+                    value=f"{weather_emoji(w)} {w}\n🌡️ {lo}–{hi}°C\n☔ 降雨 {p}%\n👕 {c}",
+                    inline=True,
+                )
+            embed.set_footer(text="資料來源：中央氣象署 CWA Open Data")
+            await interaction.followup.send(embed=embed)
+        except Exception as e:
+            logger.error(e)
+            await interaction.followup.send(f"❌ 失敗：{e}", ephemeral=True)
+
+
+class WeekView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=600)
+        self.select = CitySelect("選擇縣市（一週預報）")
+        self.select.callback = self.on_select
+        self.add_item(self.select)
+
+    async def on_select(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=False, invisible=False)
+        city = self.select.values[0]
+        try:
+            async with aiohttp.ClientSession() as s:
+                data = await cwa_get(s, "F-C0032-001", locationName=city)
+            loc = data["records"]["location"][0]
+            el = parse_36h(loc)
+
+            embed = discord.Embed(
+                title=f"📅 {city} 未來預報",
+                color=discord.Color.teal(),
+                timestamp=datetime.now(),
+            )
+            for i in range(len(el["Wx"])):
+                t = el["Wx"][i]
+                start = t["startTime"][5:16].replace("-", "/")
+                end = t["endTime"][5:16].replace("-", "/")
+                w = t["parameter"]["parameterName"]
+                lo = el["MinT"][i]["parameter"]["parameterName"]
+                hi = el["MaxT"][i]["parameter"]["parameterName"]
+                p = el["PoP"][i]["parameter"]["parameterName"]
+                embed.add_field(
+                    name=f"{weather_emoji(w)} {start} → {end}",
+                    value=f"{w}　🌡️ {lo}–{hi}°C　☔ {p}%",
+                    inline=False,
+                )
+            embed.set_footer(text="資料來源：中央氣象署 CWA Open Data")
+            await interaction.followup.send(embed=embed)
+        except Exception as e:
+            logger.error(e)
+            await interaction.followup.send(f"❌ 失敗：{e}", ephemeral=True)
+
+
+def setup(bot: discord.Bot):
     bot.add_cog(Weather(bot))
