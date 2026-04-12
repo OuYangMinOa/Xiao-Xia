@@ -10,8 +10,16 @@ from utils.info import logger
 
 async def _fetch_html(url: str) -> str:
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
-        page = await browser.new_page()
+        browser = await p.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"]
+        )
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                    "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            locale="zh-TW",
+        )
+        page = await context.new_page()
         await page.goto(url, wait_until="networkidle")
         content = await page.content()
         await browser.close()
