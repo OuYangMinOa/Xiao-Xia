@@ -63,7 +63,7 @@ async def prompt_wes_com(text : str):   # use my own LLM AI
 
     # 2. 初始化 Gemma 4 31B 模型
     # 注意：模型名稱為 'models/gemma-4-31b-it'
-    # 定義 Google Search 工具
+    # 定義 Google Search 工具           
     grounding_tool = types.Tool(
         google_search=types.GoogleSearch()
     )
@@ -73,7 +73,7 @@ async def prompt_wes_com(text : str):   # use my own LLM AI
         tools=[grounding_tool]
     )
     client = genai.Client(api_key = os.getenv("GEMINI_API"))
-    print("使用 model gemma4")
+    print("使用 model gemma-4-31b-it")
     print(text)
     response = client.models.generate_content(
         model='gemma-4-31b-it',  
