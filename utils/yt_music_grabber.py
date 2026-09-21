@@ -4,7 +4,7 @@ import os
 import re
 
 from tqdm import tqdm
-from urllib.parse import unquote
+from urllib.parse import unquote, quote
 import aiofiles
 
 # --- Part 1: 通用、解耦的下載函式 ---
@@ -17,8 +17,10 @@ async def download_file(url: str, folder: str = ".", custom_filename: str = ""):
     :param url: 要下載的檔案 URL
     :param folder: 要儲存檔案的資料夾
     :param custom_filename: (可選) 自訂檔名，如果為空則自動偵測
+    :raises: 下載失敗時會往外丟出例外，呼叫端才知道要走備用方案
     """
     bar = None
+    tmp_path = None
     try:
         # 在函式內部建立 client，實現高內聚、低耦合
         async with httpx.AsyncClient(follow_redirects=True, timeout=60) as client:
@@ -47,26 +49,38 @@ async def download_file(url: str, folder: str = ".", custom_filename: str = ""):
                         filename = "downloaded_file.tmp"
 
                 file_path = os.path.join(folder, filename)
+                # 先寫到暫存檔，成功才改名，避免半途失敗留下殘檔被當成快取
+                tmp_path  = file_path + ".tmpdl"
                 total_size = int(res.headers.get("content-length", 0))
 
                 bar = tqdm(desc=filename, total=total_size, unit="iB", unit_scale=True, unit_divisor=1024)
 
-                async with aiofiles.open(file_path, "wb") as f:
+                async with aiofiles.open(tmp_path, "wb") as f:
                     async for data in res.aiter_bytes(chunk_size=1024):
                         await f.write(data)
                         bar.update(len(data))
                 
                 bar.close()
                 bar = None
+                os.replace(tmp_path, file_path)
+                tmp_path = None
                 print(f"\n下載完成！檔案已儲存至：{file_path}")
+                return file_path
 
     except httpx.RequestError as e:
         print(f"\n下載時發生網路錯誤 ({url[:30]}...): {e}")
+        raise
     except Exception as e:
         print(f"\n下載時發生未知錯誤 ({url[:30]}...): {e}")
+        raise
     finally:
         if bar:
             bar.close()
+        if tmp_path and os.path.isfile(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
 
 
 # --- Part 2: 專門負責處理 YouTube 下載的類別 ---
@@ -95,12 +109,27 @@ class YouTubeDownloader:
         # 自動關閉 client
         await self.client.__aexit__(exc_type, exc_val, exc_tb)
 
+    # 小於這個大小的回應不可能是一首歌，多半是錯誤訊息
+    MIN_AUDIO_BYTES = 32 * 1024
+
     async def download_mp3(self, yt_url : str, download_folder : str, filename : str):
         csf_res = await self.client.get(self.CSV_URL)
         csf_token = csf_res.json().get('csrfToken', '')
-        mp3_url = f"{self.API_URL}/mp3?url={yt_url}&csrfToken={csf_token}"
+        # yt_url 內可能含有 & (?v=xxx&list=...)，不編碼的話會被當成另一個查詢參數
+        mp3_url = f"{self.API_URL}/mp3?url={quote(yt_url, safe='')}&csrfToken={csf_token}"
         print(f"正在下載 MP3 檔案: {mp3_url}")
-        await download_file(mp3_url, folder=download_folder, custom_filename=filename)
+        file_path = await download_file(mp3_url, folder=download_folder, custom_filename=filename)
+
+        # download_file 沒丟例外不代表拿到的就是音檔，再確認一次
+        if (not file_path) or (not os.path.isfile(file_path)):
+            raise RuntimeError(f"下載後找不到檔案: {os.path.join(download_folder, filename)}")
+
+        size = os.path.getsize(file_path)
+        if (size < self.MIN_AUDIO_BYTES):
+            os.remove(file_path)
+            raise RuntimeError(f"下載到的檔案只有 {size} bytes，不是有效的音訊")
+
+        return file_path
 
     async def fetch_download_links(self, yt_url: str) -> list[dict]:
         """
@@ -158,7 +187,7 @@ class YouTubeDownloader:
             )
             tasks.append(task)
         
-        await asyncio.gather(*tasks)
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     def _find_best_audio(self, audio_media: list[dict]) -> dict | None:
         """從媒體清單中找出位元率最高的音訊。"""

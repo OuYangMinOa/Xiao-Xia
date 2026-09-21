@@ -8,8 +8,11 @@ from pydub.utils import mediainfo
 
 
 import threading
+import unicodedata
+import hashlib
 import discord
 import asyncio
+import html
 import time
 import numpy as np
 from pydub import AudioSegment
@@ -18,6 +21,46 @@ import yt_dlp as youtube_dl
 import os
 
 youtube_dl.utils.bug_reports_message = lambda: ''
+
+
+# Characters that are illegal in a Windows filename (\ / : * ? " < > |) plus '#',
+# which breaks the download / playback chain even though the filesystem accepts it.
+ILLEGAL_FILENAME_CHARS = '\\/:*?"<>|#'
+
+# Linux caps a single filename at 255 bytes and Windows caps the whole path at 260
+# characters, so a long title has to be trimmed before it ever touches the disk.
+MAX_FILENAME_BYTES = 150
+
+
+def safe_song_filename(title, fallback="unknown"):
+    """Turn a video title into a filename that works on both Windows and Linux.
+
+    Args:
+        title (str): the raw video title
+        fallback (str, optional): name to use when nothing is left after cleaning
+
+    Returns:
+        str: a sanitized, length limited filename
+    """
+    # The YouTube Data API hands back HTML escaped titles (&amp; , &#39; ...)
+    name = html.unescape(str(title or ''))
+    name = ''.join(
+        ch for ch in name
+        if ch not in ILLEGAL_FILENAME_CHARS and unicodedata.category(ch)[0] != 'C'
+    )
+    name = ' '.join(name.split())
+    name = name.strip('. ')          # Windows rejects trailing dots and spaces
+    if (not name):
+        name = fallback
+
+    encoded = name.encode('utf-8')
+    if (len(encoded) > MAX_FILENAME_BYTES):
+        # keep two different long titles from collapsing onto the same file
+        suffix  = '-' + hashlib.md5(encoded).hexdigest()[:8]
+        cut     = encoded[:MAX_FILENAME_BYTES - len(suffix)]
+        name    = cut.decode('utf-8', 'ignore').rstrip() + suffix
+
+    return name
 
 
 
@@ -36,7 +79,7 @@ def change_sound_amp(each_file):
             normalized_sound = match_target_amplitude(sound, -20.0)
             normalized_sound.export(each_file, bitrate=original_bitrate)
         except Exception as e:
-            print(each_file +" -- error" + e)
+            print(f"{each_file} -- error : {e}")
 
 class MusicBot:   
     def __init__(self,channel, voice , ctx, client):
@@ -139,28 +182,19 @@ class MusicBot:
 
         logger.info(f"[*] playing  : {self.this_song[0]} in + {self.channelid}")
         this_song_url   = self.this_song[1]
-        this_song_name  = self.this_song[0]
+        display_name    = str(self.this_song[0])          # shown in discord
+        this_song_name  = safe_song_filename(display_name) # written to the disk
 
-        for each_char in ["\\", "/", '"', "'", ":", "|"]:
-            if (each_char in this_song_name):
-                this_song_name = this_song_name.replace(each_char,"")
-        if ("\\" in this_song_name):
-            this_song_name = this_song_name.replace("\\","")
-        if ("/" in this_song_name):
-            this_song_name = this_song_name.replace("/","")
-        if ('"' in this_song_name):
-            this_song_name = this_song_name.replace('"',"#")
-        if ("'" in this_song_name):
-            this_song_name = this_song_name.replace("'","#")
-        if (":" in this_song_name):
-            this_song_name = this_song_name.replace(":","#")
-        if ("|" in this_song_name):
-            this_song_name = this_song_name.replace("|","#")
+        # songs cached before the sanitizer existed still live under their raw name
+        if (('/' not in display_name) and (os.sep not in display_name)
+                and os.path.isfile(os.path.join(self.floder, display_name))):
+            this_song_name = display_name
 
         song_path  = os.path.join(self.floder , this_song_name)
+        is_stream  = False   # True when we play a live url instead of a local file
         if ( not os.path.isfile(song_path)):            
             # download with yt_download
-            self.dowloading = await self.ctx.send(f'... Downloading {this_song_name}')
+            self.dowloading = await self.ctx.send(f'... Downloading {display_name}')
             is_yt_downloader_succeed = True
             try:
                 async with YouTubeDownloader() as downloader:
@@ -169,9 +203,10 @@ class MusicBot:
                         download_folder = self.floder,
                         filename = this_song_name,                    
                     )
-            except:
+            except Exception as e:
                 is_yt_downloader_succeed = False
-            
+                logger.error(f"[*] YouTubeDownloader failed : {e}")
+
             if not is_yt_downloader_succeed:
                 logger.info("[*] Youtube Downloader failed, try to use youtube_dl")
                 # download with youtube_dl
@@ -201,6 +236,7 @@ class MusicBot:
                         else:
                             logger.info(f"[*] {this_song_url} is a live stream")
                             song_path = info['formats'][0]['url']
+                            is_stream = True
                     # try:
                     #     sound = AudioSegment.from_file(song_path)
                     #     normalized_sound = match_target_amplitude(sound, -20.0)
@@ -243,7 +279,7 @@ class MusicBot:
                     except Exception as e:
                         await self.dowloading.delete()
                         error_     = await self.ctx.channel.send(f':weary:  Error occurred again')
-                        redownload = await self.ctx.channel.send(f':weary:  Skipping this song ... {this_song_name}')
+                        redownload = await self.ctx.channel.send(f':weary:  Skipping this song ... {display_name}')
                         logger.info("[*] error heppened again")
                         logger.info("[*] play next song")
                         logger.error(e)
@@ -263,8 +299,16 @@ class MusicBot:
             print("[*] get kicked from",self.channelid)
             return
         
+        if (not is_stream) and (not os.path.isfile(song_path)):
+            logger.error(f"[*] {song_path} is missing after downloading, skip this song")
+            skip_msg = await self.ctx.channel.send(f':weary:  Download failed, skipping ... {display_name}')
+            await asyncio.sleep(1)
+            await skip_msg.delete()
+            await self._next()
+            return
+
         if (this_song_name not in ['empty.wav']):
-            self.music_msg = await self.ctx.channel.send(f':musical_note:  Now playing ({len(self.passed)}/{len(self.queqed)+len(self.passed)}) : {this_song_name} :musical_note:')
+            self.music_msg = await self.ctx.channel.send(f':musical_note:  Now playing ({len(self.passed)}/{len(self.queqed)+len(self.passed)}) : {display_name} :musical_note:')
 
         FFMPEG_OPTS = {
         # 'before_options': '-reconnect_streamed 1 -reconnect_delay_max 5', 
