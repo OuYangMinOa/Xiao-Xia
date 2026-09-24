@@ -58,7 +58,7 @@ class Record(discord.ext.commands.Cog):
             elif (ctx.guild.id in sound_user_guild):  # in sound_user
                 sound_channel_id = sound_user[list(sound_user)[sound_user_guild.index(ctx.guild.id)]].ctx.channel.id
                 if ctx.guild.voice_client not in self.bot.voice_clients:
-                    await sound_user[music_channel_id].kill()
+                    await sound_user[sound_channel_id].kill()
                     voice = await channel.connect()
                 else:
                     voice = sound_user[sound_channel_id].voice
@@ -99,31 +99,44 @@ class Record(discord.ext.commands.Cog):
 def setup(bot):
     bot.add_cog(Record(bot))
 
-async def speech_to_text(path):
-    r = sr.Recognizer() 
+def _recognize(path):
+    r = sr.Recognizer()
     sound = AudioSegment.from_wav(path)
     folder_name = "audio-chunks"
+    os.makedirs(folder_name, exist_ok=True)
     normalized_sound = match_target_amplitude(sound, -20.0)
-    chunk_filename = os.path.join(folder_name, f"chunk.wav")
-    audio_chunk = normalized_sound
-    audio_chunk.export(chunk_filename, format="wav")
-    with sr.AudioFile(chunk_filename) as source:
-        try:
+    # one chunk file per recording, so users / guilds don't overwrite each other
+    chunk_filename = os.path.join(folder_name, f"chunk_{os.path.basename(os.path.dirname(path))}_{os.path.basename(path)}")
+    normalized_sound.export(chunk_filename, format="wav")
+    text = ''
+    try:
+        with sr.AudioFile(chunk_filename) as source:
             audio_listened = r.record(source)
-            try:
-                text = r.recognize_google(audio_listened, language = 'zh-tw', show_all=True)
-            except Exception as e:
-                logger.error(f"speech_to_text(1) {e}")
-            try:
-                if text['alternative'][0]['confidence'] < 0.7:
-                    text['alternative'][0]['transcript'] = "*inaudible*"
-                text = text['alternative'][0]['transcript']
-            except sr.UnknownValueError as e:
-                text = "*inaudible*"
-        except Exception as e:
-            # logger.error(f"speech_to_text(2) {e}")
-            text = ''
-        return [text,], ''
+        result = r.recognize_google(audio_listened, language = 'zh-tw', show_all=True)
+        if not result:
+            print("\t\t[STT] no speech recognized")
+            return ''
+        alternatives = result.get('alternative', [])
+        for idx, alt in enumerate(alternatives):
+            print(f"\t\t[STT] alt {idx}: {alt.get('transcript')!r} (confidence={alt.get('confidence', 'N/A')})")
+        confidence = alternatives[0].get('confidence', 0)
+        if confidence < 0.7:
+            print(f"\t\t[STT] top confidence {confidence} < 0.7, treat as inaudible")
+            return ''
+        text = alternatives[0]['transcript']
+    except Exception as e:
+        logger.error(f"speech_to_text {e}")
+    finally:
+        try:
+            os.remove(chunk_filename)
+        except OSError:
+            pass
+    return text
+
+async def speech_to_text(path):
+    # recognize_google is a blocking network call; run it off the event loop
+    text = await asyncio.to_thread(_recognize, path)
+    return [text,], ''
     # normalized_sound = match_target_amplitude(sound, -20.0)
     # nonsilent_data = detect_nonsilent(sound, min_silence_len=500, silence_thresh=-50, seek_step=50)
     # folder_name = "audio-chunks"
@@ -222,7 +235,7 @@ class SoundAssist:
 
 
             if(self.ctx.channel.id in sound_user) :
-                sound_user[self.ctx.channel.id].kill()
+                await sound_user[self.ctx.channel.id].kill()
                 del sound_user[self.ctx.channel.id]
                 logger.info("[*] Kill the sound class")
 
@@ -237,7 +250,7 @@ class SoundAssist:
             channel = self.ctx.author.voice.channel
             self.voice = await channel.connect()
         except:
-            self.kill()
+            await self.kill()
             return
 
         music_user_guild  = [music_user[x].ctx.guild.id for x in music_user]
@@ -289,8 +302,8 @@ class SoundAssist:
         print("Record Stop")
     
     def IfContinues(self, word1,word2,numbers):
-        for i in range(0,len(word1)-numbers):
-            for j in range(0,len(word2)-numbers):
+        for i in range(0,len(word1)-numbers+1):
+            for j in range(0,len(word2)-numbers+1):
                 if ( word1[i:i+numbers] == word2[j:j+numbers] ):
                     return True
         return False
@@ -313,14 +326,18 @@ class SoundAssist:
             for user_id, audio in sink.audio_data.items():
                 this_file = os.path.join(day_folder,f'{user_id}.wav')
                 AudioSegment.from_raw(audio.file, format="wav", sample_width=2,frame_rate=48000,channels=2).export(this_file,bitrate=str(128000), format='wav')
+                member = self.ctx.guild.get_member(user_id)
+                user_name = member.display_name if member else user_id
+                print(f"\t[STT] recognizing {user_name} ({user_id}) ...")
                 result, timeline = await speech_to_text(this_file)
-                print("\t",user_id,":",result[0])
+                print(f"\t[STT] {user_name} : {result[0]!r}")
                 if not all( [len(i)==0 for i in result] ):
 
                     for eachText in result:
+                        eachText = eachText.lower()
                         if (len(eachText)>=2):
                             for eachSound,eachFile in zip(self.label, self.file):
-                                if ( self.IfContinues(eachText,eachSound,2) ):
+                                if ( self.IfContinues(eachText,eachSound.lower(),2) ):
                                     intersected = list(set(eachText)&set(eachSound.lower()))
                                     thisLen = len(intersected)
                                     print(f"\t\t{thisLen} -> {eachSound}")
@@ -330,7 +347,7 @@ class SoundAssist:
 
                         if (len(eachText)==1):
                             for eachSound,eachFile in zip(self.label, self.file):
-                                if ( eachText in eachSound ):
+                                if ( eachText in eachSound.lower() ):
                                     print(f"\t\tSingle -> {eachSound}")
                                     if (choseFile):
                                         if (random.random()>0.3):
@@ -341,6 +358,10 @@ class SoundAssist:
                                         
                 threading.Thread(target=os.remove,args=(this_file,)).start()
 
+            if (choseFile):
+                print(f"\t[STT] matched sound -> {choseFile} (sound state={self.soundClass.state})")
+            elif (sink.audio_data):
+                print("\t[STT] no sound matched")
             if (choseFile and self.soundClass.state == 0):
                 await self.soundClass.playSound(choseFile)
 

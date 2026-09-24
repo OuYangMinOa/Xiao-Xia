@@ -39,11 +39,12 @@ class Sounds(discord.ext.commands.Cog):
         # Check if there are any attachments
             attachment = file
 
-            if ( not attachment.filename.endswith('mp3') and not attachment.filename.endswith('wav')):
+            attachment_name = attachment.filename.lower()
+            if ( not attachment_name.endswith('mp3') and not attachment_name.endswith('wav')):
                 await ctx.respond(f"Only allow mp3 and wav files")
                 return
-            
-            file_extend = "mp3" if attachment.filename.endswith('mp3') else "wav"
+
+            file_extend = "mp3" if attachment_name.endswith('mp3') else "wav"
 
             save_folder = f"data/attachments/{ctx.guild.id}"
             os.makedirs(save_folder,exist_ok=True)
