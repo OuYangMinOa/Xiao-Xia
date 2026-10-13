@@ -5,7 +5,8 @@ After=network.target
 [Service]
 User=ubuntu
 WorkingDirectory=/home/ubuntu/Xiao-Xia
-ExecStart=/home/ubuntu/.local/bin/uv run main.py
+ExecStart=/home/ubuntu/Xiao-Xia/.venv/bin/python main.py
+KillMode=mixed
 Restart=always
 RestartSec=3
 
