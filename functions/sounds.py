@@ -16,6 +16,13 @@ def match_target_amplitude(sound, target_dBFS):
     change_in_dBFS = target_dBFS - sound.dBFS
     return sound.apply_gain(change_in_dBFS)
 
+def normalize_sound_file(path, file_extend):
+    sound = AudioSegment.from_file(path)
+    normalized_sound = match_target_amplitude(sound, -20.0)
+    del sound   # don't hold two full decoded copies while exporting
+    # without format=, pydub always writes mp3 (even into a .wav file)
+    normalized_sound.export(path, format=file_extend)
+
 
 class Sounds(discord.ext.commands.Cog):
     def __init__(self, bot):
@@ -55,12 +62,12 @@ class Sounds(discord.ext.commands.Cog):
 
 
             ####  re normalize the attachment file dfbs
+            # pydub decodes the whole file synchronously; run it off the event loop
+            # so a long upload doesn't freeze the gateway heartbeat / voice playback
             try:
-                sound = AudioSegment.from_file(f"{save_folder}/{filename}.{file_extend}")
-                normalized_sound = match_target_amplitude(sound, -20.0)
-                normalized_sound.export(f"{save_folder}/{filename}.{file_extend}")
-            except:
-                logger.error("[*] Normalize goes wrong")
+                await asyncio.to_thread(normalize_sound_file, f"{save_folder}/{filename}.{file_extend}", file_extend)
+            except Exception as e:
+                logger.error(f"[*] Normalize goes wrong : {e}")
             if (str(ctx.guild.id) == os.getenv('MYDISCORDGID')):
                 await upload_wp(f"{save_folder}/{filename}.{file_extend}")
 
