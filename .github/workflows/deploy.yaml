@@ -25,7 +25,10 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
             cd /home/ubuntu/Xiao-Xia
             git pull origin main
-            uv sync
+            /home/ubuntu/.local/bin/uv sync
             sudo systemctl restart Xiao-Xia.service
+            sleep 5
+            systemctl is-active Xiao-Xia.service
