@@ -20,7 +20,9 @@ from pydub import AudioSegment
 import yt_dlp as youtube_dl
 import os
 
-youtube_dl.utils.bug_reports_message = lambda: ''
+# yt-dlp calls this with keyword args (e.g. before=...); a bare `lambda: ''`
+# raises TypeError there and hides the real download error
+youtube_dl.utils.bug_reports_message = lambda *args, **kwargs: ''
 
 
 # Characters that are illegal in a Windows filename (\ / : * ? " < > |) plus '#',
@@ -218,13 +220,12 @@ class MusicBot:
                 
                 try:
                     print("[*] downloading ->", this_song_name,"\n")
-                    is_live = True
+                    is_live = False   # unknown until extract_info succeeds; still let pytube try
                     with youtube_dl.YoutubeDL(self.ytl) as ydl:
                         ydl.cache.remove()
                         # ydl.download([this_song_url])
                         info = ydl.extract_info(this_song_url, download=False)
-                        if (not info['is_live']):
-                            is_live = False
+                        if (not info.get('is_live')):
                             logger.info(f"[*] Downloading {this_song_url} due to it not a live")
                             ## download with blocking ...
                             # ydl.download([this_song_url])
@@ -234,6 +235,7 @@ class MusicBot:
                             await loop.run_in_executor(None, lambda path:change_sound_amp(path), song_path )
                             # change_sound_amp(song_path) # normalize the song
                         else:
+                            is_live = True
                             logger.info(f"[*] {this_song_url} is a live stream")
                             song_path = info['formats'][0]['url']
                             is_stream = True
