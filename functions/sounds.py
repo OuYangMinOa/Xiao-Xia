@@ -3,10 +3,10 @@ from discord.ext      import commands
 from utils.info       import logger
 from utils.info       import sound_user, music_user, recording
 from glob             import glob
-from pydub            import AudioSegment
 from utils.upload     import upload_wp
 
 import utils.MusicBot     as my_mb # my class
+import utils.loudness     as loudness
 import discord
 import asyncio
 import os
@@ -15,13 +15,6 @@ import os
 def match_target_amplitude(sound, target_dBFS):
     change_in_dBFS = target_dBFS - sound.dBFS
     return sound.apply_gain(change_in_dBFS)
-
-def normalize_sound_file(path, file_extend):
-    sound = AudioSegment.from_file(path)
-    normalized_sound = match_target_amplitude(sound, -20.0)
-    del sound   # don't hold two full decoded copies while exporting
-    # without format=, pydub always writes mp3 (even into a .wav file)
-    normalized_sound.export(path, format=file_extend)
 
 
 class Sounds(discord.ext.commands.Cog):
@@ -61,13 +54,9 @@ class Sounds(discord.ext.commands.Cog):
             logger.info(f"[*] {filename}.{file_extend} received."+ f' - {ctx.guild.id}:{ctx.author.name}')
 
 
-            ####  re normalize the attachment file dfbs
-            # pydub decodes the whole file synchronously; run it off the event loop
-            # so a long upload doesn't freeze the gateway heartbeat / voice playback
-            try:
-                await asyncio.to_thread(normalize_sound_file, f"{save_folder}/{filename}.{file_extend}", file_extend)
-            except Exception as e:
-                logger.error(f"[*] Normalize goes wrong : {e}")
+            # measure the loudness now so the first play is already normalized
+            # (the gain itself is applied at playback, see utils/loudness.py)
+            await loudness.get_filter(f"{save_folder}/{filename}.{file_extend}", timeout=None)
             if (str(ctx.guild.id) == os.getenv('MYDISCORDGID')):
                 await upload_wp(f"{save_folder}/{filename}.{file_extend}")
 

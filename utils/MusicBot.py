@@ -3,7 +3,8 @@ from utils.GrabYtList import *
 from utils.yt_music_grabber import YouTubeDownloader
 from utils.info     import logger, music_user, sound_user, MUSIC_folder
 from pytube import YouTube
-from pydub.utils import mediainfo
+
+import utils.loudness as loudness
 
 
 
@@ -15,7 +16,6 @@ import asyncio
 import html
 import time
 import numpy as np
-from pydub import AudioSegment
 # import youtube_dl
 import yt_dlp as youtube_dl
 import os
@@ -67,21 +67,6 @@ def safe_song_filename(title, fallback="unknown"):
 
 
 
-def match_target_amplitude(sound, target_dBFS):
-    change_in_dBFS = target_dBFS - sound.dBFS
-    return sound.apply_gain(change_in_dBFS)
-
-def change_sound_amp(each_file):
-    if (os.path.isfile(each_file)):
-        try:
-            original_bitrate = mediainfo(each_file)['bit_rate']
-            sound = AudioSegment.from_file(each_file)
-            if ( sound.duration_seconds > 60*60):
-                return
-            normalized_sound = match_target_amplitude(sound, -20.0)
-            normalized_sound.export(each_file, bitrate=original_bitrate)
-        except Exception as e:
-            print(f"{each_file} -- error : {e}")
 
 class MusicBot:   
     def __init__(self,channel, voice , ctx, client):
@@ -232,8 +217,6 @@ class MusicBot:
                             ## download without blocking ...
                             loop = asyncio.get_event_loop()
                             await loop.run_in_executor(None, lambda url:ydl.download(url), [this_song_url] )
-                            await loop.run_in_executor(None, lambda path:change_sound_amp(path), song_path )
-                            # change_sound_amp(song_path) # normalize the song
                         else:
                             is_live = True
                             logger.info(f"[*] {this_song_url} is a live stream")
@@ -264,9 +247,6 @@ class MusicBot:
                                                                                             output_path=self.floder,filename=this_song_name) ,
                                                     None )
                             logger.info("\n[*] ------------ download successful ------------")
-                            await loop.run_in_executor(None, lambda path:change_sound_amp(path), song_path )
-                            # change_sound_amp(song_path) # normalize the song
-                            logger.info("\n[*] ------------ apply gain successful ------------")
                         else:
                             await self.dowloading.delete()
                             await self._next()
@@ -317,6 +297,11 @@ class MusicBot:
         'before_options':f"-ss {self.startTime}",
         'options': '-vn'
         }
+        if (not is_stream):
+            # bring every song / sound clip to the same perceived loudness
+            loudness_filter = await loudness.get_filter(song_path)
+            if (loudness_filter):
+                FFMPEG_OPTS['options'] += f' -af {loudness_filter}'
 
         # self.rejoin_c += 1
         # if (self.rejoin_c == 10):

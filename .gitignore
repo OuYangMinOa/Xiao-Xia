@@ -37,3 +37,4 @@ talk_channel.txt
 reboot.py
 /utils/__pycache__
 /functions/__pycache__
+/data/loudness.json
