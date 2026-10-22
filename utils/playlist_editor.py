@@ -240,7 +240,7 @@ class PlaylistEditor(discord.ui.View):
         self._button(1, self._move_down, "⬇️", "下移", disabled=none or index == len(songs) - 1)
         self._button(1, self._move_top,  "⏫", top_label, disabled=none or index == 0)
         self._button(1, self._remove,    "🗑️", "刪除", style=discord.ButtonStyle.danger, disabled=none)
-        self._button(1, self._add,       "➕", "加歌", style=discord.ButtonStyle.success)
+        self._button(1, self._add,       "➕", "加歌")
 
         self._button(2, self._prev_page, "◀️", disabled=self.page == 0)
         self._button(2, None, label=f"{self.page + 1}/{pages}", disabled=True)
@@ -251,7 +251,7 @@ class PlaylistEditor(discord.ui.View):
                 self._button(2, self._delete_playlist, "⚠️", "確定刪除？", style=discord.ButtonStyle.danger)
             else:
                 self._button(2, self._delete_playlist, "❌", "刪除歌單")
-            self._button(3, self._play, "▶️", "播放這個歌單", style=discord.ButtonStyle.primary, disabled=not songs)
+            self._button(3, self._play, "▶️", "播放這個歌單", disabled=not songs)
             self._button(3, self._refresh, "🔄", "重新整理")
         else:
             self._button(2, self._save_as, "💾", "存成歌單")

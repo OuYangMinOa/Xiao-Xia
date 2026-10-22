@@ -200,19 +200,48 @@ async def test_position_and_resume(bot):
     await mb.kill()
 
 
+def test_page_numbers():
+    assert music_ui.page_numbers(0, 3) == [0, 1, 2]
+    assert music_ui.page_numbers(0, 8) == [0, 1, 2, 3, 7]
+    assert music_ui.page_numbers(3, 8) == [0, 2, 3, 4, 7]
+    assert music_ui.page_numbers(7, 8) == [0, 4, 5, 6, 7]
+    for total in range(1, 30):
+        for current in range(total):
+            shown = music_ui.page_numbers(current, total)
+            assert current in shown and len(shown) == min(total, 5) and len(set(shown)) == len(shown)
+
+
 @pytest.mark.asyncio
 async def test_soundboard_pages():
-    labels = [f"s{i}" for i in range(45)]
+    labels = [f"s{i}" for i in range(136)]
     board  = music_ui.SoundboardView(labels, [l + ".mp3" for l in labels], play=None, stop=None)
-    assert board.pages() == 3
-    sound_buttons = [c for c in board.children if c.row < music_ui.SOUND_ROWS]
-    assert len(sound_buttons) == music_ui.SOUNDS_PER_PAGE
-    assert len(board.children) <= 25
+    assert board.pages() == 8
 
-    board.page = 2
-    board._build()
-    sound_buttons = [c for c in board.children if c.row < music_ui.SOUND_ROWS]
-    assert [b.label for b in sound_buttons] == labels[40:]
+    def layout():
+        sounds = [c.label for c in board.children if c.label in labels]
+        rows   = {}
+        for c in board.children:
+            rows.setdefault(c.row, []).append(c)
+        pages  = [(c.label, c.style) for c in rows[music_ui.SOUND_ROWS]]
+        return sounds, rows, pages
+
+    sounds, rows, pages = layout()
+    assert sounds == labels[:18]
+    assert [c.label for c in rows[3]][-2:] == ["隨機", "停止"]
+    assert all(len(r) <= 5 for r in rows.values()) and len(board.children) <= 25
+    assert pages == [("1", discord.ButtonStyle.success), ("2", discord.ButtonStyle.secondary),
+                     ("3", discord.ButtonStyle.secondary), ("4", discord.ButtonStyle.secondary),
+                     ("8", discord.ButtonStyle.secondary)]
+
+    # jump straight to the last page by its number
+    await board._goto(7)(types.SimpleNamespace(response=types.SimpleNamespace(edit_message=lambda **k: asyncio.sleep(0))))
+    sounds, rows, pages = layout()
+    assert sounds == labels[126:]
+    assert [p[0] for p in pages] == ["1", "5", "6", "7", "8"] and pages[-1][1] == discord.ButtonStyle.success
+
+    # one page: no page numbers, random / stop right after the sounds
+    small = music_ui.SoundboardView(labels[:3], labels[:3], play=None, stop=None)
+    assert [c.label for c in small.children] == ["s0", "s1", "s2", "隨機", "停止"]
 
 
 def test_added_embed():
@@ -232,4 +261,28 @@ async def test_panel_errors_dont_stop_playback(bot, monkeypatch):
     monkeypatch.setattr(music_ui, "player_embed", broken)
     await mb._safe_next()
     assert mb.voice.is_playing() and mb.state == 1
+    await mb.kill()
+
+
+def button_colors(view):
+    return {item.style for item in view.children if isinstance(item, discord.ui.Button)}
+
+
+@pytest.mark.asyncio
+async def test_buttons_are_not_blue(bot):
+    # blue (primary) reads as "selected" in Discord; green only means "on", red is destructive
+    mb = bot
+    await mb._next()
+    view = music_ui.PlayerView(mb)
+    assert button_colors(view) == {discord.ButtonStyle.secondary, discord.ButtonStyle.danger}
+    await mb.set_loop(True)
+    view.sync_buttons()
+    assert view.loop_button.style == discord.ButtonStyle.success
+    assert view.toggle_button.style == discord.ButtonStyle.secondary
+
+    labels = [f"s{i}" for i in range(30)]
+    board  = music_ui.SoundboardView(labels, labels, play=None, stop=None)
+    assert discord.ButtonStyle.primary not in button_colors(board)
+    green = [c.label for c in board.children if c.style == discord.ButtonStyle.success]
+    assert green == ["1"]                                   # only the page you're on
     await mb.kill()

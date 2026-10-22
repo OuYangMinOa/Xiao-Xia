@@ -141,3 +141,12 @@ async def test_queue_editing(bot):
     editor.render()
     assert editor.selected is None
     await mb.kill()
+
+
+@pytest.mark.asyncio
+async def test_editor_buttons_are_not_blue(saved):
+    import discord
+    editor = PlaylistEditor(saved)
+    editor.render()
+    colors = {item.style for item in editor.children if isinstance(item, discord.ui.Button)}
+    assert colors == {discord.ButtonStyle.secondary, discord.ButtonStyle.danger}

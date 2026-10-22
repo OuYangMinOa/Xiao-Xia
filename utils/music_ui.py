@@ -24,8 +24,9 @@ COLOR_ERROR   = 0xF23F43
 PROGRESS_REFRESH = 15     # seconds between progress bar edits
 UP_NEXT_PREVIEW  = 3      # songs listed under "接下來" on the panel
 SOUNDS_PER_ROW   = 5
-SOUND_ROWS       = 4      # the 5th (last) row of a view holds the board controls
-SOUNDS_PER_PAGE  = SOUNDS_PER_ROW * SOUND_ROWS
+SOUND_ROWS       = 4      # the 5th (last) row of a view holds the page numbers
+SOUNDS_PER_PAGE  = SOUNDS_PER_ROW * SOUND_ROWS - 2   # the grid's last two cells are random / stop
+PAGE_BUTTONS     = 5      # a row holds at most 5 buttons
 
 _STATUS = {
     #  ui_status   : (color, header)
@@ -72,6 +73,22 @@ def song_link(title, url, limit=60):
 
 def member_name(member):
     return getattr(member, "display_name", None) or str(member)
+
+def page_numbers(current, total, slots=PAGE_BUTTONS):
+    """Which pages get a number button: all of them if they fit, otherwise the
+    first, the last, the current one and its neighbours."""
+    if (total <= slots):
+        return list(range(total))
+    shown  = {0, total - 1, current}
+    lo, hi = current - 1, current + 1
+    while (len(shown) < slots):
+        if (lo > 0):
+            shown.add(lo)
+            lo -= 1
+        if (len(shown) < slots and hi < total - 1):
+            shown.add(hi)
+            hi += 1
+    return sorted(shown)
 
 def info_embed(text, color=COLOR_PLAYING):
     return discord.Embed(description=text, color=color)
@@ -184,7 +201,6 @@ class PlayerView(discord.ui.View):
         mb     = self.mb
         paused = (mb.state != 1 or mb.ui_status == "paused")
         self.toggle_button.emoji = "▶️" if paused else "⏸️"
-        self.toggle_button.style = discord.ButtonStyle.success if paused else discord.ButtonStyle.primary
         self.toggle_button.disabled  = mb.ui_status == "downloading"
         self.prev_button.disabled    = len(mb.passed) < 2
         self.shuffle_button.disabled = len(mb.queqed) < 2
@@ -210,7 +226,7 @@ class PlayerView(discord.ui.View):
         self.mb.note(f"⏮️ {member_name(interaction.user)} 回到上一首")
         await self.mb.previous()
 
-    @discord.ui.button(emoji="⏸️", style=discord.ButtonStyle.primary, row=0)
+    @discord.ui.button(emoji="⏸️", style=discord.ButtonStyle.secondary, row=0)
     async def toggle_button(self, button, interaction):
         await interaction.response.defer()
         if (self.mb.state == 1):
@@ -291,15 +307,18 @@ class SoundboardView(discord.ui.View):
             button.callback = self._player(label, file)
             self.add_item(button)
 
-        row = SOUND_ROWS
-        if (self.pages() > 1):
-            self._control("◀️", None, self._prev_page, row, disabled=self.page == 0)
-            self._control(None, f"{self.page + 1}/{self.pages()}", None, row, disabled=True)
-            self._control("▶️", None, self._next_page, row, disabled=self.page >= self.pages() - 1)
-        self._control("🎲", "隨機", self._random, row)
-        self._control("⏹️", "停止", self._stop, row, style=discord.ButtonStyle.danger)
+        # random / stop come right after the last sound of the page
+        cell = len(self.children)
+        self._control("🎲", "隨機", self._random, cell // SOUNDS_PER_ROW)
+        self._control("⏹️", "停止", self._stop, (cell + 1) // SOUNDS_PER_ROW, style=discord.ButtonStyle.danger)
 
-    def _control(self, emoji, label, callback, row, disabled=False, style=discord.ButtonStyle.primary):
+        if (self.pages() > 1):
+            for page in page_numbers(self.page, self.pages()):
+                # green = the page you're on
+                style = discord.ButtonStyle.success if page == self.page else discord.ButtonStyle.secondary
+                self._control(None, str(page + 1), self._goto(page), SOUND_ROWS, style=style)
+
+    def _control(self, emoji, label, callback, row, disabled=False, style=discord.ButtonStyle.secondary):
         button = discord.ui.Button(emoji=emoji, label=label, style=style, row=row, disabled=disabled)
         if (callback):
             button.callback = callback
@@ -330,15 +349,12 @@ class SoundboardView(discord.ui.View):
         else:
             await interaction.response.defer()
 
-    async def _prev_page(self, interaction):
-        self.page = max(0, self.page - 1)
-        self._build()
-        await interaction.response.edit_message(embed=self.embed(), view=self)
-
-    async def _next_page(self, interaction):
-        self.page = min(self.pages() - 1, self.page + 1)
-        self._build()
-        await interaction.response.edit_message(embed=self.embed(), view=self)
+    def _goto(self, page):
+        async def callback(interaction):
+            self.page = max(0, min(self.pages() - 1, page))
+            self._build()
+            await interaction.response.edit_message(embed=self.embed(), view=self)
+        return callback
 
     async def on_error(self, error, item, interaction):
         logger.error(f"[*] soundboard button failed : {error}")
