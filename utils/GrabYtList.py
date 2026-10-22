@@ -8,6 +8,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import requests
 
+import yt_dlp
 from pytube import YouTube, Playlist
 from pip._vendor import requests
 
@@ -59,6 +60,28 @@ def grab_playlist(url,maxima_song = 25):
     """
     # logger.info(url)
     try:
+        logger.info("[*] Grabbing playlist with yt-dlp")
+        ydl_opts = {
+            'extract_flat': 'in_playlist',
+            'skip_download': True,
+            'noplaylist': False,
+            'quiet': True,
+            'playlistend': maxima_song,
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+        playlist_set = [
+            (entry.get('title') or entry['id'], f"https://www.youtube.com/watch?v={entry['id']}")
+            for entry in (info.get('entries') or [])
+            if entry and entry.get('id')
+        ][:maxima_song]
+        if playlist_set:
+            return playlist_set
+        logger.error(f"[*] yt-dlp got an empty playlist from {url}")
+    except Exception as e:
+        logger.error(f"[*] yt-dlp faild to grab {url} yt playlist: {e}")
+
+    try:
         logger.info("[*] Grabbing playlist with pytube")
         p = Playlist(url)
         count = 0
@@ -71,8 +94,8 @@ def grab_playlist(url,maxima_song = 25):
                 )
             time.sleep(0.01)
             count += 1
-        print(playlist_set)
-        return playlist_set
+        if playlist_set:
+            return playlist_set
     except Exception as e:
         logger.error(f"[*] Pytube faild to grab {url} yt playlist")
 
@@ -107,8 +130,9 @@ def grab_playlist(url,maxima_song = 25):
             logger.error(f"[*] keynum {keynum} failed")
 
     logger.info(f"[*] ALL keynum failed")
+    return []
 
-    
+
 
 
 async def grab_Lyrics_spotify(song_name):
