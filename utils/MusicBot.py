@@ -206,6 +206,13 @@ class MusicBot:
         """
         if (not self.SHOW_PANEL or not self.live):
             return
+        try:
+            await self._update_panel(move)
+        except Exception as e:
+            # the panel is only a view of the player; never let it stop the music
+            logger.error(f"[*] {self.channelid} updating the panel failed : {e!r}")
+
+    async def _update_panel(self, move):
         async with self._panel_lock:
             channel = self.ctx.channel
             embed   = music_ui.player_embed(self)
@@ -218,7 +225,7 @@ class MusicBot:
                         if (idle):
                             self._drop_view()
                         elif (self.view is not None):
-                            self.view.refresh()
+                            self.view.sync_buttons()
                         await self.panel.edit(embed=embed, view=self.view)
                         return
                     except discord.NotFound:
@@ -599,8 +606,9 @@ class MusicBot:
         try:
             await self._next()
         except Exception as e:
-            logger.error(f"[*] {self.channelid} playing the next song failed : {e}")
-            self.state = 0
+            logger.error(f"[*] {self.channelid} playing the next song failed : {e!r}")
+            if (not self.voice.is_playing()):
+                self.state = 0
 
     async def shuffle(self):
         random.shuffle(self.queqed)

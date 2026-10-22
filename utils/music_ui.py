@@ -178,9 +178,9 @@ class PlayerView(discord.ui.View):
     def __init__(self, mb):
         super().__init__(timeout=None)
         self.mb = mb
-        self.refresh()
+        self.sync_buttons()
 
-    def refresh(self):
+    def sync_buttons(self):
         mb     = self.mb
         paused = (mb.state != 1 or mb.ui_status == "paused")
         self.toggle_button.emoji = "▶️" if paused else "⏸️"

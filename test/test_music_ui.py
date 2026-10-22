@@ -38,9 +38,23 @@ def test_song_link_escapes_title():
     assert music_ui.song_link("Tom &amp; Jerry", "") == "Tom & Jerry"
 
 
+def test_views_dont_override_pycord_view_methods():
+    # py-cord calls View.refresh(components) on send / edit; overriding it broke the panel
+    from utils.playlist_editor import PlaylistEditor
+    base = set(dir(discord.ui.View)) - {"interaction_check", "on_error", "on_timeout"}
+    for cls in (music_ui.PlayerView, music_ui.SoundboardView, PlaylistEditor):
+        clashes = {name for name in vars(cls) if name in base and not name.startswith("__")}
+        assert not clashes, f"{cls.__name__} overrides {clashes}"
+
+
 # ------------------------------------------------------------------ fake discord
 
 _ids = itertools.count(1000)
+
+def echo_components(view):
+    """Like py-cord's send() / edit(): hand the view back the components Discord stored."""
+    if (view is not None):
+        view.refresh([discord.components._component_factory(row) for row in view.to_components()])
 
 class FakeMessage:
     def __init__(self, channel, embed, view):
@@ -49,6 +63,7 @@ class FakeMessage:
 
     async def edit(self, embed=None, view=None):
         self.embed, self.view = embed, view
+        echo_components(view)
 
     async def delete(self):
         self.deleted = True
@@ -62,6 +77,7 @@ class FakeChannel:
 
     async def send(self, content=None, embed=None, view=None, delete_after=None):
         message = FakeMessage(self, embed, view)
+        echo_components(view)
         self.sent.append(message)
         self.last_message_id = message.id
         return message
@@ -206,3 +222,14 @@ def test_added_embed():
     embed = music_ui.added_embed({"kind": "playlist", "count": 10, "more": True,
                                   "first": ("First", "https://youtu.be/aaaaaaaaaaa")}, member)
     assert "10" in embed.description and "背景" in embed.description
+
+
+@pytest.mark.asyncio
+async def test_panel_errors_dont_stop_playback(bot, monkeypatch):
+    mb = bot
+    def broken(_):
+        raise TypeError("ui bug")
+    monkeypatch.setattr(music_ui, "player_embed", broken)
+    await mb._safe_next()
+    assert mb.voice.is_playing() and mb.state == 1
+    await mb.kill()
