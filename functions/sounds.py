@@ -94,6 +94,8 @@ async def ensure_sound_bot(bot, source, member):
 
 
 class Sounds(discord.ext.commands.Cog):
+    responds_itself = True   # skip the global defer in main.py's before_invoke
+
     def __init__(self, bot):
         self.bot = bot
 

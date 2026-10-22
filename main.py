@@ -35,6 +35,9 @@ async def on_ready():
 async def before_invoke(ctx : discord.ApplicationContext ):
     logger.info(f"{ctx.command} - {ctx.author.name}")
 
+    # cogs with ephemeral replies / their own defer answer the interaction themselves
+    if (getattr(ctx.command.cog, "responds_itself", False)):
+        return
     if (str(ctx.command) not in ['autosound','vote']):
         await ctx.defer()
 

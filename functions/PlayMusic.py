@@ -23,6 +23,8 @@ async def playlist_names(ctx : discord.AutocompleteContext):
 
 
 class Music(discord.ext.commands.Cog):
+    responds_itself = True   # skip the global defer in main.py's before_invoke
+
     def __init__(self, bot):
         self.bot = bot
 
