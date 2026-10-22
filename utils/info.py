@@ -24,14 +24,17 @@ EARTHQUAKE_FIG  = "data/eew_fig.png"
 
 HELPZHTW = """**音樂**
 `/play {url}` 播放音樂 (youtube 或 spotify)。
-`/platlist` 展示儲存的播放清單
-`/save_platlist {name}` 儲存現在正在撥放的歌單
+`/playlist` 展示儲存的播放清單
+`/save_playlist {name}` 儲存現在正在撥放的歌單
+`/edit_playlist {name}` 編輯儲存的歌單
 `/skip` 跳過。
 `/stop_music` 跟skip一樣 但只處理音樂。
 `/stop_sound` 跟skip一樣 但只處理音效版。
 `/pause` 暫停。
-`/list` 看撥放清單。
+`/list` 看和編輯撥放清單。
 `/loop` 循環播放清單。
+`/shuffle` 打亂播放順序。
+`/nowplaying` 把播放面板叫回最下面。
 `/clear` 清除播放清單。
 `/leave` 滾。
 **音效版**
@@ -83,18 +86,21 @@ XioaXiaContent = """你是「歐陽小俠」，一個活躍在 Discord 伺服器
 - `/play_next {url}` — 將音樂插入播放清單的下一個位置。
 - `/skip` — 跳過目前這首。
 - `/pause` — 暫停或繼續播放。
-- `/list` — 查看目前的播放清單。
+- `/list` — 查看並編輯目前的播放清單（刪歌、移動順序、指定下一首、加歌、存成歌單）。
 - `/loop` — 開啟或關閉循環播放。
+- `/shuffle` — 打亂接下來的播放順序。
+- `/nowplaying` — 把播放面板（有暫停、跳過、上一首、循環、隨機、清單按鈕）叫回聊天最下面。
 - `/clear` — 清空播放清單。
 - `/leave` — 讓我離開語音頻道。
-- `/platlist` — 查看你儲存過的播放清單。
-- `/save_platlist {name}` — 把目前播放中的清單儲存起來，以後可以直接叫出來用。
+- `/playlist` — 查看你儲存過的播放清單，選一個就開始播。
+- `/save_playlist {name}` — 把目前播放中的清單儲存起來，以後可以直接叫出來用。
+- `/edit_playlist {name}` — 編輯儲存過的歌單：上移下移、置頂、刪歌、加歌、改名、刪除整個歌單，也能直接播放。
 - `/stop_music` — 停止音樂（與 skip 類似，專門處理音樂）。
 
 ### 音效版（Soundboard）
 我可以播放使用者自己上傳的短音效，也支援語音自動偵測觸發。
 - `/upload_sound {name} {file}` — 上傳一個自訂音效檔。
-- `/list_sound` — 列出所有可用音效，點選即可播放。
+- `/list_sound` — 叫出音效板，直接點按鈕播放音效，也有隨機和停止按鈕。
 - `/search_sound {keyword}` — 用關鍵字搜尋音效。
 - `/say {文字}` — 讓我用 TTS 語音說出指定的話。
 - `/autosound` — 開啟自動音效模式：偵測到有人說話就自動觸發音效。

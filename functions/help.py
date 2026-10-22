@@ -17,14 +17,17 @@ class Help(discord.ext.commands.Cog):
         await  ctx.respond("""* :notes: **MUSIC**
  - `/play {url}` play music (youtube or spotify).
  - `/play_next {url}` insert the music to the next of playlist.
- - `/platlist` show all playlist
- - `/save_platlist {name}` save current playlist
+ - `/playlist` show all playlist
+ - `/save_playlist {name}` save current playlist
+ - `/edit_playlist {name}` edit a saved playlist (reorder, remove / add songs, rename, delete).
  - `/skip` to skip the song.
  - `/stop_music` same as skip but only stop music。
  - `/stop_sound` same as skip but only stop sound。
  - `/pause` to pause the song.
- - `/list` to show the playlist.
+ - `/list` to show and edit the queue.
  - `/loop` to loop current song.
+ - `/shuffle` shuffle the queue.
+ - `/nowplaying` bring the player panel back to the bottom.
  - `/clear` to clear the playlist.
  - `/leave` to leave the voice channel.
  
@@ -74,14 +77,17 @@ I'll try to explain the usage of the command in simple language.
         await  ctx.respond("""* :notes: **音樂**
  - `/play {url}` 播放音樂 (youtube 或 spotify)。
  - `/play_next {url}` 將音樂插入播放清單的下一個位置。
- - `/platlist` 展示儲存的播放清單
- - `/save_platlist {name}` 儲存現在正在撥放的歌單
+ - `/playlist` 展示儲存的播放清單
+ - `/save_playlist {name}` 儲存現在正在撥放的歌單
+ - `/edit_playlist {name}` 編輯儲存的歌單（調整順序、刪歌、加歌、改名、刪除）
  - `/skip` 跳過。
  - `/stop_music` 跟skip一樣 但只處理音樂。
  - `/stop_sound` 跟skip一樣 但只處理音效版。
  - `/pause` 暫停。
- - `/list` 看撥放清單。
+ - `/list` 看和編輯撥放清單。
  - `/loop` 循環播放清單。
+ - `/shuffle` 打亂播放順序。
+ - `/nowplaying` 把播放面板叫回最下面。
  - `/clear` 清除播放清單。
  - `/leave` 滾。
 

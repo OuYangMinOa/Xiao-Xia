@@ -4,6 +4,7 @@ from utils.info       import logger
 from utils.info       import sound_user, music_user, recording
 from glob             import glob
 from utils.upload     import upload_wp
+from utils.music_ui   import SoundboardView, info_embed, error_embed, COLOR_DONE
 
 import utils.MusicBot     as my_mb # my class
 import utils.loudness     as loudness
@@ -12,258 +13,229 @@ import asyncio
 import os
 
 
+SOUND_EXTENSIONS = ('.mp3', '.wav')
+
+
 def match_target_amplitude(sound, target_dBFS):
     change_in_dBFS = target_dBFS - sound.dBFS
     return sound.apply_gain(change_in_dBFS)
+
+
+def sound_folder(guild_id):
+    return os.path.join("data/attachments", str(guild_id))
+
+def list_sounds(guild_id, keyword=None):
+    """(labels, files) of the guild's sounds, oldest upload first."""
+    files = [path for path in glob(f'{sound_folder(guild_id)}/*.*')
+             if path.lower().endswith(SOUND_EXTENSIONS) and os.path.basename(path) != 'empty.wav']
+    files.sort(key=os.path.getmtime)
+    labels = [os.path.splitext(os.path.basename(path))[0] for path in files]
+    files  = [os.path.basename(path) for path in files]
+    if (keyword):
+        keyword = keyword.lower()
+        pairs   = [(l, f) for l, f in zip(labels, files) if keyword in l.lower()]
+        labels  = [l for l, _ in pairs]
+        files   = [f for _, f in pairs]
+    return labels, files
+
+
+def music_bot_in_guild(guild_id):
+    for each in music_user.values():
+        if (each.ctx.guild.id == guild_id):
+            return each
+    return None
+
+
+async def ensure_sound_bot(bot, source, member):
+    """The SoundBot for source's text channel, joining member's voice channel if needed.
+
+    Args:
+        source: an ApplicationContext or an Interaction (only .channel and .guild are used)
+        member: who asked; the bot follows them into their voice channel
+
+    Returns:
+        (SoundBot | None, str | None): the bot, or None and the reason
+    """
+    if (not member.voice or not member.voice.channel):
+        return None, "你要先加入語音頻道"
+    channel = member.voice.channel
+    key     = source.channel.id
+    voice   = source.guild.voice_client
+
+    if (voice is not None and not voice.is_connected()):
+        voice = None
+
+    sound_bot = sound_user.get(key)
+    if (sound_bot is not None and sound_bot.live and voice is not None and sound_bot.voice is voice):
+        if (voice.channel.id != channel.id):
+            await voice.move_to(channel)
+            logger.info(f"[*] move {sound_bot.channelid} -> {channel.id}")
+        sound_bot.channel, sound_bot.channelid = channel, channel.id
+        return sound_bot, None
+
+    if (sound_bot is not None):
+        await sound_bot.kill()
+        del sound_user[key]
+
+    if (voice is None):
+        logger.info("[*] moving to voice channel")
+        voice = await channel.connect(timeout = 60)
+    elif (voice.channel.id != channel.id):
+        await voice.move_to(channel)
+
+    # the music player of this guild shares the voice client
+    music_bot = music_bot_in_guild(source.guild.id)
+    if (music_bot is not None):
+        music_bot.voice, music_bot.channel, music_bot.channelid = voice, channel, channel.id
+
+    sound_bot = SoundBot(channel, voice, source, bot)
+    sound_user[key] = sound_bot
+    return sound_bot, None
 
 
 class Sounds(discord.ext.commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    def _board(self, guild_id, labels, files, title, timeout=6 * 60 * 60):
+        async def play(interaction, file):
+            try:
+                sound_bot, error = await ensure_sound_bot(self.bot, interaction, interaction.user)
+            except Exception as e:
+                logger.error(f"[*] soundboard could not join the voice channel : {e}")
+                return "連不上語音頻道，等一下再試試"
+            if (error):
+                return error
+            if (not os.path.isfile(os.path.join(sound_folder(guild_id), file))):
+                return "這個音效已經不存在了，重新開一次 `/list_sound` 吧"
+            logger.info(f"[*] sound {file} - {interaction.user.name}")
+            asyncio.create_task(sound_bot.playSound(file))
+            return None
+
+        async def stop(interaction):
+            sound_bot = sound_user.get(interaction.channel.id)
+            if (sound_bot is None or sound_bot.state == 0):
+                return "現在沒有在播音效"
+            await sound_bot.skip()
+            return None
+
+        return SoundboardView(labels, files, play, stop, title=title, timeout=timeout)
+
     @slash_command( name="upload_sound",description="upload sound file")
     async def upload_sound(self,ctx : discord.ApplicationContext, filename : Option(str, "The name of the sound", required = True), file: discord.Attachment):
-        for _ in range(10):
-            try:
-                # await ctx.response.defer()
-                await ctx.respond(f"/upload_sound - {ctx.author.mention}",ephemeral=True,delete_after=10)
-                break
-            except:
-                print("[*] retrying...")
-
         logger.info(f"upload_sound {ctx.author.name}")
 
+        attachment_name = (file.filename or "").lower()
+        if (not attachment_name.endswith(SOUND_EXTENSIONS)):
+            await ctx.respond(embed=error_embed("只接受 mp3 或 wav 檔"), ephemeral=True)
+            return
+        await ctx.defer(ephemeral=True)
 
+        # the name ends up in a path; keep it from escaping the guild's folder
+        name        = my_mb.safe_song_filename(filename, fallback="sound")
+        file_extend = "mp3" if attachment_name.endswith('mp3') else "wav"
+        save_folder = sound_folder(ctx.guild.id)
+        os.makedirs(save_folder,exist_ok=True)
+        save_path   = f"{save_folder}/{name}.{file_extend}"
+        replaced    = os.path.isfile(save_path)
+        await file.save(save_path)
+        logger.info(f"[*] {name}.{file_extend} received."+ f' - {ctx.guild.id}:{ctx.author.name}')
 
-        if file:
-        # Check if there are any attachments
-            attachment = file
+        # measure the loudness now so the first play is already normalized
+        # (the gain itself is applied at playback, see utils/loudness.py)
+        await loudness.get_filter(save_path, timeout=None)
+        if (str(ctx.guild.id) == os.getenv('MYDISCORDGID')):
+            await upload_wp(save_path)
 
-            attachment_name = attachment.filename.lower()
-            if ( not attachment_name.endswith('mp3') and not attachment_name.endswith('wav')):
-                await ctx.respond(f"Only allow mp3 and wav files")
-                return
-
-            file_extend = "mp3" if attachment_name.endswith('mp3') else "wav"
-
-            save_folder = f"data/attachments/{ctx.guild.id}"
-            os.makedirs(save_folder,exist_ok=True)
-            await attachment.save(f"{save_folder}/{filename}.{file_extend}") 
-
-            await ctx.respond(f"{filename}.{file_extend} received.")
-            logger.info(f"[*] {filename}.{file_extend} received."+ f' - {ctx.guild.id}:{ctx.author.name}')
-
-
-            # measure the loudness now so the first play is already normalized
-            # (the gain itself is applied at playback, see utils/loudness.py)
-            await loudness.get_filter(f"{save_folder}/{filename}.{file_extend}", timeout=None)
-            if (str(ctx.guild.id) == os.getenv('MYDISCORDGID')):
-                await upload_wp(f"{save_folder}/{filename}.{file_extend}")
-
-
-
-
-        else:
-            await ctx.respond("No file attached.")
+        verb = "更新" if replaced else "新增"
+        await ctx.respond(embed=info_embed(f"✅ 已{verb}音效 **{discord.utils.escape_markdown(name)}**，用 `/list_sound` 就能播放", COLOR_DONE))
 
     @slash_command(name="list_sound",description="list all the sounds in this channel")
     async def list_sound(self,ctx : discord.ApplicationContext):
-        ThisRespond = await ctx.respond(f"/list_sound - {ctx.author.mention}",delete_after=10)
+        logger.info(f"[*] list sound"+ f' - {ctx.author.name}')
+        labels, files = list_sounds(ctx.guild.id)
+        if (len(labels) == 0):
+            await ctx.respond(embed=error_embed("這個伺服器還沒有音效，用 `/upload_sound` 上傳一個吧"), ephemeral=True)
+            return
 
-        ##  connect to a voice channel
+        await ctx.defer()
         try:
-            if not ctx.author.voice:
-                await ctx.respond('you are not connected to a voice channel')
-                return
-            else:
-                channel = ctx.author.voice.channel
-
-            music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
-
-            if (ctx.channel.id in sound_user):  # in sound_user
-                if ctx.guild.voice_client not in self.bot.voice_clients:   # in music_user but not in any voice channel
-                    await sound_user[ctx.channel.id].kill()
-                    del sound_user[ctx.channel.id]
-                    logger.info("[*] rejoin the voice channel")
-                    voice =  await channel.connect()
-                    sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-                elif (sound_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
-                    await sound_user[ctx.channel.id].voice.move_to(channel)
-                    logger.info(f"[*] move {sound_user[ctx.channel.id].channelid} -> {channel.id}")
-                    sound_user[ctx.channel.id].channel    = channel
-                    sound_user[ctx.channel.id].channelid  = channel.id
-                    sound_user[ctx.channel.id].ctx        = ctx
-
-            elif (ctx.guild.id in music_user_guild):  # in music_user (a simple transfer)
-                music_channel_id = music_user[list(music_user)[music_user_guild.index(ctx.guild.id)]].ctx.channel.id
-
-
-                if (music_user[music_channel_id].channelid != channel.id):
-                    await music_user[music_channel_id].voice.move_to(channel)
-                    logger.info(f"[*]  music_user : {music_user[music_channel_id].channelid} -> sound_user : {channel.id}")
-
-                sound_user[ctx.channel.id] = SoundBot(channel, music_user[music_channel_id].voice , ctx, self.bot)
-
-                if ctx.guild.voice_client not in self.bot.voice_clients:
-                    await music_user[music_channel_id].kill()
-                    # del music_user[ctx.channel.id]
-                    logger.info("[*] rejoin the voice channel")
-                    voice =  await channel.connect()
-                    sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-            else:
-                print("[*] moving to voice channel")
-                voice =  await channel.connect()
-                print("[*] voice channel connected")
-                sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-
-            CRM = BuildSoundSelect(ctx.guild.id, sound_user[ctx.channel.id])
-
-            if (len(CRM.label)==0):
-                await ctx.respond("you haven't upload any sound files")
-                return
-            
-            logger.info(f"[*] list sound"+ f' - {ctx.author.name}')
-
-            # ThisRespond
-            sound_user[ctx.channel.id].ctxResArr.append(ThisRespond)
-
-
-            ctxResMess =  await ctx.respond(f"Available sound (total:{CRM.count})")
-            sound_user[ctx.channel.id].ctxResArr.append(ctxResMess)
-
-            thisCount = 1
-            for eachView in CRM.views:
-                ctxRes =  await ctx.send(f"({thisCount}/{len(CRM.views)})",view=eachView)
-                sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
-                # print(type(ctxRes))
-                thisCount += 1
-
-            
-
+            _, error = await ensure_sound_bot(self.bot, ctx, ctx.author)
         except Exception as e:
             logger.error(e)
+            error = "連不上語音頻道，等一下再試試"
+        if (error):
+            await ctx.respond(embed=error_embed(error))
+            return
 
+        board = self._board(ctx.guild.id, labels, files, "🔊 音效板")
+        await ctx.respond(embed=board.embed(), view=board)
 
     @slash_command( name="search_sound",description="Search sound file")
     async def search_sound(self,ctx : discord.ApplicationContext, keyword:Option(str, "The keywords", required = True)):
-        
-        # await ctx.response.defer( ephemeral=True)
-        ThisRespond = await ctx.respond(f"/search_sound - {ctx.author.mention}",ephemeral=True)
-        
-        if not ctx.author.voice:
-            await ctx.respond('you are not connected to a voice channel')
-            return
-        else:
-            channel = ctx.author.voice.channel
-
-        music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
-
-        if (ctx.channel.id in sound_user):  # in sound_user
-            if ctx.guild.voice_client not in self.bot.voice_clients:   # in music_user but not in any voice channel
-                await sound_user[ctx.channel.id].kill()
-                del sound_user[ctx.channel.id]
-                logger.info("[*] rejoin the voice channel")
-                voice =  await channel.connect()
-                sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-
-            elif (sound_user[ctx.channel.id].channelid != channel.id):  # in same channel but not in same voice channel
-                await sound_user[ctx.channel.id].voice.move_to(channel)
-                logger.info(f"[*] move {sound_user[ctx.channel.id].channelid} -> {channel.id}")
-                sound_user[ctx.channel.id].channel    = channel
-                sound_user[ctx.channel.id].channelid  = channel.id
-                sound_user[ctx.channel.id].ctx        = ctx
-
-            
-
-        elif (ctx.guild.id in music_user_guild):  # in music_user (a simple transfer)
-            music_channel_id = music_user[list(music_user)[music_user_guild.index(ctx.guild.id)]].ctx.channel.id
-
-
-            if ctx.guild.voice_client not in self.bot.voice_clients:   
-                await music_user[ctx.channel.id].kill()
-                # del music_user[ctx.channel.id]
-                logger.info("[*] rejoin the voice channel")
-                voice =  await channel.connect()
-                sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-
-
-            elif (music_user[music_channel_id].channelid != channel.id):  # in same channel but not in same voice channel
-                await music_user[music_channel_id].voice.move_to(channel)
-                logger.info(f"[*]  music_user : {music_user[music_channel_id].channelid} -> sound_user : {channel.id}")
-                sound_user[music_channel_id] = SoundBot(channel, music_user[music_channel_id].voice , ctx, self.bot)
-
-                # del music_user[ctx.channel.id]
-
-            
-        else:
-            print("[*] moving to voice channel")
-            voice =  await channel.connect()
-            print("[*] voice channel connected")
-            sound_user[ctx.channel.id] = SoundBot(channel, voice , ctx, self.bot)
-
-        save_folder = os.path.join("data/attachments", str(ctx.guild.id))
-        label, file = [], []
-        for path in glob(f'{save_folder}/*.*'):
-            if ( (path.endswith('mp3') or path.endswith('wav')) and keyword in path):
-                label.append(os.path.basename(path[:-4]))
-                file.append( os.path.basename(path) )
-
-        options = [ discord.SelectOption(label=label[i])for i in range(len(label))]
-        view = discord.ui.View(timeout=24*60*60)
-        for i in range(len(options)//24+1):
-            if (len(label[24*(i):24*(i+1)])!=0):
-                this_select = MySelection(sound_user[ctx.channel.id],label[24*(i):24*(i+1)] ,file[24*(i):24*(i+1)] ).select
-                view.add_item(this_select)
-
-        if (len(label)==0):
-            await ctx.respond("Sound files no found", ephemeral=True)
-            return
         logger.info(f"[*] search sound"+ f'{keyword}  - {ctx.author.name}')
-        
-        ctxRes = await ctx.respond(f"Keyword : {keyword}", view=view, ephemeral=True)
-        sound_user[ctx.channel.id].ctxResArr.append(ctxRes)
-        # ThisRespond
-        sound_user[ctx.channel.id].ctxResArr.append(ThisRespond)
+        labels, files = list_sounds(ctx.guild.id, keyword)
+        if (len(labels) == 0):
+            await ctx.respond(embed=error_embed(f"找不到含有「{discord.utils.escape_markdown(keyword)}」的音效"), ephemeral=True)
+            return
+
+        await ctx.defer(ephemeral=True)
+        try:
+            _, error = await ensure_sound_bot(self.bot, ctx, ctx.author)
+        except Exception as e:
+            logger.error(e)
+            error = "連不上語音頻道，等一下再試試"
+        if (error):
+            await ctx.respond(embed=error_embed(error))
+            return
+
+        # ephemeral messages can only be edited for 15 minutes
+        board = self._board(ctx.guild.id, labels, files, f"🔍 音效搜尋：{keyword}", timeout=14 * 60)
+        await ctx.respond(embed=board.embed(), view=board)
 
 
 class SoundBot(my_mb.MusicBot):
+    SHOW_PANEL = False
+
     def __init__(self,channel, voice , ctx, client):
         super().__init__(channel, voice , ctx, client)
         self.floder = f"data/attachments/{ctx.guild.id}"
         self.loop   = False
+        self._sound_turn   = 0      # bumped by every playSound, so only the latest one resumes the music
+        self._paused_music = None   # (MusicBot, position) interrupted by sounds
 
     async def playSound(self,thisFile):
+        self._sound_turn += 1
+        turn = self._sound_turn
+
+        ## pause the music of this guild while the sound plays
+        music_bot = music_bot_in_guild(self.ctx.guild.id)
+        if (music_bot is not None and music_bot is not self and music_bot.state == 1):
+            self._paused_music = (music_bot, music_bot.startTime)
+            await music_bot.pause("🔊 播放音效中，音樂稍等一下")
+            music_bot.state = 3
+
         await self.clear()
         self.queqed = [(thisFile,''), ]
-
-        music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
-
-
-        ## check if any music playing on that guild
-        if (self.ctx.guild.id  in music_user_guild):
-            music_channel_id = music_user[list(music_user)[music_user_guild.index(self.ctx.guild.id)]].ctx.channel.id
-            if (music_user[music_channel_id].state == 1):
-                lastMusicTime = music_user[music_channel_id].startTime
-                await music_user[music_channel_id].pause("(Stop cause sound playing)")
-                music_user[music_channel_id].state = 3
-                # await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
-
         logger.info(self.queqed)
 
         ## Start the sound
-        await self._next()  
-        
+        await self._next()
+
         ## if the sound finished playing
-        while self.StartCount:   
-            await asyncio.sleep(1)
+        while self.StartCount:
+            await asyncio.sleep(0.3)
+
+        if (turn != self._sound_turn or self._paused_music is None):
+            return   # another sound took over; it resumes the music when it ends
 
         ## resume the music
-        if (self.ctx.guild.id  in music_user_guild):
-            if (music_user[music_channel_id].state == 3):
-                music_user[music_channel_id].startTime = lastMusicTime
-                await music_user[music_channel_id].pause("(Stop cause sound playing)")
-
-
+        music_bot, position = self._paused_music
+        self._paused_music  = None
+        if (music_bot.live and music_bot.state == 3):
+            music_bot.startTime = position
+            music_bot.note("")
+            await music_bot.pause()
 
     async def leave(self):
         record_user_guild = [recording[x ].ctx.guild.id for x in recording]
@@ -272,85 +244,6 @@ class SoundBot(my_mb.MusicBot):
             await recording[record_channel_id].kill()
 
         await super().leave()
-
-class BuildSoundSelect():
-    def __init__(self,channel_id ,sound_class,*args , **kwargs):
-        self.count = 0
-        self.sound_class = sound_class
-        self.label, self.sounds = self.getsounds(channel_id)
-        options = [ discord.SelectOption(label=self.label[i])for i in range(len(self.label))]
-        self.views = []
-
-        # self.view = discord.ui.View(timeout=24*60*60) # timeout -> one day
-        
-        self.view = discord.ui.View(timeout=24*60*60)
-        self.views.append(self.view)
-        counter = 0
-        for i in range(len(options)//24+1):
-            if (len(self.label[24*(i):24*(i+1)])!=0):
-                this_select = MySelection(self.sound_class,self.label[24*(i):24*(i+1)] ,self.sounds[24*(i):24*(i+1)] ).select
-                self.views[-1].add_item(this_select)
-                counter += 1
-                if(counter==5):
-                    self.view = discord.ui.View(timeout=24*60*60)
-                    self.views.append(self.view)
-                    counter = 0
-            
-
-    def getsounds(self,channel_id):
-        save_folder = os.path.join("data/attachments", str(channel_id))
-        label, file = [], []
-
-        files = glob(f'{save_folder}/*.*')
-        files.sort(key=os.path.getmtime)
-
-        for path in files:
-            if ('empty.wav' == os.path.basename(path)):
-                continue
-            if (path.endswith('mp3') or path.endswith('wav') ):
-                self.count += 1
-
-                label.append(os.path.basename(path[:-4]))
-                file.append( os.path.basename(path) )
-
-        return label, file
-
-
-        
-        # await self.sound_class.clear()
-        # await interaction.followup.send_message(f"{self.label[which_chosen]}")
-
-class MySelection:
-    def __init__(self,sound_class,label,sound):
-        self.sound_class, self.label, self.sounds = sound_class,label,sound
-        options = [ discord.SelectOption(label=label[i])for i in range(len(label))]
-
-        self.select = discord.ui.Select(
-                placeholder = "All sounds",
-                min_values  = 1, 
-                max_values  = 1,
-                options = options
-            )
-        
-        self.select.callback = self.callback
-    async def callback(self, interaction):
-        await self.sound_class.clear()
-        which_chosen = self.label.index(self.select.values[0])
-        await self.sound_class.playSound(self.sounds[which_chosen])
-
-        # self.sound_class.queqed = [(self.sounds[which_chosen],''), ]
-
-        # music_user_guild = [music_user[x].ctx.guild.id for x in music_user]  # store all guild in music_user
-
-        # if (self.sound_class.ctx.guild.id  in music_user_guild):
-        #     music_channel_id = music_user[list(music_user)[music_user_guild.index(self.sound_class.ctx.guild.id)]].ctx.channel.id
-        #     if (music_user[music_channel_id].state == 1):
-        #         await music_user[music_channel_id].pause("(Stop cause sound playing)")
-        #         music_user[music_channel_id].state = 3
-        #         # await music_user[self.sound_class.ctx.channel.id ].ctx.channel.send(f':raised_hand: :raised_hand: :raised_hand:  Music interrupt and can\'t be recover, type `/skip` to play the next music')
-
-        # logger.info(self.sound_class.queqed)
-        # await self.sound_class._next()
 
 
 def setup(bot : discord.Bot):
