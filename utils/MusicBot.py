@@ -5,6 +5,7 @@ from utils.info     import logger, music_user, sound_user, MUSIC_folder
 from pytube import YouTube
 
 import utils.loudness as loudness
+import utils.pycord_fixes  # noqa: F401  (patches voice before any client connects)
 import utils.music_ui as music_ui
 
 
