@@ -155,7 +155,7 @@ async def test_player_panel_flow(bot):
     assert mb.state == 2 and mb.voice.paused
     assert mb.panel is first_panel
     assert panel_of(mb).author.name == "⏸️ 已暫停"
-    assert mb.view.toggle_button.emoji.name == "▶️"
+    assert mb.view.toggle_button.label == "▷"
     await mb.toggle_pause()
     assert mb.state == 1 and not mb.voice.paused
 
@@ -227,7 +227,7 @@ async def test_soundboard_pages():
 
     sounds, rows, pages = layout()
     assert sounds == labels[:18]
-    assert [c.label for c in rows[3]][-2:] == ["隨機", "停止"]
+    assert [c.label for c in rows[3]][-2:] == ["隨機", "■ 停止"]
     assert all(len(r) <= 5 for r in rows.values()) and len(board.children) <= 25
     assert pages == [("1", discord.ButtonStyle.success), ("2", discord.ButtonStyle.secondary),
                      ("3", discord.ButtonStyle.secondary), ("4", discord.ButtonStyle.secondary),
@@ -241,7 +241,7 @@ async def test_soundboard_pages():
 
     # one page: no page numbers, random / stop right after the sounds
     small = music_ui.SoundboardView(labels[:3], labels[:3], play=None, stop=None)
-    assert [c.label for c in small.children] == ["s0", "s1", "s2", "隨機", "停止"]
+    assert [c.label for c in small.children] == ["s0", "s1", "s2", "隨機", "■ 停止"]
 
 
 def test_added_embed():

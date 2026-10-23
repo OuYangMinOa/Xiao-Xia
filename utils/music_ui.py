@@ -200,12 +200,12 @@ class PlayerView(discord.ui.View):
     def sync_buttons(self):
         mb     = self.mb
         paused = (mb.state != 1 or mb.ui_status == "paused")
-        self.toggle_button.emoji = "▶️" if paused else "⏸️"
+        self.toggle_button.label = "▷" if paused else "❚❚"
         self.toggle_button.disabled  = mb.ui_status == "downloading"
         self.prev_button.disabled    = len(mb.passed) < 2
         self.shuffle_button.disabled = len(mb.queqed) < 2
         self.loop_button.style = discord.ButtonStyle.success if mb.loop else discord.ButtonStyle.secondary
-        self.loop_button.label = "循環中" if mb.loop else "循環"
+        self.loop_button.label = "↻ 循環中" if mb.loop else "↻ 循環"
 
     async def interaction_check(self, interaction):
         if (not self.mb.live):
@@ -220,13 +220,13 @@ class PlayerView(discord.ui.View):
     async def on_error(self, error, item, interaction):
         logger.error(f"[*] player button failed : {error}")
 
-    @discord.ui.button(emoji="⏮️", style=discord.ButtonStyle.secondary, row=0)
+    @discord.ui.button(label="◁◁", style=discord.ButtonStyle.secondary, row=0)
     async def prev_button(self, button, interaction):
         await interaction.response.defer()
         self.mb.note(f"⏮️ {member_name(interaction.user)} 回到上一首")
         await self.mb.previous()
 
-    @discord.ui.button(emoji="⏸️", style=discord.ButtonStyle.secondary, row=0)
+    @discord.ui.button(label="❚❚", style=discord.ButtonStyle.secondary, row=0)
     async def toggle_button(self, button, interaction):
         await interaction.response.defer()
         if (self.mb.state == 1):
@@ -235,25 +235,25 @@ class PlayerView(discord.ui.View):
             self.mb.note(f"▶️ {member_name(interaction.user)} 繼續播放")
         await self.mb.toggle_pause()
 
-    @discord.ui.button(emoji="⏭️", style=discord.ButtonStyle.secondary, row=0)
+    @discord.ui.button(label="▷▷", style=discord.ButtonStyle.secondary, row=0)
     async def skip_button(self, button, interaction):
         await interaction.response.defer()
         title = shorten(self.mb.this_song[0], 40) if self.mb.this_song else ""
         self.mb.note(f"⏭️ {member_name(interaction.user)} 跳過了 {title}")
         await self.mb.skip()
 
-    @discord.ui.button(emoji="⏹️", style=discord.ButtonStyle.danger, row=0)
+    @discord.ui.button(label="■", style=discord.ButtonStyle.danger, row=0)
     async def stop_button(self, button, interaction):
         await interaction.response.defer()
         await self.mb.leave()
         await interaction.followup.send(embed=info_embed(f"👋 {member_name(interaction.user)} 讓我離開了語音頻道"))
 
-    @discord.ui.button(emoji="🔁", label="循環", style=discord.ButtonStyle.secondary, row=1)
+    @discord.ui.button(label="↻ 循環", style=discord.ButtonStyle.secondary, row=1)
     async def loop_button(self, button, interaction):
         await interaction.response.defer()
         await self.mb.set_loop(not self.mb.loop, member_name(interaction.user))
 
-    @discord.ui.button(emoji="🔀", label="隨機", style=discord.ButtonStyle.secondary, row=1)
+    @discord.ui.button(label="⇄ 隨機", style=discord.ButtonStyle.secondary, row=1)
     async def shuffle_button(self, button, interaction):
         await interaction.response.defer()
         self.mb.note(f"🔀 {member_name(interaction.user)} 打亂了播放順序")
@@ -310,7 +310,7 @@ class SoundboardView(discord.ui.View):
         # random / stop come right after the last sound of the page
         cell = len(self.children)
         self._control("🎲", "隨機", self._random, cell // SOUNDS_PER_ROW)
-        self._control("⏹️", "停止", self._stop, (cell + 1) // SOUNDS_PER_ROW, style=discord.ButtonStyle.danger)
+        self._control(None, "■ 停止", self._stop, (cell + 1) // SOUNDS_PER_ROW, style=discord.ButtonStyle.danger)
 
         if (self.pages() > 1):
             for page in page_numbers(self.page, self.pages()):

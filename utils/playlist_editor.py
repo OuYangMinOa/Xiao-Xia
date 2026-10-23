@@ -236,26 +236,26 @@ class PlaylistEditor(discord.ui.View):
 
         none = index is None
         top_label = "下一首播" if self.source.kind == "queue" else "置頂"
-        self._button(1, self._move_up,   "⬆️", "上移", disabled=none or index == 0)
-        self._button(1, self._move_down, "⬇️", "下移", disabled=none or index == len(songs) - 1)
-        self._button(1, self._move_top,  "⏫", top_label, disabled=none or index == 0)
+        self._button(1, self._move_up,   None, "↑ 上移", disabled=none or index == 0)
+        self._button(1, self._move_down, None, "↓ 下移", disabled=none or index == len(songs) - 1)
+        self._button(1, self._move_top,  None, f"⇈ {top_label}", disabled=none or index == 0)
         self._button(1, self._remove,    "🗑️", "刪除", style=discord.ButtonStyle.danger, disabled=none)
         self._button(1, self._add,       "➕", "加歌")
 
-        self._button(2, self._prev_page, "◀️", disabled=self.page == 0)
+        self._button(2, self._prev_page, None, "◁", disabled=self.page == 0)
         self._button(2, None, label=f"{self.page + 1}/{pages}", disabled=True)
-        self._button(2, self._next_page, "▶️", disabled=self.page >= pages - 1)
+        self._button(2, self._next_page, None, "▷", disabled=self.page >= pages - 1)
         if (self.source.kind == "saved"):
             self._button(2, self._rename, "✏️", "改名")
             if (self.confirm_delete):
                 self._button(2, self._delete_playlist, "⚠️", "確定刪除？", style=discord.ButtonStyle.danger)
             else:
                 self._button(2, self._delete_playlist, "❌", "刪除歌單")
-            self._button(3, self._play, "▶️", "播放這個歌單", disabled=not songs)
-            self._button(3, self._refresh, "🔄", "重新整理")
+            self._button(3, self._play, None, "▷ 播放這個歌單", disabled=not songs)
+            self._button(3, self._refresh, None, "↻ 重新整理")
         else:
             self._button(2, self._save_as, "💾", "存成歌單")
-            self._button(3, self._refresh, "🔄", "重新整理")
+            self._button(3, self._refresh, None, "↻ 重新整理")
 
     async def _show(self, interaction):
         """Answer a component interaction by redrawing the editor."""
