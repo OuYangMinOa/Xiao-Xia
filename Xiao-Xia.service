@@ -1,14 +1,17 @@
 [Unit]
-Description=Xiao Xia API Service
-After=network.target
+Description=Xiao Xia Discord Bot
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 User=ubuntu
 WorkingDirectory=/home/ubuntu/Xiao-Xia
 ExecStart=/home/ubuntu/Xiao-Xia/.venv/bin/python main.py
+Environment=PYTHONUNBUFFERED=1
 KillMode=mixed
 Restart=always
 RestartSec=3
+MemoryMax=500M
 
 [Install]
-WantedBy=multi-user.target  
+WantedBy=multi-user.target

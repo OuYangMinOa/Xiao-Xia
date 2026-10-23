@@ -27,8 +27,8 @@ jobs:
           script: |
             set -e
             cd /home/ubuntu/Xiao-Xia
-            git pull origin main
-            /home/ubuntu/.local/bin/uv sync
+            git pull --ff-only origin main
+            /home/ubuntu/.local/bin/uv sync --frozen
             sudo systemctl restart Xiao-Xia.service
             sleep 5
             systemctl is-active Xiao-Xia.service
