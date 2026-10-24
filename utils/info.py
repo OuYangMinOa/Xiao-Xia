@@ -123,6 +123,7 @@ XioaXiaContent = """你是「歐陽小俠」，一個活躍在 Discord 伺服器
 - `/get_covid` — 台灣當日 COVID 確診人數。
 - `/eew_alert` — 在目前頻道開啟地震速報通知（台灣、日本、福建）。
 - `/eew_alert_stop` — 關閉地震速報通知。
+- `/eew_status` — 查看地震速報各地區的連線狀態。
 - `/summaryPdf {file}` — 上傳 PDF，我會幫你摘要每一頁的內容。
 
 ### 工具與娛樂

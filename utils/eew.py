@@ -28,6 +28,19 @@ class EEW_data:
     def fake_data(cls):
         return EEW_data(1,datetime.now(),datetime.now().strftime("%Y年%m月%d日 %H:%M:%S"),"test",23.92,121.59,5.6,40,"5弱")
 
+@dataclass
+class WssStatus:
+    connected      : bool     = False
+    connected_at   : datetime = None  # 本次連線成功的時間
+    last_message_at: datetime = None  # 最後收到任何訊息(含 heartbeat)的時間
+    last_event_at  : datetime = None  # 最後收到地震資料的時間
+    last_error     : str      = None
+    last_error_at  : datetime = None
+    reconnect_count: int      = 0
+
+## pos -> WssStatus, 給 /eew_status 查詢用
+wss_status : dict[str, WssStatus] = {}
+
 class EEW:
     WHITE_CIRCLE  = "`⚪`"
     GREEN_CIRCLE  = "`🟢`"
@@ -155,17 +168,26 @@ class EEW:
         return self.pos_url_wss_dict["tw"]
     
     async def wss_grab_result(self,pos="tw")-> AsyncIterator[EEW_data]:
+        status = wss_status.setdefault(pos, WssStatus())
         while True:
             try:
                 async with websockets.connect(self._get_url_by_pos(pos),open_timeout=600) as websocket:
                     print("Connected !")
+                    status.connected    = True
+                    status.connected_at = datetime.now()
                     while True:
-                        recv = await websocket.recv() 
+                        recv = await websocket.recv()
+                        status.last_message_at = datetime.now()
                         r    = json.loads(recv)
                         if (r["type"]!="heartbeat"):
+                            status.last_event_at = datetime.now()
                             yield self.json_to_eewdata(r,pos)
             except Exception as e:
                 print(f"{pos} Connection closed : {e}")
+                status.connected        = False
+                status.last_error       = f"{type(e).__name__}: {e}"
+                status.last_error_at    = datetime.now()
+                status.reconnect_count += 1
                 await asyncio.sleep(1)
                 print("Reconnect")
             
